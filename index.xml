@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>whx&#39;s Blog</title>
+    <link>https://whx828.github.io/</link>
+    <description>Recent content on whx&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>whx828 All rights reserved</copyright><atom:link href="https://whx828.github.io/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
