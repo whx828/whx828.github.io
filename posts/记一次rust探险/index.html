@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> 记一次 Rust 探险 | whx&#39;s Blog</title>
+  <link rel = 'canonical' href = 'https://whx828.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1rust%E6%8E%A2%E9%99%A9/'>
+  <meta name="description" content="Patience is not passive, on the contrary, it is concentrated strength.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="记一次 Rust 探险" />
+<meta property="og:description" content="问题的起始 最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：
+ &hellip;&hellip;
+请求审核博文来改变其状态
+接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：
+1pub struct Post { 2 state: Option&lt;Box&lt;dyn State&gt;&gt;, 3 content: String, 4} 5 6impl Post { 7 // --snip-- 8 pub fn new() -&gt; Post { 9 Post { 10 state: Some(Box::new(Draft {})), 11 content: String::new(), 12 } 13 } 14 15 pub fn add_text(&amp;mut self, text: &amp;str) { 16 self.content.push_str(text); 17 } 18 19 pub fn content(&amp;self) -&gt; &amp;str { 20 &#34;&#34; 21 } 22 23 pub fn request_review(&amp;mut self) { 24 if let Some(s) = self." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://whx828.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1rust%E6%8E%A2%E9%99%A9/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-17T18:48:39+08:00" />
+<meta property="article:modified_time" content="2022-04-17T18:48:39+08:00" />
+
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="记一次 Rust 探险"/>
+<meta name="twitter:description" content="问题的起始 最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：
+ &hellip;&hellip;
+请求审核博文来改变其状态
+接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：
+1pub struct Post { 2 state: Option&lt;Box&lt;dyn State&gt;&gt;, 3 content: String, 4} 5 6impl Post { 7 // --snip-- 8 pub fn new() -&gt; Post { 9 Post { 10 state: Some(Box::new(Draft {})), 11 content: String::new(), 12 } 13 } 14 15 pub fn add_text(&amp;mut self, text: &amp;str) { 16 self.content.push_str(text); 17 } 18 19 pub fn content(&amp;self) -&gt; &amp;str { 20 &#34;&#34; 21 } 22 23 pub fn request_review(&amp;mut self) { 24 if let Some(s) = self."/>
+
+  
+  
+    
+  
+  
+  <link rel="stylesheet" href="https://whx828.github.io/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+
+  
+   <link rel="stylesheet" href="https://whx828.github.io/css/custom.css"> 
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://whx828.github.io/images/favicon.ico" />
+
+  
+  
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+         
+        <li><a href="/posts">Posts</a></li>
+         
+        <li><a href="/index.xml">RSS</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://whx828.github.io/posts/rust%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8/" aria-label="Previous">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#" aria-label="Share">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f" aria-label="Facebook">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&text=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Twitter">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Linkedin">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&is_video=false&description=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Pinterest">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9&body=Check out this article: https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f" aria-label="Email">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Pocket">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="reddit">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&name=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9&description=%e9%97%ae%e9%a2%98%e7%9a%84%e8%b5%b7%e5%a7%8b%20%e6%9c%80%e8%bf%91%e5%9c%a8%e7%9c%8b%e3%80%8aThe%20Book%e3%80%8b%ef%bc%8c%e7%ac%ac%2017%20%e7%ab%a0%e7%9a%84%2017.3%20%e8%8a%82%e9%87%8c%e9%9d%a2%e6%9c%89%e8%bf%99%e6%a0%b7%e4%b8%80%e4%b8%aa%e7%bb%86%e8%8a%82%ef%bc%9a%0a%20%26hellip%3b%26hellip%3b%0a%e8%af%b7%e6%b1%82%e5%ae%a1%e6%a0%b8%e5%8d%9a%e6%96%87%e6%9d%a5%e6%94%b9%e5%8f%98%e5%85%b6%e7%8a%b6%e6%80%81%0a%e6%8e%a5%e4%b8%8b%e6%9d%a5%e9%9c%80%e8%a6%81%e5%a2%9e%e5%8a%a0%e8%af%b7%e6%b1%82%e5%ae%a1%e6%a0%b8%e5%8d%9a%e6%96%87%e7%9a%84%e5%8a%9f%e8%83%bd%ef%bc%8c%e8%bf%99%e5%ba%94%e5%bd%93%e5%b0%86%e5%85%b6%e7%8a%b6%e6%80%81%e7%94%b1%20Draft%20%e6%94%b9%e4%b8%ba%20PendingReview%e3%80%82%e7%a4%ba%e4%be%8b%2017-15%20%e5%b1%95%e7%a4%ba%e4%ba%86%e8%bf%99%e4%b8%aa%e4%bb%a3%e7%a0%81%ef%bc%9a%0a1pub%20struct%20Post%20%7b%202%20state%3a%20Option%26lt%3bBox%26lt%3bdyn%20State%26gt%3b%26gt%3b%2c%203%20content%3a%20String%2c%204%7d%205%206impl%20Post%20%7b%207%20%2f%2f%20--snip--%208%20pub%20fn%20new%28%29%20-%26gt%3b%20Post%20%7b%209%20Post%20%7b%2010%20state%3a%20Some%28Box%3a%3anew%28Draft%20%7b%7d%29%29%2c%2011%20content%3a%20String%3a%3anew%28%29%2c%2012%20%7d%2013%20%7d%2014%2015%20pub%20fn%20add_text%28%26amp%3bmut%20self%2c%20text%3a%20%26amp%3bstr%29%20%7b%2016%20self.content.push_str%28text%29%3b%2017%20%7d%2018%2019%20pub%20fn%20content%28%26amp%3bself%29%20-%26gt%3b%20%26amp%3bstr%20%7b%2020%20%26%2334%3b%26%2334%3b%2021%20%7d%2022%2023%20pub%20fn%20request_review%28%26amp%3bmut%20self%29%20%7b%2024%20if%20let%20Some%28s%29%20%3d%20self." aria-label="Tumblr">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&t=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Hacker News">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#问题的起始">问题的起始</a></li>
+    <li><a href="#boxt-的性质">Box&lt;T&gt; 的性质</a></li>
+    <li><a href="#为什么直接赋值不行">为什么直接赋值不行</a></li>
+    <li><a href="#参考阅读">参考阅读</a></li>
+  </ul>
+</nav>
+    </div>
+    
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        记一次 Rust 探险
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2022-04-17 18:48:39 &#43;0800 CST" itemprop="datePublished">2022-04-17</time>
+          
+        </div>
+        
+        
+        <div class="article-read-time">
+          <i class="far fa-clock"></i>
+          
+          7 minute read
+        </div>
+        
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="/categories/rust">Rust</a>
+            
+        </div>
+        
+        
+        <div class="article-tag">
+            <i class="fas fa-tag"></i>
+            
+            
+            <a class="tag-link" href="/tags/%E5%AD%A6%E4%B9%A0" rel="tag">学习</a>
+            
+        </div>
+        
+      </div>
+    </header>
+
+  
+    
+    <div class="content" itemprop="articleBody">
+      <h2 id="问题的起始">问题的起始</h2>
+<p>最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：</p>
+<blockquote>
+<p>&hellip;&hellip;</p>
+<p>请求审核博文来改变其状态</p>
+<p>接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Post</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>   state: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>   content: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#ff79c6">impl</span> Post {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>  <span style="color:#6272a4">// --snip--
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span><span style="color:#6272a4"></span>   <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">new</span>() -&gt; <span style="color:#50fa7b">Post</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>       Post {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span>           state: <span style="color:#8be9fd;font-style:italic">Some</span>(<span style="color:#8be9fd;font-style:italic">Box</span>::new(Draft {})),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>           content: <span style="color:#8be9fd;font-style:italic">String</span>::new(),
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span>       }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>   <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">add_text</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self, text: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span>) {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span>       self.content.push_str(text);
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span>   <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">content</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span>       <span style="color:#f1fa8c">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span>   <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span>       <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">Some</span>(s) <span style="color:#ff79c6">=</span> self.state.take() {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span>           self.state <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Some</span>(s.request_review())
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span>       }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span><span style="color:#ff79c6">trait</span> State {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span>   <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(self: <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;</span>;
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Draft</span> {}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span><span style="color:#ff79c6">impl</span> State <span style="color:#ff79c6">for</span> Draft {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span>   <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(self: <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span>       <span style="color:#8be9fd;font-style:italic">Box</span>::new(PendingReview {})
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">PendingReview</span> {}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span><span><span style="color:#ff79c6">impl</span> State <span style="color:#ff79c6">for</span> PendingReview {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span><span>   <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(self: <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span><span>       self
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span><span>   }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span><span>}
+</span></span></code></pre></div><p>&hellip;&hellip;</p>
+<p><strong>我们需要将 state 临时设置为 None 来获取 state 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 Post 被转换为新状态后不能再使用老 state 值。</strong></p>
+<p>&hellip;&hellip;</p>
+</blockquote>
+<p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
+<h2 id="boxt-的性质">Box&lt;T&gt; 的性质</h2>
+<p>首先来看可变性。<br>
+在 Rust 中，一个变量是否可变，取决于是否用 <code>mut</code> 修饰变量绑定。</p>
+<p>如果我们用 <code>let var : T</code> 声明，那么 <code>var</code> 是不可变的；而且 <code>var</code> 内部所有的成员也都是不可变的；<br>
+如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br>
+这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br>
+但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。</p>
+<p>在 <code>std::cell</code> 模块中的 Cell 和 RefCell 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 Box 虽然一直都被拿来和前两个一起讨论，但 Box 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br>
+Box 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br>
+Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
+<p>其次来看所有权规则。<br>
+<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 Box 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
+<p>性质已经搞清，接下来我们来看具体问题。</p>
+<h2 id="为什么直接赋值不行">为什么直接赋值不行</h2>
+<p>我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Post</span> {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span>    state: <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span>    content: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span><span style="color:#ff79c6">trait</span> State {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(self: <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> State<span style="color:#ff79c6">&gt;</span>; 
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span>}
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span>
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span><span style="color:#ff79c6">impl</span> Post {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span>    <span style="color:#6272a4">// ... 
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">request_review</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) {
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span>        self.state <span style="color:#ff79c6">=</span> self.state.request_review();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span>    }
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span>    <span style="color:#6272a4">// ... 
+</span></span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><p>编译器报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>self.state = self.state.request_review();
+</span></span><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span>             ^^^^^^ move occurs because `self.state` has type `std::boxed::Box&lt;dyn State&gt;`, which does not implement the `Copy` trait&#39;.
+</span></span></code></pre></div><p>原回答：<br>
+This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn&rsquo;t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what&rsquo;s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
+<p>翻译如下：<br>
+这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你只将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
+<p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Rust" data-lang="Rust"><span style="display:flex;"><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span>self.state <span style="color:#ff79c6">=</span> self.state.request_review();
+</span></span></code></pre></div><p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br>
+因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review();</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
+<p>问题解决！感谢这些在网上无私分享知识的人们！</p>
+<h2 id="参考阅读">参考阅读</h2>
+<ol>
+<li><a href="https://stackoverflow.com/questions/57193489/why-do-we-need-to-call-take-for-optiont-variable">why do we need to call take() for Option&lt;T&gt; variable</a></li>
+<li><a href="https://rustwiki.org/zh-CN/rust-by-example/scope/move.html">所有权和移动</a></li>
+<li><a href="https://rustwiki.org/zh-CN/rust-by-example/variable_bindings/declare.html">变量先声明</a></li>
+<li><a href="https://www.archgrid.xyz/2022/03/rust-ownership/">聊聊 Rust 中的所有权机制</a></li>
+<li><a href="https://ipotato.me/article/57">Rust 中几个智能指针的异同与使用场景</a></li>
+<li><a href="https://rustcc.cn/article?id=37d1cb4f-5cc9-4adc-b41a-dbe4914bf4b5">【Rust 每周一知】如何理解 Rust 中的可变与不可变？</a></li>
+</ol>
+
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about">About</a></li>
+         
+          <li><a href="/posts">Posts</a></li>
+         
+          <li><a href="/index.xml">RSS</a></li>
+        
+      </ul>
+    </div>
+
+    
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#问题的起始">问题的起始</a></li>
+    <li><a href="#boxt-的性质">Box&lt;T&gt; 的性质</a></li>
+    <li><a href="#为什么直接赋值不行">为什么直接赋值不行</a></li>
+    <li><a href="#参考阅读">参考阅读</a></li>
+  </ul>
+</nav>
+    </div>
+    
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f" aria-label="Facebook">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&text=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Twitter">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Linkedin">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&is_video=false&description=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Pinterest">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9&body=Check out this article: https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f" aria-label="Email">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Pocket">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&title=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="reddit">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&name=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9&description=%e9%97%ae%e9%a2%98%e7%9a%84%e8%b5%b7%e5%a7%8b%20%e6%9c%80%e8%bf%91%e5%9c%a8%e7%9c%8b%e3%80%8aThe%20Book%e3%80%8b%ef%bc%8c%e7%ac%ac%2017%20%e7%ab%a0%e7%9a%84%2017.3%20%e8%8a%82%e9%87%8c%e9%9d%a2%e6%9c%89%e8%bf%99%e6%a0%b7%e4%b8%80%e4%b8%aa%e7%bb%86%e8%8a%82%ef%bc%9a%0a%20%26hellip%3b%26hellip%3b%0a%e8%af%b7%e6%b1%82%e5%ae%a1%e6%a0%b8%e5%8d%9a%e6%96%87%e6%9d%a5%e6%94%b9%e5%8f%98%e5%85%b6%e7%8a%b6%e6%80%81%0a%e6%8e%a5%e4%b8%8b%e6%9d%a5%e9%9c%80%e8%a6%81%e5%a2%9e%e5%8a%a0%e8%af%b7%e6%b1%82%e5%ae%a1%e6%a0%b8%e5%8d%9a%e6%96%87%e7%9a%84%e5%8a%9f%e8%83%bd%ef%bc%8c%e8%bf%99%e5%ba%94%e5%bd%93%e5%b0%86%e5%85%b6%e7%8a%b6%e6%80%81%e7%94%b1%20Draft%20%e6%94%b9%e4%b8%ba%20PendingReview%e3%80%82%e7%a4%ba%e4%be%8b%2017-15%20%e5%b1%95%e7%a4%ba%e4%ba%86%e8%bf%99%e4%b8%aa%e4%bb%a3%e7%a0%81%ef%bc%9a%0a1pub%20struct%20Post%20%7b%202%20state%3a%20Option%26lt%3bBox%26lt%3bdyn%20State%26gt%3b%26gt%3b%2c%203%20content%3a%20String%2c%204%7d%205%206impl%20Post%20%7b%207%20%2f%2f%20--snip--%208%20pub%20fn%20new%28%29%20-%26gt%3b%20Post%20%7b%209%20Post%20%7b%2010%20state%3a%20Some%28Box%3a%3anew%28Draft%20%7b%7d%29%29%2c%2011%20content%3a%20String%3a%3anew%28%29%2c%2012%20%7d%2013%20%7d%2014%2015%20pub%20fn%20add_text%28%26amp%3bmut%20self%2c%20text%3a%20%26amp%3bstr%29%20%7b%2016%20self.content.push_str%28text%29%3b%2017%20%7d%2018%2019%20pub%20fn%20content%28%26amp%3bself%29%20-%26gt%3b%20%26amp%3bstr%20%7b%2020%20%26%2334%3b%26%2334%3b%2021%20%7d%2022%2023%20pub%20fn%20request_review%28%26amp%3bmut%20self%29%20%7b%2024%20if%20let%20Some%28s%29%20%3d%20self." aria-label="Tumblr">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fwhx828.github.io%2fposts%2f%25E8%25AE%25B0%25E4%25B8%2580%25E6%25AC%25A1rust%25E6%258E%25A2%25E9%2599%25A9%2f&t=%e8%ae%b0%e4%b8%80%e6%ac%a1%20Rust%20%e6%8e%a2%e9%99%a9" aria-label="Hacker News">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2022  whx All rights reserved 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="/">Home</a></li>
+         
+        <li><a href="/about">About</a></li>
+         
+        <li><a href="/posts">Posts</a></li>
+         
+        <li><a href="/index.xml">RSS</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
+<script src=/lib/jquery/jquery.min.js></script>
+<script src=/js/main.js></script>
+
+<script src=/js/code-copy.js></script>
+
+
+
+
+</html>

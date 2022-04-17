@@ -7,7 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>whx All rights reserved</copyright>
-    <lastBuildDate>Fri, 01 Apr 2022 10:19:33 +0800</lastBuildDate><atom:link href="https://whx828.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 17 Apr 2022 18:48:39 +0800</lastBuildDate><atom:link href="https://whx828.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>记一次 Rust 探险</title>
+      <link>https://whx828.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1rust%E6%8E%A2%E9%99%A9/</link>
+      <pubDate>Sun, 17 Apr 2022 18:48:39 +0800</pubDate>
+      
+      <guid>https://whx828.github.io/posts/%E8%AE%B0%E4%B8%80%E6%AC%A1rust%E6%8E%A2%E9%99%A9/</guid>
+      <description>问题的起始 最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：
+ &amp;hellip;&amp;hellip;
+请求审核博文来改变其状态
+接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：
+1pub struct Post { 2 state: Option&amp;lt;Box&amp;lt;dyn State&amp;gt;&amp;gt;, 3 content: String, 4} 5 6impl Post { 7 // --snip-- 8 pub fn new() -&amp;gt; Post { 9 Post { 10 state: Some(Box::new(Draft {})), 11 content: String::new(), 12 } 13 } 14 15 pub fn add_text(&amp;amp;mut self, text: &amp;amp;str) { 16 self.content.push_str(text); 17 } 18 19 pub fn content(&amp;amp;self) -&amp;gt; &amp;amp;str { 20 &amp;#34;&amp;#34; 21 } 22 23 pub fn request_review(&amp;amp;mut self) { 24 if let Some(s) = self.</description>
+    </item>
+    
     <item>
       <title>Rust 的迭代器</title>
       <link>https://whx828.github.io/posts/rust%E7%9A%84%E8%BF%AD%E4%BB%A3%E5%99%A8/</link>
