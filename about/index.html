@@ -1,174 +1,176 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
+
 <head>
-  <link rel="preload" href="/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
-  <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> About | whx&#39;s Blog</title>
-  <link rel = 'canonical' href = 'https://whx828.github.io/about/'>
-  <meta name="description" content="Patience is not passive, on the contrary, it is concentrated strength.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="About" />
-<meta property="og:description" content="关于博客 2022 年这段时间生活的简单记录。
-之前尝试过 Next.js，一直到部署，跟着官方教程都比较顺利，但之后确实是过于高端了，完全不是给新手准备的。那之后我意识到我只是需要一个记录的地方，不必自己从头完成所有的工作。因此选择了 Hugo，并利用 Github Pages 让网站上线了，其实我还没搞懂没有服务器的情况下该怎么部署网站。
-尽管到处都充满了「极 凑 简 合」的气息，我的博客之路还是开始了，经过一段时间的折腾，我发现想要在互联网上玩得明白，必须要
-学好英语！
-感兴趣的 Crafting Interpreters
-这是一本带你写解释器的书，使用 Java 和 C 分别实现一门叫做 Lox 的语言的解释器，书里的操作令我眼花缭乱，作者不愧写了 10 多年，目前以龟速阅读中，对我的 Java 有很大提高，非常感谢作者。
-The Missing Semester of Your CS Education
-MIT 的一门对于编程世界里的「杂活」进行正规讲解的课程，里面对于 vim、git 等的解释是我见过最好的，非常适合我这样的初学者理解。
-黑客与画家
-技术和生活。我们也许做不了思想者，但可以做思考者。
-How to code and launch a tiny website.
-本站的由来之一，非常感谢作者鼓励他的读者自己动手实现一个网站，简单又如何呢？至少这也是自己的创造。
-Tinyfool的个人网站
-Tinyfool 也许永远都不会知道，他是很多人心中的灯塔。
-九曲阑干
-CSAPP 的讲解视频，非常棒，对自学者很有帮助，该有的都有。" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://whx828.github.io/about/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2022-03-31T19:26:54+08:00" />
-<meta property="article:modified_time" content="2022-03-31T19:26:54+08:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="About"/>
-<meta name="twitter:description" content="关于博客 2022 年这段时间生活的简单记录。
-之前尝试过 Next.js，一直到部署，跟着官方教程都比较顺利，但之后确实是过于高端了，完全不是给新手准备的。那之后我意识到我只是需要一个记录的地方，不必自己从头完成所有的工作。因此选择了 Hugo，并利用 Github Pages 让网站上线了，其实我还没搞懂没有服务器的情况下该怎么部署网站。
-尽管到处都充满了「极 凑 简 合」的气息，我的博客之路还是开始了，经过一段时间的折腾，我发现想要在互联网上玩得明白，必须要
-学好英语！
-感兴趣的 Crafting Interpreters
-这是一本带你写解释器的书，使用 Java 和 C 分别实现一门叫做 Lox 的语言的解释器，书里的操作令我眼花缭乱，作者不愧写了 10 多年，目前以龟速阅读中，对我的 Java 有很大提高，非常感谢作者。
-The Missing Semester of Your CS Education
-MIT 的一门对于编程世界里的「杂活」进行正规讲解的课程，里面对于 vim、git 等的解释是我见过最好的，非常适合我这样的初学者理解。
-黑客与画家
-技术和生活。我们也许做不了思想者，但可以做思考者。
-How to code and launch a tiny website.
-本站的由来之一，非常感谢作者鼓励他的读者自己动手实现一个网站，简单又如何呢？至少这也是自己的创造。
-Tinyfool的个人网站
-Tinyfool 也许永远都不会知道，他是很多人心中的灯塔。
-九曲阑干
-CSAPP 的讲解视频，非常棒，对自学者很有帮助，该有的都有。"/>
-
-  
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
-  
-  
-  <link rel="stylesheet" href="https://whx828.github.io/css/styles.94f653e9e151e28067a7c5dbbc4600cbd5a3c721e79faaf971e523c40f3b249b8e4f20bb57810dfffa8d559ca5c140fd56eb4cd9c0853113ad08e66afdb08bdd.css" integrity="sha512-lPZT6eFR4oBnp8XbvEYAy9WjxyHnn6r5ceUjxA87JJuOTyC7V4EN//qNVZylwUD9VutM2cCFMROtCOZq/bCL3Q=="> 
+<title>关于博客</title>
+    <meta name="description" content="从 2022 年开始，个人生活的简单记录。">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="关于博客">
+    <meta property="og:description" content="从 2022 年开始，个人生活的简单记录。">
+    <meta name="twitter:title" content="关于博客">
+    <meta name="twitter:description" content="从 2022 年开始，个人生活的简单记录。">
 
-  
-   <link rel="stylesheet" href="https://whx828.github.io/css/custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
+<link rel="shortcut icon" href="path/to/favicon">
+<meta property="og:url" content="http://whx828.github.io/about">
+    <meta property="twitter:url" content="http://whx828.github.io/about">
 
-  
-<link rel="icon" type="image/png" href="https://whx828.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/zine.css">
+    <link rel="alternate" type="application/atom+xml" title="whx's Blog RSS" href="/feed.xml">
+    <style>
+      :root {
+          --primary-color: #55bb8a;
+          --main-color: #000;
+          --link-color: #e97312;
+          --secondary-color: #baccd9;
+      }
+    </style>
 </head>
 
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
+<body class="h-full bg-secondary">
+    <div class="bg-primary text-main font-bold text-center z-0">
+    <header class="p-8 md:p-10">
+            <div class="text-4xl lg:text-5xl"><a href="/">whx's Blog</a></div>
 
-    <header id="header">
-  <a href="https://whx828.github.io">
-  
-    <div id="logo" style="background-image: url(https://whx828.github.io/images/logo.png)"></div>
-  
-  <div id="title">
-    <h1>whx&#39;s Blog</h1>
-  </div>
-  </a>
-  <div id="nav">
-    <ul>
-      <li class="icon">
-        <a href="#" aria-label="Menu"><i class="fas fa-bars fa-2x" aria-hidden="true"></i></a>
-      </li>
-      
-        <li><a href="/">Home</a></li>
-      
-        <li><a href="/about">About</a></li>
-      
-        <li><a href="/posts">Posts</a></li>
-      
-        <li><a href="/index.xml">RSS</a></li>
-      
-    </ul>
-  </div>
-</header>
+            <ul>
+                <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/about">About</a></li>
+                <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/feed.xml">RSS</a></li>
+                </ul>
+        </header>
+        <div class="w-full h-32 md:h-36 lg:h-44 xl:h-48 2xl:h-56"></div>
+    </div>
 
-
-
-    
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <div class="content" itemprop="articleBody">
-  
-    <h2 id="关于博客">关于博客</h2>
-<p>2022 年这段时间生活的简单记录。</p>
-<p>之前尝试过 Next.js，一直到部署，跟着官方教程都比较顺利，但之后确实是过于高端了，完全不是给新手准备的。那之后我意识到我只是需要一个记录的地方，不必自己从头完成所有的工作。因此选择了 Hugo，并利用 Github Pages 让网站上线了，其实我还没搞懂没有服务器的情况下该怎么部署网站。</p>
-<p>尽管到处都充满了「<del>极</del> 凑 <del>简</del> 合」的气息，我的博客之路还是开始了，经过一段时间的折腾，我发现想要在互联网上玩得明白，必须要</p>
-<p><strong>学好英语！</strong></p>
-<h2 id="感兴趣的">感兴趣的</h2>
-<p><a href="https://craftinginterpreters.com/contents.html">Crafting Interpreters</a></p>
+    <main class="pb-10 -translate-y-32
+                 md:-translate-y-32 lg:-translate-y-36 xl:-translate-y-44 2xl:-translate-y-56
+                 mx-auto sm:max-w-scree-md md:max-w-screen-lg">
+            <div class="p-4 md:p-8 mx-4 my-6 bg-white min-h-[500px]
+            shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
+    <article class="zine-page prose mx-auto py-8">
+        <h1 id="关于博客" class="flex group">
+    <span>关于博客</span>
+    <a href="#关于博客" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h1>
+<p>从 2022 年开始，个人生活的简单记录。<br />
+之前尝试过 Next.js，一直到部署，跟着官方教程都比较顺利，但之后确实是过于高端了，完全不是给新手准备的。那之后我意识到我只是需要一个记录的地方，不必自己从头完成所有的工作。恰逢我对 Rust 产生了极大的兴趣，因此选择对 zine 做减法，建成了个人博客，并利用 Github Pages 让网站上线了，其实我还没搞懂没有服务器的情况下该怎么部署网站。<br />
+尽管到处都充满了「极 <del>凑</del> 简 <del>合</del>」的气息，我的博客之路还是开始了，经过一段时间的折腾，我发现想要在互联网上玩得开心，一定要<br />
+<strong>学好英语！</strong></p>
+<h2 id="感兴趣的" class="flex group">
+    <span>感兴趣的</span>
+    <a href="#感兴趣的" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h2><a href="https://craftinginterpreters.com/contents.html"><h3 id="crafting interpreters" class="flex group">
+    <span>Crafting Interpreters</span>
+    <a href="#crafting interpreters" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
 <p>这是一本带你写解释器的书，使用 Java 和 C 分别实现一门叫做 Lox 的语言的解释器，书里的操作令我眼花缭乱，作者不愧写了 10 多年，目前以龟速阅读中，对我的 Java 有很大提高，非常感谢作者。</p>
-<p><a href="https://missing.csail.mit.edu/">The Missing Semester of Your CS Education</a></p>
+<a href="https://missing.csail.mit.edu/"><h3 id="the missing semester of your cs education" class="flex group">
+    <span>The Missing Semester of Your CS Education</span>
+    <a href="#the missing semester of your cs education" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
 <p>MIT 的一门对于编程世界里的「杂活」进行正规讲解的课程，里面对于 vim、git 等的解释是我见过最好的，非常适合我这样的初学者理解。</p>
-<p><a href="https://m.douban.com/book/subject/6021440/">黑客与画家</a></p>
-<p>技术和生活。我们也许做不了思想者，但可以做思考者。</p>
-<p><a href="https://tinyprojects.dev/guides/tiny_website">How to code and launch a tiny website.</a></p>
-<p>本站的由来之一，非常感谢作者鼓励他的读者自己动手实现一个网站，简单又如何呢？至少这也是自己的创造。</p>
-<p><a href="https://codechina.org">Tinyfool的个人网站</a></p>
-<p>Tinyfool 也许永远都不会知道，他是很多人心中的灯塔。</p>
-<p><a href="https://space.bilibili.com/354767108">九曲阑干</a></p>
+<a href="https://fasterthanli.me/"><h3 id="amos 的博客" class="flex group">
+    <span>Amos 的博客</span>
+    <a href="#amos 的博客" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
+<p>我非常喜欢的 Rust 博主，最近在看他的博文，很有收获。</p>
+<a href="https://space.bilibili.com/354767108"><h3 id="九曲阑干" class="flex group">
+    <span>九曲阑干</span>
+    <a href="#九曲阑干" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
 <p>CSAPP 的讲解视频，非常棒，对自学者很有帮助，该有的都有。</p>
+<a href="https://m.douban.com/book/subject/6021440/"><h3 id="黑客与画家" class="flex group">
+    <span>黑客与画家</span>
+    <a href="#黑客与画家" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
+<p>技术和生活。我们也许做不了思想者，但可以做思考者。</p>
+<a href="https://tinyprojects.dev/guides/tiny_website"><h3 id="how to code and launch a tiny website." class="flex group">
+    <span>How to code and launch a tiny website.</span>
+    <a href="#how to code and launch a tiny website." class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
+<p>本站的由来之一，非常感谢作者鼓励他的读者自己动手实现一个网站，简单又如何呢？至少这也是自己的创造。</p>
+<a href="https://codechina.org/"><h3 id="tinyfool 的个人网站" class="flex group">
+    <span>Tinyfool 的个人网站</span>
+    <a href="#tinyfool 的个人网站" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3></a>
+<p>Tinyfool 也许永远都不会知道，他是很多人心中的灯塔。</p>
 
-  
-  </div>
-</article>
+    </article>
+</div>
+</main>
 
-
-    <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2022  whx All rights reserved 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="/">Home</a></li>
-         
-        <li><a href="/about">About</a></li>
-         
-        <li><a href="/posts">Posts</a></li>
-         
-        <li><a href="/index.xml">RSS</a></li>
-        
-      </ul>
-    </nav>
-  </div>
-</footer>
-
-
-  </div>
+    <footer class="relative">
+        <footer class="bg-black text-white text-center p-16">
+                    <div>
+                        <a class="hover:underline" href="https://github.com/Folyd/zine">Zine</a> 
+                        - a simple and opinionated tool to build your own magazine.
+                    </div>
+                </footer>
+            <a href="https://github.com/zineland" 
+           class="absolute z-20 bottom-0 w-full text-center font-bold
+                  md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent
+                  bg-primary p-2 text-main">
+            Proudly powered by Zine.
+        </a>
+        </div>
+    </footer>
 </body>
-
-<link rel="stylesheet" href=/lib/font-awesome/css/all.min.css>
-<script src=/lib/jquery/jquery.min.js></script>
-<script src=/js/main.js></script>
+<script src="/static/medium-zoom.min.js"></script>
+<script src="/static/zine.js"></script>
 </html>
+

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+<title>Rust 的迭代器</title>
+    <meta name="description" content="The iterator keeps track of what element it's currently pointing to and supports at least the following basic operations:">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Rust 的迭代器">
+    <meta property="og:description" content="The iterator keeps track of what element it's currently pointing to and supports at least the following basic operations:">
+    <meta name="twitter:title" content="Rust 的迭代器">
+    <meta name="twitter:description" content="The iterator keeps track of what element it's currently pointing to and supports at least the following basic operations:">
+
+<link rel="shortcut icon" href="path/to/favicon">
+<meta property="og:url" content="http://whx828.github.io/s2/1">
+    <meta property="twitter:url" content="http://whx828.github.io/s2/1">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="http://whx828.github.io/static/2022/Rust.png">
+    <meta name="twitter:image" content="http://whx828.github.io/static/2022/Rust.png">
+    <link rel="icon" type="image/png" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/zine.css">
+    <link rel="alternate" type="application/atom+xml" title="whx's Blog RSS" href="/feed.xml">
+    <style>
+      :root {
+          --primary-color: #55bb8a;
+          --main-color: #000;
+          --link-color: #e97312;
+          --secondary-color: #baccd9;
+      }
+    </style>
+</head>
+
+<body class="h-full bg-secondary">
+    <div class="bg-primary text-main font-bold text-center z-0">
+    <header class="p-8 md:p-10">
+            <div class="text-4xl lg:text-5xl"><a href="/">whx's Blog</a></div>
+
+            <ul>
+                <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/about">About</a></li>
+                <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/feed.xml">RSS</a></li>
+                </ul>
+        </header>
+        <div class="w-full h-32 md:h-36 lg:h-44 xl:h-48 2xl:h-56"></div>
+    </div>
+
+    <main class="pb-10 -translate-y-32
+                 md:-translate-y-32 lg:-translate-y-36 xl:-translate-y-44 2xl:-translate-y-56
+                 mx-auto sm:max-w-scree-md md:max-w-screen-lg">
+            <div class="p-4 pb-10 md:p-8 md:pb-14 mx-4 my-6 bg-white 
+            shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
+    <div class="relative mx-2">
+        <a class="before:block before:absolute before:-inset-1 before:-skew-x-6 before:bg-primary relative inline-block
+                                transition sm:hover:scale-110 duration-500"
+                        href="/s2">
+            <div class="relative text-main px-4">2022</div>
+        </a>
+        <span class="ml-2 text-gray-700"> /  No. ⁨1⁩</span>
+    </div>
+    <div class="mt-4 mb-8 w-full border-dashed border-t border-slate-300"></div>
+    <div class="prose mx-auto">
+        <h1 class="text-center">Rust 的迭代器</h1>
+        <div class="flex items-center justify-between text-gray-500">
+            <span>2022-04-01</span>
+            <a class="flex items-center px-2 py-1 !text-gray-500 rounded hover:bg-gray-200 hover:!no-underline" href="/@whx">
+        <img class="!m-0 !p-1 w-7 h-7 rounded-full object-cover" src="/static/avatar.png" alt="avatar" loading="lazy">
+        <span>
+        whx
+        </span>
+    </a>
+    
+        </div>
+    </div>
+    <article class="prose mx-auto my-12">
+        <h2 id="iterator" class="flex group">
+    <span>Iterator</span>
+    <a href="#iterator" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h2><h3 id="iterators and “iterables” in rust" class="flex group">
+    <span>Iterators and “iterables” in Rust</span>
+    <a href="#iterators and “iterables” in rust" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3>
+<p>The iterator keeps track of what element it’s currently pointing to and supports at least the following basic operations:<br />
+<code>Iterator</code> 跟踪它当前指向的元素，并至少支持以下基本操作：</p>
+<ul>
+<li>getting the current element</li>
+<li>获取当前元素</li>
+<li>advancing to the next element</li>
+<li>前进到下一个元素</li>
+<li>signaling when no more elements are available</li>
+<li>当没有更多元素可用时发出信号</li>
+</ul>
+<p>Some languages provide separate iterator methods for each of those tasks, but Rust chooses to combine them all into one. You can see that when looking at the <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html"><code>Iterator</code> trait</a>: <code>next</code> is the only method to be provided by its implementations.<br />
+一些语言为这些任务中的每一个提供单独的 <code>Iterator</code> 方法，但 Rust 选择将它们组合成一个。您可以在查看 <code>Iterator Trait</code> 时看到：<code>next</code> 是其实现提供的唯一方法。</p>
+<p>The core of <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html" title="Iterator"><code>Iterator</code></a> looks like this:<br />
+<code>Iterator</code> 的核心是这样的：</p>
+<pre><code class="language-rust">trait Iterator {
+    type Item;
+    fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt;;
+}
+</code></pre>
+<p>An iterator has a method, <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next"><code>next</code></a>, which when called, returns an <a href="https://doc.rust-lang.org/std/option/enum.Option.html" title="Option">Option</a><code>&lt;Item&gt;</code>. Calling <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next"><code>next</code></a> will return <a href="https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some"><code>Some(Item)</code></a> as long as there are elements, and once they’ve all been exhausted, will return <code>None</code> to indicate that iteration is finished. Individual iterators may choose to resume iteration, and so calling <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next"><code>next</code></a> again may or may not eventually start returning <a href="https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some"><code>Some(Item)</code></a> again at some point (for example, see <a href="https://doc.rust-lang.org/std/sync/mpsc/struct.TryIter.html"><code>TryIter</code></a>).<br />
+<code>Iterator</code> 有一个方法 <code>next</code>，当 <code>next</code> 被调用时，返回 <code>Option&lt;Item&gt;</code>。只要还有元素，调用 <code>next</code> 就会返回 <code>Some(Item)</code> ，一旦元素被耗尽，将返回 <code>None</code>，表示迭代完成。个别 <code>Iterator</code> 可能会选择恢复迭代，因此再次调用 <code>next</code> 可能会可能不会在某个时间点再次开始返回 <code>Some(Item)</code>（例如 <code>TryIter</code>）。</p>
+<p><a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html" title="Iterator"><code>Iterator</code></a>’s full definition includes a number of other methods as well, but they are default methods, built on top of <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next"><code>next</code></a>, and so you get them for free.<br />
+<code>Iterator</code> 的完整定义还包括许多其他方法，但它们是默认方法，构建在 <code>next</code> 之上，因此您可以轻松使用它们。</p>
+<h3 id="the three forms of iteration" class="flex group">
+    <span>The three forms of iteration</span>
+    <a href="#the three forms of iteration" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3>
+<p>There are three common methods which can create iterators from a collection:<br />
+有三种常用方法可以从 collection 创建 <code>Iterator</code>：</p>
+<ul>
+<li><code>iter()</code>, which iterates over <code>&amp;T</code>.</li>
+<li><code>iter()</code>，遍历 <code>&amp;T</code>。</li>
+<li><code>iter_mut()</code>, which iterates over <code>&amp;mut T</code>.</li>
+<li><code>iter_mut()</code>，遍历 <code>&amp;mut T</code>。</li>
+<li><code>into_iter()</code>, which iterates over <code>T</code>.</li>
+<li><code>into_iter()</code>，遍历 <code>T</code>。</li>
+</ul>
+<blockquote>
+<p>What is the difference between <code>iter</code> and <code>into_iter</code>?
+<code>iter</code> 和 <code>into_iter</code> 有什么区别？</p>
+</blockquote>
+<p><code>into_iter</code> is a generic method to obtain an iterator, whether this iterator yields values, immutable references or mutable references <strong>is context dependent</strong> and can sometimes be surprising.<br />
+<code>into_iter</code> 是获取 <code>Iterator</code> 的通用方法，该 <code>Iterator</code> 是否产生值、不可变引用或可变引用 <strong>取决于上下文</strong>，有时可能会令人惊讶。</p>
+<p><code>iter</code> and <code>iter_mut</code> are ad-hoc methods. Their return type is therefore independent of the context, and will conventionally be iterators yielding immutable references and mutable references, respectively.<br />
+<code>iter</code> 和 <code>iter_mut</code> 是临时方法。因此，它们的返回类型 <strong>独立于上下文</strong>，并且 <code>Iterator</code> 通常分别产生不可变引用和可变引用。</p>
+<h3 id="implementing iterator" class="flex group">
+    <span>Implementing Iterator</span>
+    <a href="#implementing iterator" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3>
+<p>Creating an iterator of your own involves two steps: creating a <code>struct</code> to hold the iterator’s state, and then implementing <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html" title="Iterator"><code>Iterator</code></a> for that <code>struct</code>. This is why there are so many <code>struct</code>s in this module: there is one for each iterator and iterator adapter.</p>
+<p>创建一个自己的 <code>Iterator</code> 需要两个步骤：</p>
+<ol>
+<li>创建结构体来保存 <code>Iterator</code> 的状态；</li>
+<li>然后为该结构体实现 <code>Iterator</code> Trait。</li>
+</ol>
+<p>这就是为什么本模块中有这么多结构体：每个 <code>Iterator</code> 和 <code>Iterator</code> 适配器都有一个。</p>
+<p>Rust has a construct which can call <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#tymethod.next"><code>next</code></a> on your iterator, until it reaches <code>None</code>.<br />
+Rust 有一个结构，可以对你的 <code>Iterator</code> 调用 <code>next</code>，直到它达到 <code>None</code>。</p>
+<p>Also note that <code>Iterator</code> provides a default implementation of methods such as <code>nth</code> and <code>fold</code> which call <code>next</code> internally. However, it is also possible to write a custom implementation of methods like <code>nth</code> and <code>fold</code> if an iterator can compute them more efficiently without calling <code>next</code>.<br />
+还要注意的是，<code>Iterator</code> 提供了默认的方法实现，比如内部调用 <code>next</code> 的 <code>nth</code> 和 <code>fold</code>。<br />
+如果一个 <code>Iterator</code> 可以在不调用 <code>next</code> 的情况下更有效地计算 <code>nth</code> 和 <code>fold</code> 等方法，也可以写一个自定义的实现。</p>
+<code>for</code><h4 id=" loops and " class="flex group">
+    <span> loops and </span>
+    <a href="# loops and " class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h4><code>IntoIterator</code>
+<p>We never called anything on our collection to produce an iterator. What gives?<br />
+实际上，我们从未在我们的 collection 上调用任何东西来生成 <code>Iterator</code>。那么这到底是怎么回事呢？</p>
+<p>There’s a trait in the standard library for converting something into an iterator: <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a>. This trait has one method, <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html#tymethod.into_iter"><code>into_iter</code></a>, which converts the thing implementing <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a> into an iterator.<br />
+在标准库中，有一个 <code>Trait</code> 可以将某些东西转换为 <code>Iterator</code>。<code>IntoIterator</code>。这个 <code>Trait</code> 有一个方法，<code>into_iter</code>，可以将实现 <code>IntoIterator Trait</code> 的东西转换成一个 <code>Iterator</code>。 #Rust/迭代器 </p>
+<p>The standard library contains an interesting implementation of <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a>:<br />
+标准库包含一个有趣的 <code>IntoIterator</code> 实现：</p>
+<pre><code class="language-Rust">impl&lt;I: Iterator&gt; IntoIterator for I
+</code></pre>
+<p>In other words, all <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html" title="Iterator"><code>Iterator</code></a>s implement <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a>, by just returning themselves. This means three things:</p>
+<p>换句话说，所有 <code>Iterator</code> 都通过<strong>返回自身</strong>来<strong>实现 <code>IntoIterator</code></strong>。这意味着三件事：</p>
+<ol>
+<li>If you’re writing an <a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html" title="Iterator"><code>Iterator</code></a>, you can use it with a <code>for</code> loop.
+如果你正在编写一个 <code>Iterator</code>，你可以将它与 <code>for</code> 循环一起使用。</li>
+<li>If you’re creating a collection, implementing <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a> for it will allow your collection to be used with the <code>for</code> loop.
+如果你正在创建一个 collection，为它实现 <code>IntoIterator</code> 将允许你的 collection 与 <code>for</code> 循环一起使用。</li>
+<li>You implement this trait when you want to specify how a particular type is to be converted into an iterator.
+当您想指定如何将特定类型转换为 <code>Iterator</code> 时，您可以实现 <code>IntoIterator trait</code>。</li>
+</ol>
+<hr />
+<h3 id="代码分析" class="flex group">
+    <span>代码分析</span>
+    <a href="#代码分析" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3>
+<pre><code class="language-Rust">pub struct LinkedList&lt;T&gt; {
+	head: Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;,
+    size: usize,
+}
+
+struct Node&lt;T&gt; {
+	value: T,
+	next: Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;,
+}
+
+impl&lt;T&gt; Node&lt;T&gt; {
+	pub fn new(value: T, next: Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;) -&gt; Node&lt;T&gt; {
+		Node { value, next }
+	}
+}
+
+impl&lt;T&gt; LinkedList&lt;T&gt; {
+	pub fn new() -&gt; LinkedList&lt;T&gt; {
+		LinkedList {
+			head: None,
+			size: 0
+		}
+	}
+	
+	// ...
+	
+	pub fn pop_front(&amp;mut self) -&gt; Option&lt;T&gt; {
+		let node: Box&lt;Node&lt;T&gt;&gt; = self.head.take()?;
+		self.head = node.next;
+		self.size -= 1;
+		Some(node.value)
+	}
+}
+</code></pre>
+<pre><code class="language-Rust">// implement struct that keeps track of the current node pointer and make that struct public
+// This syntax essentially says that the struct lives as long as the reference it contains,
+// so that we don’t have issues with dangling pointers.
+pub struct LinkedListIter&lt;'a, T&gt; {
+	current: &amp;'a Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;,
+}
+
+impl&lt;T: Clone&gt; Iterator for LinkedListIter&lt;'_, T&gt; {
+	type Item = T;
+	fn next(&amp;mut self) -&gt; Option&lt;T&gt; {
+		match self.current {
+			Some(node) =&gt; {
+				self.current = &amp;node.next;
+				Some(node.value.clone())
+			},
+			None =&gt; None
+		}
+	}
+}
+
+// Note that, in order to implement `IntoIterator` for `LinkedList&lt;T&gt;` 
+// (as in, an iterator that will take ownership of the `LinkedList&lt;T&gt;` it is iterating over), 
+// you can simply implement the `Iterator` trait for `LinkedList&lt;T&gt;`.
+impl&lt;T&gt; Iterator for LinkedList&lt;T&gt; {
+	type Item = T;
+	fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt; {
+		self.pop_front()
+	}
+}
+
+// For `&amp;LinkedList&lt;T&gt;`, implement the trait only on types `T` that implement `Clone`,
+// so that the `next` function returns copies of the elements in your collection.
+impl&lt;'a, T: Clone&gt; IntoIterator for &amp;'a LinkedList&lt;T&gt; {
+	type Item = T;
+	type IntoIter = LinkedListIter&lt;'a, T&gt;;
+	fn into_iter(self) -&gt; LinkedListIter&lt;'a, T&gt; {
+		LinkedListIter { current: &amp;self.head }
+	}
+}
+</code></pre>
+<hr />
+<p>我们的目标是为 <code>LinkedList&lt;T&gt;</code> 实现 <code>Iterator</code>，首先看 <code>LinkedListIter&lt;'a T&gt;</code>：</p>
+<pre><code class="language-Rust">// implement struct that keeps track of the current node pointer and make that struct public
+// This syntax essentially says that the struct lives as long as the reference it contains,
+// so that we don’t have issues with dangling pointers.
+pub struct LinkedListIter&lt;'a, T&gt; {
+	current: &amp;'a Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;,
+}
+</code></pre>
+<p>我们创建 <code>LinkedListIter&lt;'a T&gt;</code> 来保存 <code>Iterator</code> 的状态。<br />
+这里指创建一个 <code>Option&lt;Box&lt;Node&lt;T&gt;&gt;&gt;</code> 的引用来保存当前 <code>LinkedList&lt;T&gt;</code> 里 <code>Node</code> 元素的位置信息，即迭代时我们可以知道进行到 collection 中哪一个元素。<br />
+为了创建 <code>Iterator</code>，接下来应该为 <code>LinkedListIter&lt;'a T&gt;</code> 实现 <code>Iterator Trait</code>。此时 <code>LinkedListIter&lt;'a T&gt;</code> 应是一个 <code>Iterator</code>。</p>
+<pre><code class="language-Rust">impl&lt;T: Clone&gt; Iterator for LinkedListIter&lt;'_, T&gt; {
+	type Item = T;
+	fn next(&amp;mut self) -&gt; Option&lt;T&gt; {
+		match self.current {
+			Some(node) =&gt; {
+				self.current = &amp;node.next;
+				Some(node.value.clone())
+			},
+			None =&gt; None
+		}
+	}
+}
+</code></pre>
+<p>实际上我们是为 <code>&amp;LinkedList&lt;T&gt;</code> collection 中实现 <code>Clone Trait</code> 的元素创建 <code>LinkedListIter&lt;'a T&gt; Iterator Trait</code> 的。<br />
+采取的方法是用 <code>LinkedListIter&lt;'a T&gt;</code> 记录当前 <code>Node</code> 元素信息（移指针）并弹出 <code>value</code> 的克隆值。</p>
+<pre><code class="language-Rust">// Note that, in order to implement `IntoIterator` for `LinkedList&lt;T&gt;` 
+// (as in, an iterator that will take ownership of the `LinkedList&lt;T&gt;` it is iterating over), 
+// you can simply implement the `Iterator` trait for `LinkedList&lt;T&gt;`.
+impl&lt;T&gt; Iterator for LinkedList&lt;T&gt; {
+	type Item = T;
+	fn next(&amp;mut self) -&gt; Option&lt;Self::Item&gt; {
+		self.pop_front()
+	}
+}
+</code></pre>
+<p>对于其他的普遍情况，当然也可以直接为 <code>LinkedList&lt;T&gt;</code> 实现 <code>Iterator Trait</code>，进而实现 <code>LinkedList&lt;T&gt;</code> 的 <code>IntoIterator Trait</code>，因为所有 <code>Iterator</code> 都通过<strong>返回自身</strong>来<strong>实现 <code>IntoIterator</code></strong>。此时对 <code>T</code> 没有要求。<br />
+由于已经为 <code>LinkedList&lt;T&gt;</code> collection 实现了 <code>Iterator</code>，允许 <code>LinkedList&lt;T&gt;</code> collection 与 <code>for</code> 循环一起使用。</p>
+<pre><code class="language-Rust">// For `&amp;LinkedList&lt;T&gt;`, implement the trait only on types `T` that implement `Clone`,
+// so that the `next` function returns copies of the elements in your collection.
+impl&lt;'a, T: Clone&gt; IntoIterator for &amp;'a LinkedList&lt;T&gt; {
+	type Item = T;
+	type IntoIter = LinkedListIter&lt;'a, T&gt;;
+	fn into_iter(self) -&gt; LinkedListIter&lt;'a, T&gt; {
+		LinkedListIter { current: &amp;self.head }
+	}
+}
+</code></pre>
+<p>为 <code>&amp;LinkedList&lt;T&gt;</code> collection 中元素实现 <code>Clone Trait</code> 的元素的情况下实现 <code>IntoIterator</code>，利用 <code>into_iter</code> 函数把实现 <code>IntoIterator Trait</code> 的 <code>&amp;LinkedList&lt;T&gt;</code> 转换成一个 <code>LinkedListIter&lt;'a T&gt; Iterator</code>。<br />
+此举的目的是为 <code>&amp;LinkedList&lt;T&gt;</code> collection 中实现 <code>Clone Trait</code> 的元素构造 <code>Iterator</code>，因此特意构造出 <code>LinkedListIter&lt;'a T&gt; Iterator</code>。<br />
+由于已经为 <code>&amp;LinkedList&lt;T&gt;</code> collection 实现了 <code>IntoIterator</code>，因此这将允许 <code>&amp;LinkedList&lt;T&gt;</code> collection 与 <code>for</code> 循环一起使用。</p>
+<h3 id="代码实例" class="flex group">
+    <span>代码实例</span>
+    <a href="#代码实例" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+            <svg width="12" height="12" fill="none" aria-hidden="true">
+                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+        </div>
+    </a>
+</h3>
+<pre><code class="language-Rust">let mut list: LinkedList&lt;u32&gt; = LinkedList::new();
+
+for i in 1..12 {
+	list.push_front(i);
+}
+
+// ---------------------------------------------------
+for x in list {
+    println!(&quot;{}&quot;, x);
+}
+
+// 等价于
+let mut iter = IntoIterator::into_iter(list);
+loop {
+	match iter.next() {
+		Some(x) =&gt; {
+			println!(&quot;{}&quot;, x);
+		},
+		None =&gt; break,
+	}
+}
+</code></pre>
+<pre><code class="language-Rust">let mut strings: LinkedList&lt;String&gt; = LinkedList::new();
+strings.push_front(&quot;a&quot;.to_string());
+strings.push_front(&quot;b&quot;.to_string());
+strings.push_front(&quot;c&quot;.to_string());
+strings.push_front(&quot;d&quot;.to_string());
+
+for p in &amp;strings {
+	println!(&quot;{}&quot;, p);
+}
+
+// -------------------------------------------------------
+// 等价于
+{
+    let result = match IntoIterator::into_iter(&amp;strings) {
+        mut iter =&gt; loop {
+            let next;
+            match iter.next() {
+                Some(val) =&gt; next = val,
+                None =&gt; break,
+            };
+            let x = next;
+            let () = { println!(&quot;{}&quot;, x); };
+        },
+    };
+    result
+}
+</code></pre>
+
+
+        </article>
+    <div class="my-4 w-full border-dashed border-t border-slate-300"></div>
+        <div class="flex flex-col md:flex-row">
+        <a class="inline my-1 py-2 px-4 font-bold text-slate-700 hover:underline"
+                    href="/s2/2">
+                    Next:
+                    记一次 Rust 探险
+                </a>
+            </div>
+    </div>
+</main>
+
+    <footer class="relative">
+        <footer class="bg-black text-white text-center p-16">
+                    <div>
+                        <a class="hover:underline" href="https://github.com/Folyd/zine">Zine</a> 
+                        - a simple and opinionated tool to build your own magazine.
+                    </div>
+                </footer>
+            <a href="https://github.com/zineland" 
+           class="absolute z-20 bottom-0 w-full text-center font-bold
+                  md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent
+                  bg-primary p-2 text-main">
+            Proudly powered by Zine.
+        </a>
+        </div>
+    </footer>
+</body>
+<script src="/static/medium-zoom.min.js"></script>
+<script src="/static/zine.js"></script>
+</html>
+
