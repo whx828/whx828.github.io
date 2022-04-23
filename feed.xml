@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>whx's Blog</title>
     <subtitle></subtitle>
-    <updated>2022-04-22T14:59:12.441829+08:00</updated>
+    <updated>2022-04-23T09:16:55.020728+08:00</updated>
     <id>http://whx828.github.io</id>
     <link href="http://whx828.github.io/feed.xml" rel="self" type="application/atom+xml" />
     <link href="http://whx828.github.io" rel="alternate" type="text/html" />
@@ -248,7 +248,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <li><code>into_iter()</code>，遍历 <code>T</code>。</li>
 </ul>
 <blockquote>
-<p>What is the difference between <code>iter</code> and <code>into_iter</code>?
+<p>What is the difference between <code>iter</code> and <code>into_iter</code>?<br />
 <code>iter</code> 和 <code>into_iter</code> 有什么区别？</p>
 </blockquote>
 <p><code>into_iter</code> is a generic method to obtain an iterator, whether this iterator yields values, immutable references or mutable references <strong>is context dependent</strong> and can sometimes be surprising.<br />
@@ -277,16 +277,16 @@ Rust 有一个结构，可以对你的 <code>Iterator</code> 调用 <code>next</
 <p>Also note that <code>Iterator</code> provides a default implementation of methods such as <code>nth</code> and <code>fold</code> which call <code>next</code> internally. However, it is also possible to write a custom implementation of methods like <code>nth</code> and <code>fold</code> if an iterator can compute them more efficiently without calling <code>next</code>.<br />
 还要注意的是，<code>Iterator</code> 提供了默认的方法实现，比如内部调用 <code>next</code> 的 <code>nth</code> 和 <code>fold</code>。<br />
 如果一个 <code>Iterator</code> 可以在不调用 <code>next</code> 的情况下更有效地计算 <code>nth</code> 和 <code>fold</code> 等方法，也可以写一个自定义的实现。</p>
-<code>for</code><h4 id=" loops and " class="flex group">
-    <span> loops and </span>
-    <a href="# loops and " class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
+<h4 id="for loops and intoiterator" class="flex group">
+    <span>for loops and IntoIterator</span>
+    <a href="#for loops and intoiterator" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
         <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
             <svg width="12" height="12" fill="none" aria-hidden="true">
                 <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
             </svg>
         </div>
     </a>
-</h4><code>IntoIterator</code>
+</h4>
 <p>We never called anything on our collection to produce an iterator. What gives?<br />
 实际上，我们从未在我们的 collection 上调用任何东西来生成 <code>Iterator</code>。那么这到底是怎么回事呢？</p>
 <p>There’s a trait in the standard library for converting something into an iterator: <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a>. This trait has one method, <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html#tymethod.into_iter"><code>into_iter</code></a>, which converts the thing implementing <a href="https://doc.rust-lang.org/std/iter/trait.IntoIterator.html" title="IntoIterator"><code>IntoIterator</code></a> into an iterator.<br />
