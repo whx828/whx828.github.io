@@ -276,7 +276,40 @@ This is because calling <code>State::request_review</code> will move <code>Bo
         Proudly powered by Zine.
     </a>
     </div>
-</footer><a href="https://github.com/zineland"
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+<script>
+    document.getElementsByClassName('bg-primary')[0].setAttribute("id", "vanta");
+    document.getElementById('vanta').classList.remove('bg-primary');
+    window.addEventListener('DOMContentLoaded', () => {
+        VANTA.WAVES({
+            el: "#vanta",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            shininess: 150.00,
+            waveHeight: 37.50,
+            waveSpeed: 1.50,
+            zoom: 0.97
+        })
+    });
+</script>
+<style>
+    .vanta {
+        z-index: 0;
+        position: relative;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style><a href="https://github.com/zineland"
                    class="absolute z-20 bottom-0 w-full text-center font-bold md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent bg-primary p-2 text-main">
                     Proudly powered by Zine.
                 </a>
