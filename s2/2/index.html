@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
-<title>记一次 Rust 探险</title>
+
+    <title>记一次 Rust 探险</title>
     <meta name="description" content="最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：">
     <meta property="og:type" content="website">
     <meta property="og:title" content="记一次 Rust 探险">
@@ -13,8 +13,8 @@
     <meta name="twitter:title" content="记一次 Rust 探险">
     <meta name="twitter:description" content="最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：">
 
-<link rel="shortcut icon" href="path/to/favicon">
-<meta property="og:url" content="http://whx828.github.io/s2/2">
+    <link rel="shortcut icon" href="path/to/favicon">
+    <meta property="og:url" content="http://whx828.github.io/s2/2">
     <meta property="twitter:url" content="http://whx828.github.io/s2/2">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -24,24 +24,24 @@
     <link rel="stylesheet" href="/static/zine.css">
     <link rel="alternate" type="application/atom+xml" title="whx's Blog RSS" href="/feed.xml">
     <style>
-      :root {
-          --primary-color: #55bb8a;
-          --main-color: #000;
-          --link-color: #e97312;
-          --secondary-color: #baccd9;
-      }
+        :root {
+            --primary-color: #55bb8a;
+            --main-color: #000;
+            --link-color: #e97312;
+            --secondary-color: #baccd9;
+        }
     </style>
 </head>
 
 <body class="h-full bg-secondary">
     <div class="bg-primary text-main font-bold text-center z-0">
-    <header class="p-8 md:p-10">
+        <header class="p-8 md:p-10">
             <div class="text-4xl lg:text-5xl"><a href="/">whx's Blog</a></div>
 
             <ul>
                 <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/about">About</a></li>
                 <li class="inline-block mt-6 mx-5 text-base hover:underline"><a href="/feed.xml">RSS</a></li>
-                </ul>
+            </ul>
         </header>
         <div class="w-full h-32 md:h-36 lg:h-44 xl:h-48 2xl:h-56"></div>
     </div>
@@ -49,47 +49,51 @@
     <main class="pb-10 -translate-y-32
                  md:-translate-y-32 lg:-translate-y-36 xl:-translate-y-44 2xl:-translate-y-56
                  mx-auto sm:max-w-scree-md md:max-w-screen-lg">
-            <div class="p-4 pb-10 md:p-8 md:pb-14 mx-4 my-6 bg-white 
+        <div class="p-4 pb-10 md:p-8 md:pb-14 mx-4 my-6 bg-white 
             shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
-    <div class="relative mx-2">
-        <a class="before:block before:absolute before:-inset-1 before:-skew-x-6 before:bg-primary relative inline-block
-                                transition sm:hover:scale-110 duration-500"
-                        href="/s2">
-            <div class="relative text-main px-4">2022</div>
-        </a>
-        <span class="ml-2 text-gray-700"> /  No. ⁨2⁩</span>
-    </div>
-    <div class="mt-4 mb-8 w-full border-dashed border-t border-slate-300"></div>
-    <div class="prose mx-auto">
-        <h1 class="text-center">记一次 Rust 探险</h1>
-        <div class="flex items-center justify-between text-gray-500">
-            <span>2022-04-17</span>
-            <a class="flex items-center px-2 py-1 !text-gray-500 rounded hover:bg-gray-200 hover:!no-underline" href="/@whx">
-        <img class="!m-0 !p-1 w-7 h-7 rounded-full object-cover" src="/static/avatar.png" alt="avatar" loading="lazy">
-        <span>
-        whx
-        </span>
-    </a>
-    
-        </div>
-    </div>
-    <article class="prose mx-auto my-12">
-        <h2 id="问题的起始" class="flex group">
-    <span>问题的起始</span>
-    <a href="#问题的起始" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
-        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
-            <svg width="12" height="12" fill="none" aria-hidden="true">
-                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-            </svg>
-        </div>
-    </a>
-</h2>
-<p>最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：</p>
-<blockquote>
-<p>……</p>
-<p>请求审核博文来改变其状态</p>
-<p>接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：</p>
-<pre><code class="language-rust">pub struct Post {
+            <div class="relative mx-2">
+                <a class="before:block before:absolute before:-inset-1 before:-skew-x-6 before:bg-primary relative inline-block
+                                transition sm:hover:scale-110 duration-500" href="/s2">
+                    <div class="relative text-main px-4">2022</div>
+                </a>
+                <span class="ml-2 text-gray-700"> / No. ⁨2⁩</span>
+            </div>
+            <div class="mt-4 mb-8 w-full border-dashed border-t border-slate-300"></div>
+            <div class="prose mx-auto">
+                <h1 class="text-center">记一次 Rust 探险</h1>
+                <div class="flex items-center justify-between text-gray-500">
+                    <span>2022-04-17</span>
+                    <a class="flex items-center px-2 py-1 !text-gray-500 rounded hover:bg-gray-200 hover:!no-underline"
+                        href="/@whx">
+                        <img class="!m-0 !p-1 w-7 h-7 rounded-full object-cover" src="/static/avatar.png" alt="avatar"
+                            loading="lazy">
+                        <span>
+                            whx
+                        </span>
+                    </a>
+
+                </div>
+            </div>
+            <article class="prose mx-auto my-12">
+                <h2 id="问题的起始" class="flex group">
+                    <span>问题的起始</span>
+                    <a href="#问题的起始" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
+                        aria-label="Anchor">
+                        <div
+                            class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+                            <svg width="12" height="12" fill="none" aria-hidden="true">
+                                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </h2>
+                <p>最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：</p>
+                <blockquote>
+                    <p>……</p>
+                    <p>请求审核博文来改变其状态</p>
+                    <p>接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这个代码：</p>
+                    <pre><code class="language-rust">pub struct Post {
    state: Option&lt;Box&lt;dyn State&gt;&gt;,
    content: String,
 }
@@ -139,45 +143,58 @@ impl State for PendingReview {
 }
 
 </code></pre>
-<p>……</p>
-<p><strong>我们需要将 state 临时设置为 None 来获取 state 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 Post 被转换为新状态后不能再使用老 state 值。</strong></p>
-<p>……</p>
-</blockquote>
-<p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
-<h2 id="box 的性质" class="flex group">
-    <span>Box 的性质</span>
-    <a href="#box 的性质" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
-        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
-            <svg width="12" height="12" fill="none" aria-hidden="true">
-                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-            </svg>
-        </div>
-    </a>
-</h2>
-<p>首先来看可变性。<br />
-在 Rust 中，一个变量是否可变，取决于是否用 <code>mut</code> 修饰变量绑定。</p>
-<p>如果我们用 <code>let var : T</code> 声明，那么 <code>var</code> 是不可变的；而且 <code>var</code> 内部所有的成员也都是不可变的；<br />
-如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br />
-这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br />
-但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。</p>
-<p>在 <code>std::cell</code> 模块中的 Cell 和 RefCell 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 Box 虽然一直都被拿来和前两个一起讨论，但 Box 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
-Box 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
-Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
-<p>其次来看所有权规则。<br />
-<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 Box 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
-<p>性质已经搞清，接下来我们来看具体问题。</p>
-<h2 id="为什么直接赋值不行" class="flex group">
-    <span>为什么直接赋值不行</span>
-    <a href="#为什么直接赋值不行" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
-        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
-            <svg width="12" height="12" fill="none" aria-hidden="true">
-                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-            </svg>
-        </div>
-    </a>
-</h2>
-<p>我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：</p>
-<pre><code class="language-Rust">pub struct Post {
+                    <p>……</p>
+                    <p><strong>我们需要将 state 临时设置为 None 来获取 state 值，即老状态的所有权，而不是使用
+                            <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 Post
+                            被转换为新状态后不能再使用老 state 值。</strong></p>
+                    <p>……</p>
+                </blockquote>
+                <p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
+                <h2 id="box 的性质" class="flex group">
+                    <span>Box 的性质</span>
+                    <a href="#box 的性质" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
+                        aria-label="Anchor">
+                        <div
+                            class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+                            <svg width="12" height="12" fill="none" aria-hidden="true">
+                                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </h2>
+                <p>首先来看可变性。<br />
+                    在 Rust 中，一个变量是否可变，取决于是否用 <code>mut</code> 修饰变量绑定。</p>
+                <p>如果我们用 <code>let var : T</code> 声明，那么 <code>var</code> 是不可变的；而且 <code>var</code> 内部所有的成员也都是不可变的；<br />
+                    如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br />
+                    这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br />
+                    但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。
+                </p>
+                <p>在 <code>std::cell</code> 模块中的 Cell 和 RefCell 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code>
+                    的情况下可以修改其中的值；而 Box 虽然一直都被拿来和前两个一起讨论，但 Box 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
+                    Box 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
+                    Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
+                <p>其次来看所有权规则。<br />
+                    <code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 Box 拥有分配在堆上的缓冲区，非 <code>Copy</code>
+                    类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。
+                </p>
+                <p>性质已经搞清，接下来我们来看具体问题。</p>
+                <h2 id="为什么直接赋值不行" class="flex group">
+                    <span>为什么直接赋值不行</span>
+                    <a href="#为什么直接赋值不行"
+                        class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
+                        aria-label="Anchor">
+                        <div
+                            class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+                            <svg width="12" height="12" fill="none" aria-hidden="true">
+                                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </h2>
+                <p>我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：</p>
+                <pre><code class="language-Rust">pub struct Post {
     state: Box&lt;dyn State&gt;,
     content: String,
 }
@@ -194,61 +211,78 @@ impl Post {
     // ... 
 }
 </code></pre>
-<p>编译器报错：</p>
-<pre><code class="language-text">self.state = self.state.request_review();
+                <p>编译器报错：</p>
+                <pre><code class="language-text">self.state = self.state.request_review();
              ^^^^^^ move occurs because `self.state` has type `std::boxed::Box&lt;dyn State&gt;`, which does not implement the `Copy` trait'.
 </code></pre>
-<p>原回答：<br />
-This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what’s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
-<p>翻译如下：<br />
-这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你只将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
-<p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
-<pre><code class="language-Rust">self.state = self.state.request_review();
+                <p>原回答：<br />
+                    This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>,
+                    which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you
+                    implement <code>Copy</code>, otherwise what’s left there? The book
+                    uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
+                <p>翻译如下：<br />
+                    这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而
+                    Rust 不允许你只将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用
+                    <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。
+                </p>
+                <p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
+                <pre><code class="language-Rust">self.state = self.state.request_review();
 </code></pre>
-<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
-因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review();</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
-<p>问题解决！感谢这些在网上无私分享知识的人们！</p>
-<h2 id="参考阅读" class="flex group">
-    <span>参考阅读</span>
-    <a href="#参考阅读" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100" aria-label="Anchor">
-        <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
-            <svg width="12" height="12" fill="none" aria-hidden="true">
-                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-            </svg>
-        </div>
-    </a>
-</h2>
-<ol>
-<li><a href="https://stackoverflow.com/questions/57193489/why-do-we-need-to-call-take-for-optiont-variable">why do we need to call take() for Option&lt;T&gt; variable</a></li>
-<li><a href="https://rustwiki.org/zh-CN/rust-by-example/scope/move.html">所有权和移动</a></li>
-<li><a href="https://rustwiki.org/zh-CN/rust-by-example/variable_bindings/declare.html">变量先声明</a></li>
-<li><a href="https://www.archgrid.xyz/2022/03/rust-ownership/">聊聊 Rust 中的所有权机制</a></li>
-<li><a href="https://ipotato.me/article/57">Rust 中几个智能指针的异同与使用场景</a></li>
-<li><a href="https://rustcc.cn/article?id=37d1cb4f-5cc9-4adc-b41a-dbe4914bf4b5">【Rust 每周一知】如何理解 Rust 中的可变与不可变？</a></li>
-</ol>
+                <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被
+                    <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code>
+                    的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust
+                    编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
+                    因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个
+                    trait，<code>self.state</code> 在 <code>self.state.request_review();</code> 之后依然能保持初始化状态，也就可以完成
+                    <code>self.state =</code> 这部分的赋值了。
+                </p>
+                <p>问题解决！感谢这些在网上无私分享知识的人们！</p>
+                <h2 id="参考阅读" class="flex group">
+                    <span>参考阅读</span>
+                    <a href="#参考阅读" class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
+                        aria-label="Anchor">
+                        <div
+                            class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+                            <svg width="12" height="12" fill="none" aria-hidden="true">
+                                <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round"></path>
+                            </svg>
+                        </div>
+                    </a>
+                </h2>
+                <ol>
+                    <li><a
+                            href="https://stackoverflow.com/questions/57193489/why-do-we-need-to-call-take-for-optiont-variable">why
+                            do we need to call take() for Option&lt;T&gt; variable</a></li>
+                    <li><a href="https://rustwiki.org/zh-CN/rust-by-example/scope/move.html">所有权和移动</a></li>
+                    <li><a href="https://rustwiki.org/zh-CN/rust-by-example/variable_bindings/declare.html">变量先声明</a>
+                    </li>
+                    <li><a href="https://www.archgrid.xyz/2022/03/rust-ownership/">聊聊 Rust 中的所有权机制</a></li>
+                    <li><a href="https://ipotato.me/article/57">Rust 中几个智能指针的异同与使用场景</a></li>
+                    <li><a href="https://rustcc.cn/article?id=37d1cb4f-5cc9-4adc-b41a-dbe4914bf4b5">【Rust 每周一知】如何理解 Rust
+                            中的可变与不可变？</a></li>
+                </ol>
 
 
-        </article>
-    <div class="my-4 w-full border-dashed border-t border-slate-300"></div>
-        <div class="flex flex-col md:flex-row">
-        <a class="inline my-1 py-2 px-4 font-bold text-slate-700 hover:underline"
-                    href="/s2/1">
+            </article>
+            <div class="my-4 w-full border-dashed border-t border-slate-300"></div>
+            <div class="flex flex-col md:flex-row">
+                <a class="inline my-1 py-2 px-4 font-bold text-slate-700 hover:underline" href="/s2/1">
                     Previous:
                     Rust 的迭代器
                 </a>
             </div>
-    </div>
-</main>
+        </div>
+    </main>
 
     <footer class="relative">
         <footer class="bg-black text-white text-center p-16">
-                    <div>
-                        <a class="hover:underline" href="https://github.com/Folyd/zine">Zine</a> 
-                        - a simple and opinionated tool to build your own magazine.
-                    </div>
-                </footer>
-            <a href="https://github.com/zineland" 
-           class="absolute z-20 bottom-0 w-full text-center font-bold
+            <div>
+                <a class="hover:underline" href="https://github.com/Folyd/zine">Zine</a>
+                - a simple and opinionated tool to build your own magazine.
+            </div>
+        </footer>
+        <a href="https://github.com/zineland" class="absolute z-20 bottom-0 w-full text-center font-bold
                   md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent
                   bg-primary p-2 text-main">
             Proudly powered by Zine.
@@ -258,5 +292,5 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 </body>
 <script src="/static/medium-zoom.min.js"></script>
 <script src="/static/zine.js"></script>
-</html>
 
+</html>
