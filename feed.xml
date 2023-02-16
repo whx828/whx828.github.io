@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>whx's Blog</title>
     <subtitle></subtitle>
-    <updated>2023-01-01T15:03:40.616079+08:00</updated>
+    <updated>2023-02-16T10:42:17.333432+08:00</updated>
     <id>http://whx828.github.io</id>
     <link href="http://whx828.github.io/feed.xml" rel="self" type="application/atom+xml" />
     <link href="http://whx828.github.io" rel="alternate" type="text/html" />
@@ -802,13 +802,72 @@ Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把�
 <p>原回答：<br />
 This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what’s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
 <p>翻译如下：<br />
-这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你只将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
+这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
 <p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
 <pre style="background-color:#fafafa;">
 <span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state </span><span style="color:#ed9366;">= </span><span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">request_review</span><span style="color:#61676c;">()</span><span style="color:#61676ccc;">;
 </span></pre>
 <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
-因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review();</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
+因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
+<h2 id="2023.2.26 追加" class="flex group">
+<span>2023.2.26 追加</span>
+<a href="#2023.2.26 追加"
+   class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
+   aria-label="Anchor">
+    <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
+        <svg width="12" height="12" fill="none" aria-hidden="true">
+            <path d="M3.75 1v10M8.25 1v10M1 3.75h10M1 8.25h10"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round">
+            </path>
+        </svg>
+    </div>
+</a>
+</h2>
+<p>再读《The Book》，想到自己还写过这么一篇文章，回来看的时候发现有个地方没说透：</p>
+<blockquote>
+<p>Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code></p>
+</blockquote>
+<p>这句话什么意思？还是要看<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=dcc068cc77c38b8a929b9177a11500ec">报错信息</a>：</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#61676c;">   Compiling playground v0.0.1 (/playground)
+</span><span style="color:#61676c;">error[E0507]: cannot move out of `self.state` which is behind a mutable reference
+</span><span style="color:#61676c;">  --&gt; src/lib.rs:12:22
+</span><span style="color:#61676c;">   |
+</span><span style="color:#61676c;">12 |         self.state = self.state.request_review();
+</span><span style="color:#61676c;">   |                      ^^^^^^^^^^ ---------------- `self.state` moved due to this method call
+</span><span style="color:#61676c;">   |                      |
+</span><span style="color:#61676c;">   |                      move occurs because `self.state` has type `Box&lt;dyn State&gt;`, which does not implement the `Copy` trait
+</span><span style="color:#61676c;">   |
+</span><span style="color:#61676c;">note: this function takes ownership of the receiver `self`, which moves `self.state`
+</span><span style="color:#61676c;">  --&gt; src/lib.rs:7:23
+</span><span style="color:#61676c;">   |
+</span><span style="color:#61676c;">7  |     fn request_review(self: Box&lt;Self&gt;) -&gt; Box&lt;dyn State&gt;; 
+</span><span style="color:#61676c;">   |                       ^^^^
+</span><span style="color:#61676c;">
+</span><span style="color:#61676c;">For more information about this error, try `rustc --explain E0507`.
+</span><span style="color:#61676c;">error: could not compile `playground` due to previous error
+</span></pre>
+<p>我们的操作会 <code>cannot move out of *self.state* which is behind a mutable reference</code>，也就是说会在可变引用时 <code>move</code> 变量（转移所有权）。<br />
+看一下函数签名： <code>fn request_review(&amp;mut self)</code>，果然使用的是 <code>Post</code> 的可变引用（也就是 <code>&amp;mut self</code>），然后在 <code>self.state.request_review()</code> 这一步时 <code>move</code> 了 <code>self.state</code>，如果 <code>self.state</code> 没有实现 <code>Copy</code> 这个 trait，那么根据 Rust 规则，使用可变引用时是不能 <code>move</code> 的，一旦 <code>move</code> 了，对象的内存地址改变了，那引用还有效吗？</p>
+<ul>
+<li>从借用规则角度看，可变引用是「独占引用」，也即在存在可变引用的时候是不能其他引用的，如果把值看成一种「可变引用」，那么很明显发生了冲突，之前的可变引用很可能就失效了。</li>
+<li>从所有权角度看，可以把可变引用看成持有一段时间的所有权的值的特殊状态，这段时间内原值是不拥有所有权的，所以原值也没有能力去 <code>move</code>。</li>
+<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
+</ul>
+<p>说了这么多，让我看看书里的操作是什么：</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">impl </span><span style="color:#399ee6;">Post </span><span style="color:#61676c;">{
+</span><span style="color:#61676c;">    </span><span style="font-style:italic;color:#abb0b6;">// --snip--
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">pub fn </span><span style="color:#f29718;">request_review</span><span style="color:#61676c;">(</span><span style="color:#ed9366;">&amp;</span><span style="color:#fa6e32;">mut </span><span style="color:#ff8f40;">self</span><span style="color:#61676c;">) {
+</span><span style="color:#61676c;">        </span><span style="color:#fa6e32;">if let </span><span style="font-style:italic;color:#55b4d4;">Some</span><span style="color:#61676c;">(s) </span><span style="color:#ed9366;">= </span><span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">take</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">            </span><span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state </span><span style="color:#ed9366;">= </span><span style="font-style:italic;color:#55b4d4;">Some</span><span style="color:#61676c;">(s</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">request_review</span><span style="color:#61676c;">())
+</span><span style="color:#61676c;">        }
+</span><span style="color:#61676c;">    }
+</span><span style="color:#61676c;">}
+</span></pre>
+<p>人家的 <code>state</code> 用 <code>Option</code> 给包住了，而且取值和赋值是分开写的，没有写在一行里，从 <code>take</code> 的签名：<code>pub fn take(&amp;mut self) -&gt; Option&lt;T&gt;</code> 中看出 <code>take</code> 用的是可变借用而不是 <code>self</code>，也就没有 <code>move</code> 了，同时生命周期推断也能发挥作用，当然就规避掉了这些问题。</p>
 <p>问题解决！感谢这些在网上无私分享知识的人们！</p>
 <h2 id="参考阅读" class="flex group">
 <span>参考阅读</span>
