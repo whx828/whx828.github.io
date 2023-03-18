@@ -237,9 +237,9 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 </span></pre>
 <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
-<h2 id="2023.2.26 追加" class="flex group">
-<span>2023.2.26 追加</span>
-<a href="#2023.2.26 追加"
+<h2 id="2023.2.16 追加" class="flex group">
+<span>2023.2.16 追加</span>
+<a href="#2023.2.16 追加"
    class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
    aria-label="Anchor">
     <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">

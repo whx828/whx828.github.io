@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>whx's Blog</title>
-    <subtitle></subtitle>
-    <updated>2023-02-16T10:42:17.333432+08:00</updated>
+    <subtitle>Welcome to my blog!</subtitle>
+    <updated>2023-03-18T10:25:09.968880+08:00</updated>
     <id>http://whx828.github.io</id>
     <link href="http://whx828.github.io/feed.xml" rel="self" type="application/atom+xml" />
     <link href="http://whx828.github.io" rel="alternate" type="text/html" />
@@ -12,6 +12,85 @@
         <uri>http://whx828.github.io</uri>
     </author>
 
+    <entry>
+        <title>AI 来了</title>
+        <link rel="alternate" href="http://whx828.github.io/s3/2" type="text/html" title="AI 来了" />
+        <published>2023-03-17</published>
+        <updated>2023-03-17</updated>
+        <id>http://whx828.github.io/s3/2</id>
+        <content type="html" xml:base="http://whx828.github.io/s3/2">
+            <![CDATA[<p>今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4/ChatGPT/文心一言刷屏，突然也想跟把风玩玩 AI。</p>
+<p>上网冲浪找到了这个项目：<a href="https://github.com/setzer22/llama-rs">LLaMA-rs</a>，是 <a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> 的 Rust 版本，正好 MacBook 也能跑，比较适合我。<br />
+我尝试着 clone 了项目，想着看看能不能跑通，权当娱乐。</p>
+<p>需要这么几步操作：</p>
+<ol>
+<li>
+<p>首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;dn=LLaMA</p>
+</li>
+<li>
+<p>简单瞅瞅，这些模型太大，我只是想玩一下，所以选择了最小的 7B</p>
+</li>
+<li>
+<p>模型下载好之后需要按照 <a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> 项目的步骤继续：</p>
+<ol>
+<li>把模型挪到 <code>./models</code> 下</li>
+<li>安装必要的依赖：<code>python3 -m pip install torch numpy sentencepiece</code></li>
+<li>将 7B 模型转换为 ggml FP16 格式：<code>python3 convert-pth-to-ggml.py models/7B/ 1</code></li>
+<li>将模型量化为 4 位：<code>./quantize.sh 7B</code></li>
+</ol>
+</li>
+<li>
+<p>通过上面一顿操作你就得到了 <code>./models/7B/ggml-model-q4_0.bin</code> 这个文件</p>
+</li>
+<li>
+<p>友情提示下载的模型就有 10 几个 G，转化好的玩意也有 4G 多，所以你最好在等下载&amp;运行转换命令的时候找点事做，不然会非常无聊（说好的娱乐向呢。。。）</p>
+</li>
+<li>
+<p>接下来 clone <a href="https://github.com/setzer22/llama-rs">LLaMA-rs</a> 项目，在 LLaMA-rs 项目的根目录下执行 <code>cargo build --release</code>，构建 Rust 项目（熟悉 Rust 的要注意目前 debug 模式会报错，必须是 release 模式才行）</p>
+</li>
+<li>
+<p>构建完成之后就可以用 <code>cargo run --release -- &lt;ARGS&gt;</code> 命令运行了，人家给的例子是 <code>cargo run --release -- -m /data/Llama/LLaMA/7B/ggml-model-q4_0.bin -p &quot;Tell me how cool the Rust programming language is:</code> </p>
+</li>
+<li>
+<p>一切顺利你会看到结果，大功告成！我跑出来的东西是这样的：</p>
+</li>
+</ol>
+<p><img src="../../static/2023/llama-rs-result.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>Tell me how cool the Rust programming language is: </p>
+<ol>
+<li>It’s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time. </li>
+<li>It can create a complete binary application from an XML file that specifies the class hierarchy and relationships - no other code is necessary or allowed! </li>
+<li>The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I’m really loving this because I can now write C-like</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>告诉我，Rust 编程语言有多酷：<br />
+1）它是使用标准技术编译的，但是它没有运行时库（所有类都插入了可执行文件中）。因此，您通常不必担心编译时的各种事情。<br />
+2）它可以从 XML 文件中创建一个完整的二进制应用程序，该应用程序指定类层次结构和关系 - 不需要或允许其他代码！<br />
+3）编程语言看起来像 Java，但没有开销 - 它以现代硬件的正常速度（i5+MacBookPro）在内存中运行。我真的很喜欢这个，因为我现在可以写类 C 语言</p>
+</blockquote>
+<p>AI 还是有点意思的，第一条还像那么回事，Rust 官方的确没有提供运行时，但是这意味着有更多的工作要在编译时去做啊，AI 的逻辑让人哭笑不得；<br />
+第二条更加离谱，如果这里说 TOML 文件将是绝杀，可惜换不得；第三条又是说对了一部分，Rust 的确快，但和 Java 并没多少相似之处。</p>
+<hr />
+<p>再来看基于 Stanford Alpaca 的 <a href="https://github.com/antimatter15/alpaca.cpp">alpaca.cpp</a> 项目的神奇操作，步骤和前面的差不多，但是效果更好：</p>
+<p><img src="../../static/2023/alpaca-cpp.png" alt="" loading="lazy"></p>
+<blockquote>
+<p>Rust has been described as “the most exciting new development in software engineering since C++”. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!</p>
+</blockquote>
+<blockquote>
+<p>Rust 被描述为“自 C++ 以来软件工程领域最激动人心的新发展”。它结合了安全性和性能，并注重正确性，这使其成为编写安全代码的理想选择。Rust 还提供来自社区的强大工具支持，使您能够比以往更快地编写更好的程序！</p>
+</blockquote>
+<p>这个效果就比前者好太多了，基本没有错误！</p>
+<p>最恐怖的是，所有的这一切都是在我这台 2016 的老 MacBook 上完成的，没有什么显卡/GPU 加持，完全靠 CPU 也能做到这种程度，这样看来 ChatGPT 那种神乎其技的表现也就不足为奇了，所谓图灵测试根本是难不住它们的，依照这个速度发展下去，奇点一定会到来；<br />
+这个世界太疯狂，未来会变成什么样子，真是令人期待！</p>
+]]>
+        </content>
+
+        <author>
+            <name>whx</name>
+        </author>
+    </entry>
     <entry>
         <title>2022 总结</title>
         <link rel="alternate" href="http://whx828.github.io/s3/1" type="text/html" title="2022 总结" />
@@ -809,9 +888,9 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 </span></pre>
 <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
-<h2 id="2023.2.26 追加" class="flex group">
-<span>2023.2.26 追加</span>
-<a href="#2023.2.26 追加"
+<h2 id="2023.2.16 追加" class="flex group">
+<span>2023.2.16 追加</span>
+<a href="#2023.2.16 追加"
    class="ml-2 inline-flex items-center opacity-0 border-0 group-hover:opacity-100"
    aria-label="Anchor">
     <div class="w-6 h-6 text-slate-400 ring-1 ring-slate-900/5 rounded-md shadow-sm flex items-center justify-center hover:ring-slate-900/10 hover:shadow hover:text-slate-700">
