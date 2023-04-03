@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#55bb8a">
+        <title>从 Happened-before 说起（2）</title>
+<meta name="description" content="书接上文，继续讨论那个让人疑惑的问题。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="从 Happened-before 说起（2）">
+<meta property="og:description" content="书接上文，继续讨论那个让人疑惑的问题。">
+<meta name="twitter:title" content="从 Happened-before 说起（2）">
+<meta name="twitter:description" content="书接上文，继续讨论那个让人疑惑的问题。">
+<link rel="shortcut icon" href="path/to/favicon">
+<meta property="og:url" content="http://whx828.github.io/s3/4">
+    <meta property="twitter:url" content="http://whx828.github.io/s3/4">
+<meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="http://whx828.github.io/static/2022/Rust.jpeg">
+    <meta name="twitter:image" content="http://whx828.github.io/static/2022/Rust.jpeg">
+<link rel="icon" type="image/png" href="/favicon.ico">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&family=Raleway&family=Roboto+Mono&display=swap"
+    rel="stylesheet">
+<style>
+    body {
+        font-family: 'Open Sans', sans-serif;
+        font-family: 'Raleway', sans-serif;
+    }
+</style><link rel="stylesheet" href="/static/zine.css">
+        <link rel="alternate"
+              type="application/atom+xml"
+              title="whx's Blog RSS"
+              href="/feed.xml">
+        <style>
+            :root {
+                --primary-color: #55bb8a;
+                --main-color: #111111;
+                --link-color: #e97312;
+                --secondary-color: #baccd9;
+            }
+        </style>
+    </head>
+    <body class="h-full bg-secondary">
+        <div class="bg-primary text-main font-bold text-center z-0">
+                <header class="p-8 md:p-10">
+                    <div class="text-4xl lg:text-5xl">
+                        <a href="/">whx's Blog</a>
+                    </div>
+                    <ul>
+                        <li class="inline-block mt-6 mx-5 text-base hover:underline">
+                                <a href="/about">About</a>
+                            </li>
+                        <li class="inline-block mt-6 mx-5 text-base hover:underline">
+                                <a href="/feed.xml">RSS</a>
+                            </li>
+                        </ul>
+                </header>
+                <div class="w-full h-32 md:h-36 lg:h-44 xl:h-48 2xl:h-56"></div>
+            </div>
+            <main class="pb-10 -translate-y-32 md:-translate-y-32 lg:-translate-y-36 xl:-translate-y-44 2xl:-translate-y-56 mx-auto sm:max-w-scree-md md:max-w-screen-lg">
+                <div class="p-4 pb-10 md:p-8 md:pb-14 mx-4 my-6 bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
+        <div class="relative mx-2">
+            <a class="before:block before:absolute before:-inset-1 before:-skew-x-6 before:bg-primary relative inline-block transition sm:hover:scale-110 duration-500"
+               href="/s3">
+                <div class="relative text-main px-4">2023</div>
+            </a>
+            <span class="ml-2 text-gray-700">/  第 ⁨4⁩ 篇</span>
+        </div>
+        <div class="mt-4 mb-8 w-full border-dashed border-t border-slate-300"></div>
+        <div class="prose mx-auto">
+            <h1 class="text-center">从 Happened-before 说起（2）</h1>
+            <div class="flex items-center justify-between text-gray-500">
+                <span>2023-04-03</span>
+                <a class="flex items-center px-2 py-1 !text-gray-500 rounded hover:bg-gray-200 hover:!no-underline"
+           href="/@whx">
+            <img class="!m-0 !p-1 w-7 h-7 rounded-full object-cover"
+                 src="/static/avatar.png"
+                 alt="avatar"
+                 loading="lazy">
+            <span>
+                whx
+                </span>
+        </a>
+    
+            </div>
+        </div>
+        <article class="prose mx-auto my-12">
+            <p>书接上文，继续讨论那个让人疑惑的问题。<br />
+为了方便讨论，我把代码挪过来：</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">static</span><span style="color:#61676c;"> X</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#fa6e32;">static</span><span style="color:#61676c;"> Y</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">a</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">10</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 1
+</span><span style="color:#61676c;">    Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">20</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 2
+</span><span style="color:#61676c;">}
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">b</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> y </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 3
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> x </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 4
+</span><span style="color:#61676c;">    </span><span style="color:#f07171;">println!</span><span style="color:#61676c;">(</span><span style="color:#86b300;">&quot;</span><span style="color:#ff8f40;">{x} {y}</span><span style="color:#86b300;">&quot;</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.
+更有趣的是，输出也可以是 0 20，即使没有可能导致此结果的四个操作的全局一致顺序。当 3 执行时，与 2 没有 happens-before 关系，也就是说它可以加载 0 或 20。当 4 执行时，与 1 没有 happens-before 关系，这意味着它可以加载 0 或 10。鉴于此，输出 0 20 是一个有效的结果。</p>
+</blockquote>
+<p>想要彻底搞明白，还得从概念的细节下手：</p>
+<blockquote>
+<p>…the basic happens-before rule is that everything that happens within the same thread happens in order. In this case: 1 happens-before 2, and 3 happens-before 4. Since we use relaxed memory ordering, there are no other happens-before relationships in our example.<br />
+……基本的 happens-before 规则是同一线程内发生的所有事情都按顺序发生。在这种情况下：1 happens-before 2，3 happens-before 4。由于我们使用 <code>Relaxed</code> 内存排序，因此在我们的示例中没有其他 happens-before 关系。</p>
+</blockquote>
+<p>那到底什么是 happened-before？这里是维基百科给的定义：</p>
+<p>In <a href="https://www.wikiwand.com/en/Computer_science" title="Computer science">computer science</a>, the <strong>happened-before</strong> <a href="https://www.wikiwand.com/en/Binary_relation" title="Binary relation">relation</a> (denoted: →) is a relation between the result of two events, such that if one event should happen before another event, the result must reflect that, even if those events are in reality executed out of order (usually to optimize program flow). This involves <a href="https://www.wikiwand.com/en/Partially_ordered_set" title="Partially ordered set">ordering</a> events based on the potential <a href="https://www.wikiwand.com/en/Causal_relationships" title="Causal relationships">causal relationship</a> of pairs of events in a concurrent system, especially <a href="https://www.wikiwand.com/en/Asynchronous_communication" title="Asynchronous communication">asynchronous</a> <a href="https://www.wikiwand.com/en/Distributed_systems" title="Distributed systems">distributed systems</a>. It was formulated by <a href="https://www.wikiwand.com/en/Leslie_Lamport" title="Leslie Lamport">Leslie Lamport</a>.<a href="https://www.wikiwand.com/en/Happened-before#cite_note-1">[1]</a><br />
+在计算机科学中，happened-before 关系（表示为：→）是两个事件的结果之间的关系，这样如果一个事件应该在另一个事件之前发生，那么即使这些事件在现实中发生，结果也必须反映出来乱序执行（通常是为了优化程序流程）。这涉及根据并发系统中事件对的潜在因果关系对事件进行排序，尤其是异步分布式系统。它是由 Leslie Lamport 制定的。<a href="https://www.wikiwand.com/en/Happened-before#cite_note-1">[1]</a></p>
+<p>The happened-before relation is formally defined as the least <a href="https://www.wikiwand.com/en/Strict_partial_order" title="Strict partial order">strict partial order</a> on events such that:<br />
+happened-before 关系的正式定义为──事件最不严格的偏序，使得：</p>
+<ul>
+<li>If events a and b occur on the same process, a → b if the occurrence of event a preceded the occurrence of event b.<br />
+如果事件 a 和 b 在同一进程上，则 a → b。事件 a 的发生先于事件 b 的发生。</li>
+<li>If event a is the sending of a message and event b is the reception of the message sent in event a, a → b.<br />
+如果事件 a 是消息的发送者，事件 b 是 a 发送的消息的接收者，则 a → b。</li>
+</ul>
+<p>If two events happen in different isolated processes (that do not exchange messages directly or indirectly via third-party processes), then the two processes are said to be concurrent, that is neither a → b nor b → a is true.<a href="https://www.wikiwand.com/en/Happened-before#cite_note-2">[2]</a><br />
+如果两个事件发生在不同的隔离进程中（不直接或通过第三方进程间接交换消息），则称这两个进程是并发的，a → b 和 b → a 都不成立。<a href="https://www.wikiwand.com/en/Happened-before#cite_note-2">[2]</a></p>
+<p>If there are other causal relationships between events in a given system, such as between the creation of a process and its first event, these relationships are also added to the definition. For example, in some programming languages such as Java, C, C++ or Rust, a <strong>happens-before</strong> edge exists if memory written to by statement A is visible to statement B, that is, if statement A completes its write before statement B starts its read.<br />
+如果给定系统中的事件之间存在其他因果关系，例如进程的创建与此进程第一个事件之间的因果关系，这些关系也会添加到定义中。例如，在某些编程语言中，如 Java、C、C++ 或 Rust，如果语句 A 写入的内存对语句 B 可见，即如果语句 A 在语句 B 开始读取之前完成了写入，则存在 happens-before 关系。</p>
+<p>The processes that make up a distributed system have no knowledge of the happened-before relation unless they use a <a href="https://www.wikiwand.com/en/Logical_clock" title="Logical clock">logical clock</a>, like a <a href="https://www.wikiwand.com/en/Lamport_clock" title="Lamport clock">Lamport clock</a> or a <a href="https://www.wikiwand.com/en/Vector_clock" title="Vector clock">vector clock</a>. This allows one to design algorithms for <a href="https://www.wikiwand.com/en/Mutual_exclusion" title="Mutual exclusion">mutual exclusion</a>, and tasks like debugging or optimising distributed systems.<br />
+构成分布式系统的进程之间没有 happened-before 关系，除非它们使用逻辑时钟，如 Lamport 时钟或矢量时钟。这允许人们设计互斥算法，以及调试或优化分布式系统等任务。</p>
+<hr />
+<p>维基百科的定义更加明确：happened-before 表征的是一个事件应该在另一个事件之前发生。在这个例子中，我们只能肯定的是：操作 1 happened-before 操作 2，操作 3 happened-before 操作 4，其他什么都无法肯定，即使你看到了程序输出 <code>0 20</code> 也不意味着操作 4 在操作 1 之前发生或者操作 2 在操作 3 之前发生，换句话说，正是因为你使用的是 <code>Relaxed</code> 内存排序，Rust 也就放弃提供跨线程的操作顺序的保证了，而我觉得无法理解是因为我之前认为 <code>0 20</code> 根本就无法发生，但真的不会吗？来看看 GPT-4 的回答：</p>
+<blockquote>
+<p>在多线程环境中，使用 <code>Relaxed</code> 内存排序的原子操作不会产生跨线程的 happened-before 关系。这意味着，当线程执行操作 3 时，我们不能确定操作 2 是否已经发生。同样地，当线程执行操作 4 时，我们也不能确定操作 1 是否已经发生。</p>
+<p>以下是可能导致输出 0 20 的一种情况：</p>
+<ol>
+<li>线程 a 执行操作 1，将 X 设置为 10。</li>
+<li>线程 b 执行操作 3，加载 Y 的值。此时，线程 a 尚未执行操作 2，因此 Y 的值仍然是 0。所以，操作 3 加载的值是 0。</li>
+<li>线程 a 执行操作 2，将 Y 设置为 20。</li>
+<li>线程 b 执行操作 4，加载 X 的值。此时，线程 a 已经执行了操作 1，但由于没有跨线程的 happens-before 关系，线程 b 仍然可以看到 X 的旧值 0。因此，操作 4 加载的值是 0。</li>
+</ol>
+<p>这就是为什么输出可能是 0 20。在这种情况下，线程 b 观察到的操作顺序实际上是：操作 3、操作 4、操作 1、操作 2。这个例子说明了在使用 <code>Relaxed</code> 内存排序时，不同线程之间的操作顺序是不确定的，可能导致一些看似违反直觉的结果。</p>
+</blockquote>
+<p>我对这个答案不是很满意，它并未说服我，所以我接着追问：</p>
+<blockquote>
+<p>为什么没有跨线程的 happened-before 关系，线程 b 就可以看到 X 的旧值 0 呢？（这也的确是我最核心的疑问）</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>当没有跨线程的 happened-before 关系时，线程 b 可以看到 X 的旧值 0，是因为内存顺序、编译器优化和处理器行为可能导致数据在不同线程之间的可见性有延迟。在我们的例子中，由于使用了 <code>Relaxed</code> 内存排序，编译器和处理器对操作的优化和重排更加自由。这可能导致线程 a 对 X 的写入操作（操作 1）在线程 b 观察到之前存在一定的延迟。以下是一些可能导致这种现象的因素：</p>
+<ol>
+<li>编译器优化：编译器可能会对代码进行优化，以提高执行效率。在 <code>Relaxed</code> 内存排序下，编译器可以自由地重新排序操作，只要它们在单个线程中的顺序保持不变。这种优化可能导致线程 b 在观察到线程 a 对 X 的写入操作之前存在延迟。</li>
+<li>处理器缓存：现代处理器通常具有多级缓存，用于加速内存访问。当一个线程对内存位置进行写操作时，这个改动可能首先出现在处理器的缓存中，而不是立即写回到主存。在没有强制 happened-before 关系的情况下，其他线程可能在一段时间内仍然看到旧的值。</li>
+<li>处理器指令重排：为了提高执行效率，处理器可能会对指令进行重排。这意味着实际执行的指令顺序可能与代码中的顺序不同。在 <code>Relaxed</code> 内存排序下，指令重排可能导致线程 b 在观察到线程 a 对 X 的写入操作之前存在延迟。</li>
+</ol>
+<p>因此，在没有跨线程的 happened-before 关系的情况下，线程 b 可能看到 X 的旧值 0，是由于编译器优化、处理器缓存和处理器指令重排等因素导致的内存访问延迟。这些因素使得线程之间的操作顺序和数据可见性变得不确定。</p>
+</blockquote>
+</blockquote>
+<p>GPT-4 提供了几种可能会发生的场景，成功说服了我，因为真的有可能发生。同时我也对内存排序是如何做到的有了新的理解，这并不完全是 Rust 语言本身能决定的事情，你要考虑延迟、缓存、编译器，甚至还需要硬件、处理器的配合，那么这其中的自由度和复杂度就不是新手菜鸟所能想到的（太遗憾了鄙人就是菜鸟）。</p>
+<p>行文至此，再次感觉到编程的复杂，看起来简单的内存排序竟会在背后包含如此复杂的内容，不得不感叹计算机是一个整体，到了一定复杂度以后很难完全抽象出单一元素来完备地解答问题。如此发展下去，恐怕到最后也只有机器能解答机器了吧。</p>
+<p>另外 AI 的确不失为一种很棒的学习工具，GPT-4 并不是一次性就给出了上述回答，它前几次的回答有错误，考虑到避免误导，我就没有把错误的对话也放上来，有的时候答案其实并不重要，如果能正确地发问，其实有些时候问题也就解决了。<br />
+目前的 GPT 模型其实效果已经相当好了，但依然存在一本正经地胡说行为，因此如果想用它来学习，你最好有能分辨答案是否正确的能力，这又有些悖论了，我如果有这个能力，我还问什么呢？</p>
+<p>从维基百科中可以得知 happened-before 是由 Leslie Lamport 这位分布式大牛提出的，happened-before 是为了一个更大的问题所做的铺垫，这个问题就是分布式系统中的时间。分布式系统中相当多的概念和算法都需要依靠 happened-before 这个偏序关系，说它是构成分布式世界的基石一点也不为过，详细的展开则要去读《Time, Clocks, and the Ordering of Events in a Distributed System》这篇论文才能知道了。</p>
+<p>其实 happened-before 还有许多部分可以展开，不过鄙人才疏学浅，目前只掌握了这些，或许以后还会写点自己的心得体会吧，敬请期待。</p>
+
+            </article>
+        <div class="my-4 w-full border-dashed border-t border-slate-300"></div>
+            <div class="flex flex-col md:flex-row">
+                <a class="inline my-1 py-2 px-4 font-bold text-slate-700 hover:underline"
+                           href="/s3/3">
+                            上一篇：
+                            从 Happened-before 说起（1）
+                        </a>
+                    </div>
+        </div>
+    </main>
+            <footer class="relative">
+                <footer class="bg-black text-white text-center p-16">
+    <div>
+        <a href="https://github.com/whx828">Copyright © 2022-2023 whx</a>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+<script>
+    document.getElementsByClassName('bg-primary')[0].setAttribute("id", "vanta");
+    document.getElementById('vanta').classList.remove('bg-primary');
+    window.addEventListener('DOMContentLoaded', () => {
+        VANTA.WAVES({
+            el: "#vanta",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            shininess: 150.00,
+            waveHeight: 37.50,
+            waveSpeed: 1.50,
+            zoom: 0.97
+        })
+    });
+</script>
+<script src="https://app.embed.im/snow.js" defer></script>
+<style>
+    .vanta {
+        z-index: 0;
+        position: relative;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap');
+</style><a href="https://github.com/zineland"
+                   class="absolute z-20 bottom-0 w-full text-center font-bold md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent bg-primary p-2 text-main">
+                    Proudly powered by Zine.
+                </a>
+            </div>
+        </footer>
+    </body>
+    <script src="/static/medium-zoom.min.js"></script>
+    <script src="/static/zine.js"></script>
+</html>

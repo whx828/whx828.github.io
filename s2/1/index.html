@@ -21,7 +21,14 @@
 <link rel="icon" type="image/png" href="/favicon.ico">
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap" rel="stylesheet"><link rel="stylesheet" href="/static/zine.css">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&family=Raleway&family=Roboto+Mono&display=swap"
+    rel="stylesheet">
+<style>
+    body {
+        font-family: 'Open Sans', sans-serif;
+        font-family: 'Raleway', sans-serif;
+    }
+</style><link rel="stylesheet" href="/static/zine.css">
         <link rel="alternate"
               type="application/atom+xml"
               title="whx's Blog RSS"
@@ -100,7 +107,7 @@
 <blockquote>
 <p>……</p>
 <p>请求审核博文来改变其状态</p>
-<p>接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这段代码：</p>
+<p>接下来需要增加请求审核博文的功能，这应当将其状态由 <code>Draft</code> 改为 <code>PendingReview</code>。示例 17-15 展示了这段代码：</p>
 </blockquote>
 <pre style="background-color:#fafafa;">
 <span style="color:#fa6e32;">pub struct </span><span style="color:#399ee6;">Post </span><span style="color:#61676c;">{
@@ -155,7 +162,7 @@
 </span></pre>
 <blockquote>
 <p>……</p>
-<p><strong>我们需要将 state 临时设置为 None 来获取 state 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 Post 被转换为新状态后不能再使用老 state 值。</strong></p>
+<p><strong>我们需要将 <code>state</code> 临时设置为 <code>None</code> 来获取 <code>state</code> 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 <code>Post</code> 被转换为新状态后不能再使用老 <code>state</code> 值。</strong></p>
 <p>……</p>
 </blockquote>
 <p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
@@ -181,11 +188,11 @@
 如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br />
 这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br />
 但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。</p>
-<p>在 <code>std::cell</code> 模块中的 Cell 和 RefCell 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 Box 虽然一直都被拿来和前两个一起讨论，但 Box 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
-Box 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
-Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
+<p>在 <code>std::cell</code> 模块中的 <code>Cell</code> 和 <code>RefCell</code> 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 <code>Box</code> 虽然一直都被拿来和前两个一起讨论，但 <code>Box</code> 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
+<code>Box</code> 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
+<code>Cell</code> <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
 <p>其次来看所有权规则。<br />
-<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 Box 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
+<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 <code>Box</code> 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
 <p>性质已经搞清，接下来我们来看具体问题。</p>
 <h2 id="为什么直接赋值不行" class="flex group">
 <span>为什么直接赋值不行</span>
@@ -235,7 +242,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <pre style="background-color:#fafafa;">
 <span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state </span><span style="color:#ed9366;">= </span><span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">request_review</span><span style="color:#61676c;">()</span><span style="color:#61676ccc;">;
 </span></pre>
-<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
+<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 <code>Post</code> 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
 <h2 id="2023.2.16 追加" class="flex group">
 <span>2023.2.16 追加</span>
@@ -328,7 +335,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
             <footer class="relative">
                 <footer class="bg-black text-white text-center p-16">
     <div>
-        <a href="https://github.com/whx828">Copyright © 2023 whx</a>
+        <a href="https://github.com/whx828">Copyright © 2022-2023 whx</a>
     </div>
 </footer>
 

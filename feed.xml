@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>whx's Blog</title>
     <subtitle>Welcome to my blog!</subtitle>
-    <updated>2023-03-18T10:25:09.968880+08:00</updated>
+    <updated>2023-04-03T21:07:11.111031+08:00</updated>
     <id>http://whx828.github.io</id>
     <link href="http://whx828.github.io/feed.xml" rel="self" type="application/atom+xml" />
     <link href="http://whx828.github.io" rel="alternate" type="text/html" />
@@ -12,6 +12,353 @@
         <uri>http://whx828.github.io</uri>
     </author>
 
+    <entry>
+        <title>从 Happened-before 说起（2）</title>
+        <link rel="alternate" href="http://whx828.github.io/s3/4" type="text/html" title="从 Happened-before 说起（2）" />
+        <published>2023-04-03</published>
+        <updated>2023-04-03</updated>
+        <id>http://whx828.github.io/s3/4</id>
+        <content type="html" xml:base="http://whx828.github.io/s3/4">
+            <![CDATA[<p>书接上文，继续讨论那个让人疑惑的问题。<br />
+为了方便讨论，我把代码挪过来：</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">static</span><span style="color:#61676c;"> X</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#fa6e32;">static</span><span style="color:#61676c;"> Y</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">a</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">10</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 1
+</span><span style="color:#61676c;">    Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">20</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 2
+</span><span style="color:#61676c;">}
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">b</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> y </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 3
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> x </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 4
+</span><span style="color:#61676c;">    </span><span style="color:#f07171;">println!</span><span style="color:#61676c;">(</span><span style="color:#86b300;">&quot;</span><span style="color:#ff8f40;">{x} {y}</span><span style="color:#86b300;">&quot;</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.
+更有趣的是，输出也可以是 0 20，即使没有可能导致此结果的四个操作的全局一致顺序。当 3 执行时，与 2 没有 happens-before 关系，也就是说它可以加载 0 或 20。当 4 执行时，与 1 没有 happens-before 关系，这意味着它可以加载 0 或 10。鉴于此，输出 0 20 是一个有效的结果。</p>
+</blockquote>
+<p>想要彻底搞明白，还得从概念的细节下手：</p>
+<blockquote>
+<p>…the basic happens-before rule is that everything that happens within the same thread happens in order. In this case: 1 happens-before 2, and 3 happens-before 4. Since we use relaxed memory ordering, there are no other happens-before relationships in our example.<br />
+……基本的 happens-before 规则是同一线程内发生的所有事情都按顺序发生。在这种情况下：1 happens-before 2，3 happens-before 4。由于我们使用 <code>Relaxed</code> 内存排序，因此在我们的示例中没有其他 happens-before 关系。</p>
+</blockquote>
+<p>那到底什么是 happened-before？这里是维基百科给的定义：</p>
+<p>In <a href="https://www.wikiwand.com/en/Computer_science" title="Computer science">computer science</a>, the <strong>happened-before</strong> <a href="https://www.wikiwand.com/en/Binary_relation" title="Binary relation">relation</a> (denoted: →) is a relation between the result of two events, such that if one event should happen before another event, the result must reflect that, even if those events are in reality executed out of order (usually to optimize program flow). This involves <a href="https://www.wikiwand.com/en/Partially_ordered_set" title="Partially ordered set">ordering</a> events based on the potential <a href="https://www.wikiwand.com/en/Causal_relationships" title="Causal relationships">causal relationship</a> of pairs of events in a concurrent system, especially <a href="https://www.wikiwand.com/en/Asynchronous_communication" title="Asynchronous communication">asynchronous</a> <a href="https://www.wikiwand.com/en/Distributed_systems" title="Distributed systems">distributed systems</a>. It was formulated by <a href="https://www.wikiwand.com/en/Leslie_Lamport" title="Leslie Lamport">Leslie Lamport</a>.<a href="https://www.wikiwand.com/en/Happened-before#cite_note-1">[1]</a><br />
+在计算机科学中，happened-before 关系（表示为：→）是两个事件的结果之间的关系，这样如果一个事件应该在另一个事件之前发生，那么即使这些事件在现实中发生，结果也必须反映出来乱序执行（通常是为了优化程序流程）。这涉及根据并发系统中事件对的潜在因果关系对事件进行排序，尤其是异步分布式系统。它是由 Leslie Lamport 制定的。<a href="https://www.wikiwand.com/en/Happened-before#cite_note-1">[1]</a></p>
+<p>The happened-before relation is formally defined as the least <a href="https://www.wikiwand.com/en/Strict_partial_order" title="Strict partial order">strict partial order</a> on events such that:<br />
+happened-before 关系的正式定义为──事件最不严格的偏序，使得：</p>
+<ul>
+<li>If events a and b occur on the same process, a → b if the occurrence of event a preceded the occurrence of event b.<br />
+如果事件 a 和 b 在同一进程上，则 a → b。事件 a 的发生先于事件 b 的发生。</li>
+<li>If event a is the sending of a message and event b is the reception of the message sent in event a, a → b.<br />
+如果事件 a 是消息的发送者，事件 b 是 a 发送的消息的接收者，则 a → b。</li>
+</ul>
+<p>If two events happen in different isolated processes (that do not exchange messages directly or indirectly via third-party processes), then the two processes are said to be concurrent, that is neither a → b nor b → a is true.<a href="https://www.wikiwand.com/en/Happened-before#cite_note-2">[2]</a><br />
+如果两个事件发生在不同的隔离进程中（不直接或通过第三方进程间接交换消息），则称这两个进程是并发的，a → b 和 b → a 都不成立。<a href="https://www.wikiwand.com/en/Happened-before#cite_note-2">[2]</a></p>
+<p>If there are other causal relationships between events in a given system, such as between the creation of a process and its first event, these relationships are also added to the definition. For example, in some programming languages such as Java, C, C++ or Rust, a <strong>happens-before</strong> edge exists if memory written to by statement A is visible to statement B, that is, if statement A completes its write before statement B starts its read.<br />
+如果给定系统中的事件之间存在其他因果关系，例如进程的创建与此进程第一个事件之间的因果关系，这些关系也会添加到定义中。例如，在某些编程语言中，如 Java、C、C++ 或 Rust，如果语句 A 写入的内存对语句 B 可见，即如果语句 A 在语句 B 开始读取之前完成了写入，则存在 happens-before 关系。</p>
+<p>The processes that make up a distributed system have no knowledge of the happened-before relation unless they use a <a href="https://www.wikiwand.com/en/Logical_clock" title="Logical clock">logical clock</a>, like a <a href="https://www.wikiwand.com/en/Lamport_clock" title="Lamport clock">Lamport clock</a> or a <a href="https://www.wikiwand.com/en/Vector_clock" title="Vector clock">vector clock</a>. This allows one to design algorithms for <a href="https://www.wikiwand.com/en/Mutual_exclusion" title="Mutual exclusion">mutual exclusion</a>, and tasks like debugging or optimising distributed systems.<br />
+构成分布式系统的进程之间没有 happened-before 关系，除非它们使用逻辑时钟，如 Lamport 时钟或矢量时钟。这允许人们设计互斥算法，以及调试或优化分布式系统等任务。</p>
+<hr />
+<p>维基百科的定义更加明确：happened-before 表征的是一个事件应该在另一个事件之前发生。在这个例子中，我们只能肯定的是：操作 1 happened-before 操作 2，操作 3 happened-before 操作 4，其他什么都无法肯定，即使你看到了程序输出 <code>0 20</code> 也不意味着操作 4 在操作 1 之前发生或者操作 2 在操作 3 之前发生，换句话说，正是因为你使用的是 <code>Relaxed</code> 内存排序，Rust 也就放弃提供跨线程的操作顺序的保证了，而我觉得无法理解是因为我之前认为 <code>0 20</code> 根本就无法发生，但真的不会吗？来看看 GPT-4 的回答：</p>
+<blockquote>
+<p>在多线程环境中，使用 <code>Relaxed</code> 内存排序的原子操作不会产生跨线程的 happened-before 关系。这意味着，当线程执行操作 3 时，我们不能确定操作 2 是否已经发生。同样地，当线程执行操作 4 时，我们也不能确定操作 1 是否已经发生。</p>
+<p>以下是可能导致输出 0 20 的一种情况：</p>
+<ol>
+<li>线程 a 执行操作 1，将 X 设置为 10。</li>
+<li>线程 b 执行操作 3，加载 Y 的值。此时，线程 a 尚未执行操作 2，因此 Y 的值仍然是 0。所以，操作 3 加载的值是 0。</li>
+<li>线程 a 执行操作 2，将 Y 设置为 20。</li>
+<li>线程 b 执行操作 4，加载 X 的值。此时，线程 a 已经执行了操作 1，但由于没有跨线程的 happens-before 关系，线程 b 仍然可以看到 X 的旧值 0。因此，操作 4 加载的值是 0。</li>
+</ol>
+<p>这就是为什么输出可能是 0 20。在这种情况下，线程 b 观察到的操作顺序实际上是：操作 3、操作 4、操作 1、操作 2。这个例子说明了在使用 <code>Relaxed</code> 内存排序时，不同线程之间的操作顺序是不确定的，可能导致一些看似违反直觉的结果。</p>
+</blockquote>
+<p>我对这个答案不是很满意，它并未说服我，所以我接着追问：</p>
+<blockquote>
+<p>为什么没有跨线程的 happened-before 关系，线程 b 就可以看到 X 的旧值 0 呢？（这也的确是我最核心的疑问）</p>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>当没有跨线程的 happened-before 关系时，线程 b 可以看到 X 的旧值 0，是因为内存顺序、编译器优化和处理器行为可能导致数据在不同线程之间的可见性有延迟。在我们的例子中，由于使用了 <code>Relaxed</code> 内存排序，编译器和处理器对操作的优化和重排更加自由。这可能导致线程 a 对 X 的写入操作（操作 1）在线程 b 观察到之前存在一定的延迟。以下是一些可能导致这种现象的因素：</p>
+<ol>
+<li>编译器优化：编译器可能会对代码进行优化，以提高执行效率。在 <code>Relaxed</code> 内存排序下，编译器可以自由地重新排序操作，只要它们在单个线程中的顺序保持不变。这种优化可能导致线程 b 在观察到线程 a 对 X 的写入操作之前存在延迟。</li>
+<li>处理器缓存：现代处理器通常具有多级缓存，用于加速内存访问。当一个线程对内存位置进行写操作时，这个改动可能首先出现在处理器的缓存中，而不是立即写回到主存。在没有强制 happened-before 关系的情况下，其他线程可能在一段时间内仍然看到旧的值。</li>
+<li>处理器指令重排：为了提高执行效率，处理器可能会对指令进行重排。这意味着实际执行的指令顺序可能与代码中的顺序不同。在 <code>Relaxed</code> 内存排序下，指令重排可能导致线程 b 在观察到线程 a 对 X 的写入操作之前存在延迟。</li>
+</ol>
+<p>因此，在没有跨线程的 happened-before 关系的情况下，线程 b 可能看到 X 的旧值 0，是由于编译器优化、处理器缓存和处理器指令重排等因素导致的内存访问延迟。这些因素使得线程之间的操作顺序和数据可见性变得不确定。</p>
+</blockquote>
+</blockquote>
+<p>GPT-4 提供了几种可能会发生的场景，成功说服了我，因为真的有可能发生。同时我也对内存排序是如何做到的有了新的理解，这并不完全是 Rust 语言本身能决定的事情，你要考虑延迟、缓存、编译器，甚至还需要硬件、处理器的配合，那么这其中的自由度和复杂度就不是新手菜鸟所能想到的（太遗憾了鄙人就是菜鸟）。</p>
+<p>行文至此，再次感觉到编程的复杂，看起来简单的内存排序竟会在背后包含如此复杂的内容，不得不感叹计算机是一个整体，到了一定复杂度以后很难完全抽象出单一元素来完备地解答问题。如此发展下去，恐怕到最后也只有机器能解答机器了吧。</p>
+<p>另外 AI 的确不失为一种很棒的学习工具，GPT-4 并不是一次性就给出了上述回答，它前几次的回答有错误，考虑到避免误导，我就没有把错误的对话也放上来，有的时候答案其实并不重要，如果能正确地发问，其实有些时候问题也就解决了。<br />
+目前的 GPT 模型其实效果已经相当好了，但依然存在一本正经地胡说行为，因此如果想用它来学习，你最好有能分辨答案是否正确的能力，这又有些悖论了，我如果有这个能力，我还问什么呢？</p>
+<p>从维基百科中可以得知 happened-before 是由 Leslie Lamport 这位分布式大牛提出的，happened-before 是为了一个更大的问题所做的铺垫，这个问题就是分布式系统中的时间。分布式系统中相当多的概念和算法都需要依靠 happened-before 这个偏序关系，说它是构成分布式世界的基石一点也不为过，详细的展开则要去读《Time, Clocks, and the Ordering of Events in a Distributed System》这篇论文才能知道了。</p>
+<p>其实 happened-before 还有许多部分可以展开，不过鄙人才疏学浅，目前只掌握了这些，或许以后还会写点自己的心得体会吧，敬请期待。</p>
+]]>
+        </content>
+
+        <author>
+            <name>whx</name>
+        </author>
+    </entry>
+    <entry>
+        <title>从 Happened-before 说起（1）</title>
+        <link rel="alternate" href="http://whx828.github.io/s3/3" type="text/html" title="从 Happened-before 说起（1）" />
+        <published>2023-03-22</published>
+        <updated>2023-03-22</updated>
+        <id>http://whx828.github.io/s3/3</id>
+        <content type="html" xml:base="http://whx828.github.io/s3/3">
+            <![CDATA[<blockquote>
+<p>本文大部分是背景介绍，本来想一气呵成，但发现要讲的东西有点多，遂分成了两篇来写。</p>
+</blockquote>
+<p><a href="https://m-ou.se/">Mara Bos</a> 关于并发主题的新书 <a href="https://marabos.nl/atomics/">Rust Atomics and Locks</a> 最近可以免费在线阅读了，这位 Rust Library team 的 Leader 自不必多说，对 Rust 的理解（贡献）非是常人可比，而这次 Mara 博士这次的慷慨更是让手头常年拮据学生党（鄙人）直呼老铁 666！<del>耶，是官方的白嫖！</del></p>
+<p>玩笑差不多了，说正事。<br />
+尽管鄙人的英语是中国人水平，但为了学点 Rust，困难可以克服（感谢谷歌翻译+DeepL+ChatGPT），这本书不长，但想要读透，真正领会作者的思想，要花好多功夫。在一众翻译软件的帮助下，我简单阅读了这本书的前几章内容，其中第一个令我印象深刻的内容当属第 3 章中提到的也是我们今天的主题：Happened-before 关系。</p>
+<p>要讨论 Happened-before 关系，说来话长，让我们保持耐心，先从简单的计算机历史说起。<br />
+最初的计算机工作非常简单，只要把一些简单繁琐的计算任务搞定即可，在真空管和穿孔打卡的时代，程序员是把程序写到纸上，你没看错，是纸，然后在纸上穿孔，如此反复操作，直到穿成厚厚的一摞，再把这一摞交给计算机，计算机计算结果打印出来，然后程序员拿到打印结果。</p>
+<blockquote>
+<p>这就是最开始的 IO。</p>
+</blockquote>
+<p>用今天的眼光看那时的程序员也太不容易了，纸上编程确实有助于学习编码和思考代码逻辑，但如果真要把干活的程序写在纸上再去穿孔才能执行，这种繁琐、浪费是现在的程序员所无法想象的（谁愿意天天穿孔），你可能会问：如果我就运行自己的程序行不行，答案是不行！在当时计算机的资源是相当昂贵的，没有那么多机器让你一个人玩，就像买东西太贵选择拼单一样，你写程序也要和人拼计算机，所谓批处理就是这么一回事，名字起得挺高深，实际上背后一把辛酸泪。</p>
+<p>这样的 IO 用脚趾头想都能想到肯定会和 CPU 的速度存在巨大差异，CPU 的计算时间非常少而等待 IO 结束的时间却很多。所以为了 <del>让 CPU 更累</del> 更合理地利用 CPU 计算资源，我们就得想个办法，看能不能「偷」点时间出来。后来不知道哪位天使大哥/大姐想到了一个鬼点子：我们可以把内存划分为多个部分（日子宽裕了，内存也比以前大了，可以让更多程序用了），不同的程序可以使用各自的内存部分互不干涉，这些单独的程序就是所谓的进程。然后我们给 CPU 再加上一个超能力：跨进程切换执行。这样就有戏法可以玩了：当某个进程进行磁盘 IO 的时候，CPU 就可以切换到另外一个进程执行（闲着也是闲着，不如干点别的活），这样就 <del>让 CPU 更累</del> 偷出了本来可以摸鱼（等待 IO）的时间来干活（运行其他进程），我们的目的达到了！（能力越大，责任就越大嘛~）</p>
+<p>怎么给 CPU 加上跨进程切换执行的超能力呢？请看三板斧：</p>
+<ul>
+<li>CPU 时间片：现在我们有很多进程，所以对于每个进程如何执行，需要有个规定──每一次切换进程后，CPU 只会工作一段时间，然后又切换到另外一个进程，再执行一段时间。我们把 CPU 切换进程的这个时间段叫做“时间片”。</li>
+<li>程序计数器：CPU 经过一圈切换后还会切换回最开始的进程继续执行（对每个进程都是如此），所以它需要知道进程已经执行到了哪一步才好接着执行，程序计数器应运而生，它会记住进程执行到的位置。有了这个就可以继续执行了。</li>
+<li>栈指针：程序计数器解决了记忆程序（代码）执行到的位置，但是每个进程还持有操作系统分配给它的内存资源，这玩意对每个进程是独立的，因此也需要记录，所以我们用栈指针来记录操作系统给它的内存资源地址。</li>
+</ul>
+<p>这三板斧下去，CPU 再也不好摸鱼了，比起以前，那效率是高多了，但是人类对于极致的追求是无止境的，大家慢慢发现切换进程这个操作本身居然挺费时间，如果每个进程都有很多 IO，那么 CPU 的时间都被切换进程浪费掉了，然后还什么都没做，这不是又让 CPU 闲着了吗？不行，必须要解决！</p>
+<blockquote>
+<p>这只是一个缺点，相关的缺点还有很多，不一一列举了。</p>
+</blockquote>
+<p>进程切换成本这么高，一部分的原因是进程太「重」了，每切换一次上面的三板斧都得顾及到，那么让它变得小一点不就好了吗？这就是线程：我们让一个进程创建很多个线程，然后让线程来做以前进程的工作，现在 CPU 会在线程而不是进程之间来回切换，由于线程更小，时间片也分得更小，以至于多个线程之间切换执行成本也小了，同时 CPU 等待 IO 的几率也更加小了。一举多得。</p>
+<p>技术领域有一句名言：没有银弹。意思是不管什么问题，没有万能解决方案。多线程也不是没缺点，对程序员来说最直观的感受就是：多线程编程更难。为什么？因为在多线程编程的场景下，你会经常遇到「多个线程同时读取和修改同一个变量」的问题，而在 Rust 中，我们认为“这通常会导致未定义的行为（UB）”。</p>
+<p>为什么“多个线程同时读取和修改同一个变量”会是个问题？这不是效率更高了吗？请看下面的伪代码：</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#61676c;">data_race() {
+</span><span style="color:#61676c;">  global x = 0
+</span><span style="color:#61676c;">  
+</span><span style="color:#61676c;">  thread1 = thread {
+</span><span style="color:#61676c;">    for i in 0..100 {
+</span><span style="color:#61676c;">      x += 1;
+</span><span style="color:#61676c;">    }
+</span><span style="color:#61676c;">  };
+</span><span style="color:#61676c;">
+</span><span style="color:#61676c;">  thread2 = thread {
+</span><span style="color:#61676c;">    for i in 0..100 {
+</span><span style="color:#61676c;">      x += 1;
+</span><span style="color:#61676c;">    }
+</span><span style="color:#61676c;">  };
+</span><span style="color:#61676c;">
+</span><span style="color:#61676c;">  t1 = thread1.spawn();
+</span><span style="color:#61676c;">  t2 = thread2.spawn();
+</span><span style="color:#61676c;">
+</span><span style="color:#61676c;">  t1.join();
+</span><span style="color:#61676c;">  t2.join();
+</span><span style="color:#61676c;">
+</span><span style="color:#61676c;">  return x;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>之所以写伪代码是因为用 Rust 写的话想写个有问题的程序着实不容易。</p>
+</blockquote>
+<p>伪代码说明（虽然我希望这是不言自明的）：</p>
+<ul>
+<li><code>global x = 0</code> 表示 <code>x</code> 是个全局变量，每个线程都能看到并修改它的值</li>
+<li><code>thread1 =  thread { for i in 0..100 { x += 1; } };</code> 表示 <code>thread1</code> 对 <code>x</code> 进行 100 次加 1 操作，这是 <code>thread1</code> 的定义</li>
+<li><code>t1 = thread1.spawn();</code> 则是启动 <code>thread1</code>，<code>thread1</code> 自此开始执行</li>
+<li><code>thread1.join();</code> 表示当前线程（主线程）将一直等待 <code>thread1</code> 执行结束</li>
+<li><code>thread2</code> 上述一切同理</li>
+</ul>
+<p>请猜想下，这段程序执行到 <code>return x;</code> 时，<code>x</code> 的值会是多少？ </p>
+<p>答案是：只有天知道，理论上在 100-200 之间的任何整数值都有可能。</p>
+<p>你可能会问：<code>x</code> 不是 <code>200</code> 吗？<br />
+<code>x</code> 不一定会是 <code>200</code>，这就是多线程编程的吊诡之处，很反直觉。</p>
+<blockquote>
+<p>更反直觉的还在后面。</p>
+</blockquote>
+<p>试想下面的过程：<br />
+（1）CPU 时间片先分给 <code>thread1</code> 执行，假设代表 <code>x</code> 这个变量的寄存器在 <code>thread1</code> 中执行累加到了 50，此时恰巧时间片用完了，而存放在寄存器中的值 50 还没来及写入实际的物理内存。<br />
+（2）因为时间片用完了，CPU 现在分配给 <code>thread2</code>，由于 <code>thread1</code> 算出来的值并没有写回内存，所以实际上此时 <code>thread2</code> 还是从 <code>x = 0</code> 开始进行加 1 操作，这次我们假设分给它的时间片够进行 60 次加 1 操作，之后 <code>thread2</code> 将得到的 <code>x = 60</code> 写入实际的物理内存。<br />
+（3）时间片再度分配给 <code>thread1</code>，<code>thread1</code> 开始执行它在上一个时间片结束时没有执行完的工作，将 <code>x = 50</code> 写入实际的物理内存，计算机严格按照代码执行指令，但此时问题出现：<code>thread1</code> 计算并写入的 <code>x = 50</code> 会把 <code>thread2</code> 计算并写入的 <code>x = 60</code> 覆盖掉。而每次执行程序，上述情况的发生总不会完全一致，比如时间片的大小就不是能完全确定的，相当于每次都有微调，这就是多次执行相同的代码得到的结果却完全不一致的原因。</p>
+<blockquote>
+<p>其实真实的过程比这复杂得多，这里进行了简化以方便讨论概念。</p>
+</blockquote>
+<p>如何解决这样的问题？先来看问题出在哪里。我们可以发现上面程序过程中的关键点是：每个线程的 <strong>计算 <code>x</code> 的值</strong> 和 <strong>把算好的值存入物理内存</strong> 这两个操作之间是 <strong>不连续的</strong>，这样就给了其他线程进来搞破坏的可趁之机。<br />
+如果在单个线程中，计算值和把算好的值存入内存这两个操作连续进行是很自然的，自然到你根本不会意识到它们还可以不连续，这是你编程时的默认心智模型，如果这一条都不成立大家也就不用编码了。</p>
+<blockquote>
+<p>其实这里面还有指令重排的事，别以为你「看到」的就是「真相」。</p>
+</blockquote>
+<p>但是在多线程环境中，这就成为了问题，为了灵活和性能，多线程编程的自由度更高。如果多线程编程要强行规定线程间的执行顺序、线程内的指令执行顺序，那样还有意义吗？还不如继续优化多进程。</p>
+<p>好，我们现在遇到了一个“既要…还要…”的问题：我们既要留住多线程的灵活，又要让它在某些时候不那么灵活，有没有两全法呢？有，原子操作！</p>
+<p>原子操作是什么呢？我认为最通俗易懂的说法是：要么不做，要么全做。不过我的总结不够规范，咱们还是来看专业人士（Mara Bos 博士）是怎么表述这个概念的：</p>
+<blockquote>
+<p>The word atomic comes from the Greek word ἄτομος, meaning indivisible, something that cannot be cut into smaller pieces. In computer science, it is used to describe an operation that is indivisible: it is either fully completed, or it didn’t happen yet.<br />
+原子这个词来自希腊语 ἄτομος，意思是不可分割的，不能被切割成更小的部分。在计算机科学中，它被用来描述一个不可分割的操作：它要么完全完成，要么还没有发生。<br />
+However, atomic operations do allow for different threads to safely read and modify the same variable. Since such an operation is indivisible, it either happens completely before or completely after another operation, avoiding undefined behavior.<br />
+原子操作允许不同的线程安全地读取和修改同一个变量。由于原子操作是不可分割的，它要么完全发生在另一个操作之前，要么完全发生在另一个操作之后，这样就避免了 UB。</p>
+<p>Atomic operations are the main building block for anything involving multiple threads. All the other concurrency primitives, such as mutexes and condition variables, are implemented using atomic operations.<br />
+原子操作是涉及多线程的任何事物的主要构建块。所有其他并发原语，例如互斥量和条件变量，都是使用原子操作实现的。<br />
+In Rust, atomic operations are available as methods on the standard atomic types that live in <code>std::sync::atomic</code>. They all have names starting with <code>Atomic</code>, such as <code>AtomicI32</code> or <code>AtomicUsize</code>. Which ones are available depends on the hardware architecture and sometimes operating system, but almost all platforms provide at least all atomic types up to the size of a pointer.<br />
+在 Rust 中，原子操作可以作为存在于 <code>std::sync::atomic</code> 中的标准原子类型的方法。它们的名称都以 <code>Atomic</code> 开头，例如 <code>AtomicI32</code> 或 <code>AtomicUsize</code>。哪些可用取决于硬件架构，有时取决于操作系统，但几乎所有平台都至少提供所有原子类型，最大为指针大小。<br />
+Unlike most types, they allow modification through a shared reference (e.g., <code>&amp;AtomicU8</code>). This is possible thanks to interior mutability, as discussed in “Interior Mutability” in Chapter 1.<br />
+与大多数类型不同，它们允许通过共享引用进行修改（例如 <code>&amp;AtomicU8</code>）。这要归功于内部可变性，正如第 1 章“内部可变性”中所讨论的那样。</p>
+</blockquote>
+<p>我们可以看到“原子操作是不可分割的”，放在我们的例子中这也就意味着我们可以通过原子操作，让线程的 <strong>计算 <code>x</code> 的值</strong> 和 <strong>把算好的值存入物理内存</strong> 之间是 <strong>不可分割的</strong>，那么也就不会出现前文中所述的错误，<code>x</code> 就会是 <code>200</code>。 </p>
+<p>Rust 是一门标榜“安全”的语言，既然多线程编程中会有“不安全”的场景出现，那么 Rust 肯定要考虑如何解决，不过相比 The book 中其他主题的 Rust 安全特色（所有权、借用检查等），我读到 Rust Atomics and Locks 后面只觉得在多线程编程方面，Rust 还是很明显地抄了不少别人（C++）的东西，例如下面 Mara Bos 博士话锋一转，开始讨论起了另一个概念：</p>
+<blockquote>
+<p>But, before we can dive into the different atomic operations, we briefly need to touch upon a concept called memory ordering:<br />
+但是，在我们深入研究不同的原子操作之前，我们需要简单地谈谈一个叫做内存排序的概念：<br />
+Every atomic operation takes an argument of type <code>std::sync::atomic::Ordering</code>, which determines what guarantees we get about the relative ordering of operations. The simplest variant with the fewest guarantees is <code>Relaxed</code>. <code>Relaxed</code> still guarantees consistency on a single atomic variable, but does not promise anything about the relative order of operations between different variables.<br />
+每个原子操作都有一个类型为 <code>std::sync::atomic::Ordering</code> 的参数，它决定了我们对操作的相对顺序有什么「保证」。而「保证」最少的、最简单的变体是 <code>Relaxed</code>。<code>Relaxed</code> 仍然保证单个原子变量的一致性，但不保证不同变量之间的相对操作顺序。<br />
+What this means is that two threads might see operations on different variables happen in a different order. For example, if one thread writes to one variable first and then to a second variable very quickly afterwards, another thread might see that happen in the opposite order.<br />
+这意味着两个线程可能会看到对不同变量的操作以不同的顺序发生。例如，如果一个线程首先写入一个变量，然后很快写入第二个变量，则另一个线程可能会看到以相反顺序发生的情况。</p>
+</blockquote>
+<p>我之前说有更反直觉的东西，这不现在看到了？为什么第二个线程可能看到以相反顺序发生的情况？</p>
+<blockquote>
+<p>Processors and compilers perform all sorts of tricks to make your programs run as fast as possible. A processor might determine that two particular consecutive instructions in your program will not affect each other, and execute them out of order, if that is faster, for example. While one instruction is briefly blocked on fetching some data from main memory, several of the following instructions might be executed and finished before the first instruction finishes, as long as that wouldn’t change the behavior of your program. Similarly, a compiler might decide to reorder or rewrite parts of your program if it has reason to believe it might result in faster execution. But, again, only if that wouldn’t change the behavior of your program.<br />
+处理器和编译器执行各种技巧以使您的程序运行得尽可能快。处理器可能会确定您程序中的两个特定的连续指令不会相互影响，并乱序执行它们（例如，如果这样更快的话）。虽然一条指令在从主存中获取一些数据时被短暂阻塞，但在第一条指令完成之前，可能会执行并完成以下几条指令，只要这不会改变程序的行为。同样，如果编译器有理由相信它可能会导致更快的执行，它可能会决定重新排序或重写程序的某些部分。但是，同样，前提是这不会改变您的程序的行为。</p>
+<p>Let’s take a look at the following function as an example:<br />
+让我们以下面的函数为例：</p>
+</blockquote>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">fn </span><span style="color:#f29718;">f</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">a</span><span style="color:#61676ccc;">: </span><span style="color:#ed9366;">&amp;</span><span style="color:#fa6e32;">mut i32</span><span style="color:#61676c;">, </span><span style="color:#ff8f40;">b</span><span style="color:#61676ccc;">: </span><span style="color:#ed9366;">&amp;</span><span style="color:#fa6e32;">mut i32</span><span style="color:#61676c;">) {
+</span><span style="color:#61676c;">    </span><span style="color:#ed9366;">*</span><span style="color:#61676c;">a </span><span style="color:#ed9366;">+= </span><span style="color:#ff8f40;">1</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">    </span><span style="color:#ed9366;">*</span><span style="color:#61676c;">b </span><span style="color:#ed9366;">+= </span><span style="color:#ff8f40;">1</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">    </span><span style="color:#ed9366;">*</span><span style="color:#61676c;">a </span><span style="color:#ed9366;">+= </span><span style="color:#ff8f40;">1</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>Here, the compiler will most certainly understand that the order of these operations does not matter, since nothing happens between these three addition operations that depends on the value of <code>*a</code> or <code>*b</code>. (Assuming overflow checking is disabled.) Because of that, it might reorder the second and third operations, and then merge the first two into a single addition:<br />
+在这里，编译器肯定会理解这些操作的顺序无关紧要，因为这三个取决于 <code>*a</code> 或 <code>*b</code> 的值的加法操作之间没有任何关联。（假设溢出检查被禁用）因此，它可能会重新排序第二个和第三个操作，然后将前两个合并为一个加法：</p>
+</blockquote>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">fn </span><span style="color:#f29718;">f</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">a</span><span style="color:#61676ccc;">: </span><span style="color:#ed9366;">&amp;</span><span style="color:#fa6e32;">mut i32</span><span style="color:#61676c;">, </span><span style="color:#ff8f40;">b</span><span style="color:#61676ccc;">: </span><span style="color:#ed9366;">&amp;</span><span style="color:#fa6e32;">mut i32</span><span style="color:#61676c;">) {
+</span><span style="color:#61676c;">    </span><span style="color:#ed9366;">*</span><span style="color:#61676c;">a </span><span style="color:#ed9366;">+= </span><span style="color:#ff8f40;">2</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">    </span><span style="color:#ed9366;">*</span><span style="color:#61676c;">b </span><span style="color:#ed9366;">+= </span><span style="color:#ff8f40;">1</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>Later, while executing this function of the optimized compiled program, a processor might for a variety of reasons end up executing the second addition before the first addition, possibly because <code>*b</code> was available in a cache, while <code>*a</code> had to be fetched from the main memory.<br />
+稍后，在执行优化编译程序的这个函数时，处理器可能由于各种原因在第一次加法之前结束执行第二次加法，这可能是因为 <code>*b</code> 在缓存中可用，而 <code>*a</code> 必须从主存提取。<br />
+Regardless of these optimizations, the result stays the same: <code>*a</code> is incremented by two and <code>*b</code> is incremented by one. The order in which they were incremented is entirely invisible to the rest of your program.<br />
+不管这些优化如何，结果都保持不变：<code>*a</code> 增加 2，<code>*b</code> 增加 1。它们递增的顺序对于程序的其余部分是完全不可见的。</p>
+<p>The logic for verifying that a specific reordering or other optimization won’t affect the behavior of your program does not take other threads into account. In our example above, that’s perfectly fine, as the unique references (&amp;mut i32) guarantee that nothing else can possibly access the values, making other threads irrelevant. The only situation where this is a problem is when mutating data that’s shared between threads. Or, in other words, when working with atomics. This is why we have to explicitly tell the compiler and processor what they can and can’t do with our atomic operations, since their usual logic ignores interactions between threads and might allow for optimizations that do change the result of your program.<br />
+验证特定重新排序或其他优化不会影响程序行为的逻辑不会考虑其他线程。在我们上面的示例中，这完全没问题，因为独占引用 (<code>&amp;mut i32</code>) 保证没有其他任何东西可以访问这些值，从而使其他线程无关紧要。唯一会出现问题的情况是在改变线程之间共享的数据时。或者，换句话说，在使用原子时。这就是为什么我们必须明确地告诉编译器和处理器它们可以用我们的原子操作做什么和不能做什么，因为它们通常的逻辑会忽略线程之间的交互，并且可能允许进行确实会改变程序结果的优化。<br />
+The interesting question is how we tell them. If we wanted to precisely spell out exactly what is and isn’t acceptable, concurrent programming might become exceedingly verbose and error prone, and maybe even architecture-specific:<br />
+有趣的问题是我们如何告诉他们。如果我们想准确地说明什么是可接受的，什么是不可接受的，并发编程可能会变得非常冗长和容易出错，甚至可能是特定于体系结构的：</p>
+</blockquote>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">let</span><span style="color:#61676c;"> x </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> a</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">fetch_add</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">1</span><span style="color:#61676ccc;">,
+</span><span style="color:#61676c;">    Dear compiler and processor</span><span style="color:#61676ccc;">,
+</span><span style="color:#61676c;">    Feel free to reorder this with operations on b</span><span style="color:#61676ccc;">,
+</span><span style="color:#61676c;">    but </span><span style="color:#fa6e32;">if</span><span style="color:#61676c;"> there</span><span style="color:#fa6e32;">&#39;s</span><span style="color:#61676c;"> another thread concurrently executing f</span><span style="color:#61676ccc;">,
+</span><span style="color:#61676c;">    please don</span><span style="color:#fa6e32;">&#39;t</span><span style="color:#61676c;"> reorder this with operations on c</span><span style="color:#ed9366;">!
+</span><span style="color:#61676c;">    Also</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> processor</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> don</span><span style="color:#fa6e32;">&#39;t</span><span style="color:#61676c;"> forget to flush your store buffer</span><span style="color:#ed9366;">!
+</span><span style="color:#61676c;">    If b is zero</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> though</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> it doesn</span><span style="color:#fa6e32;">&#39;t</span><span style="color:#61676c;"> matter</span><span style="color:#ed9366;">.
+</span><span style="color:#61676c;">    In that case</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> feel free to </span><span style="color:#f51818;">do</span><span style="color:#61676c;"> whatever is fastest</span><span style="color:#ed9366;">.
+</span><span style="color:#61676c;">    Thanks</span><span style="color:#ed9366;">~ &lt;</span><span style="color:#ff8f40;">3
+</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span></pre>
+<blockquote>
+<p>Instead, we can only pick from a small set of options, represented by the <code>std::sync::atomic::Ordering</code> enum, which every atomic operation takes as an argument. The set of available options is very limited, but has been carefully picked to fit most use cases well. The orderings are very abstract and do not directly reflect the actual compiler and processor mechanisms involved, such as instruction reordering. This makes it possible for your concurrent code to be architecture-independent and future-proof. It allows for verification without knowing the details of every single current and future processor and compiler version.<br />
+相反，我们只能从一小组选项中选择，由 <code>std::sync::atomic::Ordering</code> 枚举表示，每个原子操作都将其作为参数。可用选项集非常有限，但经过精心挑选以适合大多数用例。排序非常抽象，并不直接反映所涉及的实际编译器和处理器机制，例如指令重新排序。这使您的并发代码可以独立于体系结构且面向未来。它允许在不知道每个当前和未来处理器和编译器版本的详细信息的情况下进行验证。</p>
+<p>The available orderings in Rust are:<br />
+Rust 中可用的排序是：</p>
+<ul>
+<li>Relaxed ordering: Ordering::Relaxed</li>
+<li>Release and acquire ordering: Ordering::{Release, Acquire, AcqRel}</li>
+<li>Sequentially consistent ordering: Ordering::SeqCst</li>
+</ul>
+<p>In C++, there is also something called consume ordering, which has been purposely omitted from Rust, but is nonetheless interesting to discuss as well.<br />
+在 C++ 中，还有一种叫做 consume ordering 的东西，它在 Rust 中被故意省略了，但讨论起来也很有趣。</p>
+</blockquote>
+<p>在这一大段里我们来捞点干的，大意是编译器会优化代码，导致指令执行顺序和代码表示的顺序不一定一致，而这一点在多线程环境下被放大了。不管是否有指令重排，第一个线程实际上并不关心，因为不会影响它的执行结果，而假如发生了指令重排，使第一个线程真实的执行顺序变得和原来相反，那么第二个线程就看到了相反顺序的发生情况，如果第二个线程的操作对第一个线程的操作顺序有所依赖，这就会出现问题。所以在某些特殊场合，我们需要有能力对代码/指令的执行顺序有所限制，如果你不想做上面 Mara 博士举例的“面向协议编程”，内存排序则是你的救星。</p>
+<blockquote>
+<p>The different memory ordering options have a strict formal definition to make sure we know exactly what we’re allowed to assume, and for compiler writers to know exactly what guarantees they need to provide to us. To decouple this from the details of specific processor architectures, memory ordering is defined in terms of an abstract <em>memory model</em>.<br />
+不同的内存排序选项有一个严格的正式定义，以确保我们确切地知道我们被允许假设什么，并让编译器编写者确切地知道他们需要为我们提供什么保证。为了将其与特定处理器架构的细节分离，内存排序是根据抽象内存模型定义的。</p>
+</blockquote>
+<blockquote>
+<p>Rust’s memory model, which is mostly copied from C++, doesn’t match any existing processor architecture, but instead is an abstract model with a strict set of rules that attempt to represent the greatest common denominator of all current and future architectures, while also giving the compiler enough freedom to make useful assumptions while analyzing and optimizing programs.<br />
+Rust 的内存模型，主要是从 C++ 复制而来，不匹配任何现有的处理器架构，而是一个具有一组严格规则的抽象模型，试图代表所有当前和未来架构的最大公分母，同时也给出编译器有足够的自由在分析和优化程序时做出有用的假设。</p>
+</blockquote>
+<blockquote>
+<p>We’ve already seen a part of the memory model in action in <a href="https://marabos.nl/atomics/basics.html#borrowing-and-races">“Borrowing and Data Races” in Chapter 1</a>, where we talked about how data races result in undefined behavior. Rust’s memory model allows for concurrent atomic stores, but considers concurrent non-atomic stores to the same variable to be a data race, resulting in undefined behavior.<br />
+我们已经在第 1 章的“借用和数据竞争”中看到了内存模型的一部分，我们在其中讨论了数据竞争如何导致未定义的行为。Rust 的内存模型允许并发<strong>原子存储</strong>，但将对同一变量的并发<strong>非原子存储</strong>视为数据竞争──导致未定义的行为。</p>
+</blockquote>
+<p>计算机的难题 99% 是靠分层解决的，Rust 的内存模型也不例外，这里借鉴了 C++，或者说是编译器前后端/虚拟机的经验，不对某一具体处理器架构而是在这中间又加了一个抽象层，这样就能最大程度地保证灵活，除了多了一层翻译会有一点性能上的权衡以外没啥缺点。</p>
+<p>激动，终于要谈到今天的主题──Happened-before 关系了，接着读：</p>
+<blockquote>
+<p>The memory model defines the order in which operations happen in terms of <em>happens-before relationships</em>. This means that as an abstract model, it doesn’t talk about machine instructions, caches, buffers, timing, instruction reordering, compiler optimizations, and so on, but instead only defines situations where one thing is guaranteed to happen before another thing, and leaves the order of everything else undefined.<br />
+内存模型定义了操作发生的顺序，即 happens-before 关系。这意味着，作为一个抽象的模型，它不谈论机器指令、缓存、缓冲区、时间、指令重排、编译器优化等等，只定义了一件事在另一件事之前发生的情况，而对其他事情的顺序没有定义。</p>
+</blockquote>
+<blockquote>
+<p>The basic happens-before rule is that everything that happens within the same thread happens in order. If a thread is executing <code>f(); g();</code>, then <code>f()</code> <em>happens-before</em> <code>g()</code>.<br />
+基本的 happens-before 规则是同一线程内发生的所有事情都按顺序发生。如果线程正在执行 <code>f(); g();</code>，那么 <code>f()</code> happens-before <code>g()</code>。</p>
+</blockquote>
+<p>这里我补充一些内容：</p>
+<ol start="0">
+<li>Mara 博士原文是 happens-before，这是编程语言的用法，但我更想讨论的是 happened-before 事件间的关系，故引述原文的地方我不做改动，但在我自己叙述的时候使用后者</li>
+<li>当 A 操作 <strong>happened-before</strong> B 操作的时候，操作 A 先于操作 B 执行，且 A 操作的结果对 B 来说可见。每个线程都可以执行不同的任务，但是当它们之间进行一些交互时，例如读写共享内存或发送和接收消息时，必须遵守一些规则。这些规则确保了在一个线程中发生的操作在另一个线程中变得可见之前已经完成。也就是说，在一个线程中发生的操作 happened-before 了在另一个线程中看到该操作</li>
+<li><strong>happened-before</strong> 包含两种情况：</li>
+</ol>
+<ul>
+<li>对于同一线程内的 happened-before，其等同于 sequenced-before（A <em>sequenced-before</em> B → 代表 A 的求值会先完成，之后才进行对 B 的求值）</li>
+<li>对于不同线程内的 happened-before，其等同于 inter-thread happened before（A <em>inter-thread happened before</em> B → 如果操作 A happened-before 操作 B，则可以保证线程 1 中的操作 A 的执行对线程 2 中的操作 B 的执行是可见的，也就是说，操作 A 执行后对共享状态所做的修改对线程 2 可见）</li>
+</ul>
+<blockquote>
+<p>Between threads, however, happens-before relationships only occur in a few specific cases, such as when spawning and joining a thread, unlocking and locking a mutex, and through atomic operations that use non-relaxed memory ordering. <code>Relaxed</code> memory ordering is the most basic (and most performant) memory ordering that, by itself, never results in any cross-thread happens-before relationships.<br />
+然而，在线程之间，happens-before 关系只发生在少数特定情况下，例如 spawn 线程和 join 线程、解锁和锁定互斥锁以及使用非 <code>Relaxed</code> 内存排序的原子操作。<code>Relaxed</code> 内存排序是最基本（也是最高效）的内存排序，它本身不会导致任何跨线程的 happens-before 关系。</p>
+<p>To explore what that means, let’s take a look at the following example where we assume <code>a</code> and <code>b</code> are concurrently executed by different threads:<br />
+为了探究这意味着什么，让我们看一下下面的示例，其中我们假设 <code>a</code> 和 <code>b</code> 由不同的线程同时执行：</p>
+</blockquote>
+<pre style="background-color:#fafafa;">
+<span style="color:#fa6e32;">static</span><span style="color:#61676c;"> X</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#fa6e32;">static</span><span style="color:#61676c;"> Y</span><span style="color:#61676ccc;">:</span><span style="color:#61676c;"> AtomicI32 </span><span style="color:#ed9366;">= </span><span style="color:#61676c;">AtomicI32</span><span style="color:#ed9366;">::</span><span style="color:#61676c;">new(</span><span style="color:#ff8f40;">0</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">a</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">10</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 1
+</span><span style="color:#61676c;">    Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">store</span><span style="color:#61676c;">(</span><span style="color:#ff8f40;">20</span><span style="color:#61676ccc;">,</span><span style="color:#61676c;"> Relaxed)</span><span style="color:#61676ccc;">;    </span><span style="font-style:italic;color:#abb0b6;">// 2
+</span><span style="color:#61676c;">}
+</span><span style="color:#61676c;">
+</span><span style="color:#fa6e32;">fn </span><span style="color:#f29718;">b</span><span style="color:#61676c;">() {
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> y </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> Y</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 3
+</span><span style="color:#61676c;">    </span><span style="color:#fa6e32;">let</span><span style="color:#61676c;"> x </span><span style="color:#ed9366;">=</span><span style="color:#61676c;"> X</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">load</span><span style="color:#61676c;">(Relaxed)</span><span style="color:#61676ccc;">; </span><span style="font-style:italic;color:#abb0b6;">// 4
+</span><span style="color:#61676c;">    </span><span style="color:#f07171;">println!</span><span style="color:#61676c;">(</span><span style="color:#86b300;">&quot;</span><span style="color:#ff8f40;">{x} {y}</span><span style="color:#86b300;">&quot;</span><span style="color:#61676c;">)</span><span style="color:#61676ccc;">;
+</span><span style="color:#61676c;">}
+</span></pre>
+<blockquote>
+<p>As mentioned above, the basic happens-before rule is that everything that happens within the same thread happens in order. In this case: 1 happens-before 2, and 3 happens-before 4, as shown in <a href="https://marabos.nl/atomics/memory-ordering.html#happens-before-diagram-load-store">Figure 3-1</a>. Since we use relaxed memory ordering, there are no other happens-before relationships in our example.<br />
+如上所述，基本的 happens-before 规则是同一线程内发生的所有事情都按顺序发生。在这种情况下：1 happens-before 2，3 happens-before 4，如图 3-1 所示。由于我们使用 <code>Relaxed</code> 内存排序，因此在我们的示例中没有其他 happens-before 关系。</p>
+</blockquote>
+<p><img src="https://marabos.nl/atomics/images/raal_0301.png" alt="" loading="lazy"></p>
+<p>Figure 3-1. The happens-before relationships between atomic operations in the example code.<br />
+图 3-1 示例代码中原子操作之间的 happens-before 关系。</p>
+<blockquote>
+<p>If either of <code>a</code> or <code>b</code> completes before the other starts, the output will be <code>0 0</code> or <code>10 20</code>. If <code>a</code> and <code>b</code> run concurrently, it’s easy to see how the output can be <code>10 0</code>. One way this can happen is if the operations run in this order: 3 1 2 4.<br />
+如果 <code>a</code> 或 <code>b</code> 中的任何一个在另一个开始之前完成，则输出将为 <code>0 0</code> 或 <code>10 20</code>。如果 <code>a</code> 和 <code>b</code> 同时运行，很容易看出输出是 <code>10 0</code>。发生这种情况的一种方式是操作按以下顺序运行：3 1 2 4。</p>
+</blockquote>
+<blockquote>
+<p>More interestingly, the output can also be <code>0 20</code>, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output <code>0 20</code> is a valid outcome.<br />
+更有趣的是，输出也可以是 <code>0 20</code>，<strong>即使没有可能导致此结果的四个操作的全局一致顺序</strong>。当 3 执行时，与 2 没有 happens-before 关系，也就是说它可以加载 0 或 20。当 4 执行时，与 1 没有 happens-before 关系，这意味着它可以加载 0 或 10。鉴于此，输出 <code>0 20</code> 是一个有效的结果。</p>
+</blockquote>
+<blockquote>
+<p>The important and counter-intuitive thing to understand is that operation 3 loading the value 20 does <em>not</em> result in a happens-before relationship with 2, even though that value is the one stored by 2. Our intuitive understanding of the concept of “before” breaks down when things don’t necessarily happen in a globally consistent order, such as when instruction reordering is involved.<br />
+需要理解的重要且违反直觉的事情是，操作 3 加载值 20 不会导致与操作 2 为 happens-before 关系，即使该值是由操作 2 存储的。当事情不一定以全局一致顺序发生时，我们对“before”概念的直觉理解就会崩溃，例如当涉及<strong>指令重排</strong>时。
+A more practical and intuitive, but less formal, understanding is that from the perspective of the thread executing <code>b</code>, operations 1 and 2 might appear to happen in the opposite order.<br />
+一种更实用、更直观但不太正式的理解是，从执行 <code>b</code> 的线程的角度来看，操作 1 和 2 的发生顺序可能相反。</p>
+</blockquote>
+<p>迷糊了吧，我也迷糊了，我始终无法理解 <code>0 20</code> 是怎么成为一个有效结果的。首先输出 <code>0</code>，这意味着操作 4 在操作 1 之前发生；输出 <code>20</code> 则意味着操作 2 在操作 3 之前发生，而最关键的“基本的 happened-before 规则是同一线程内发生的所有事情都按顺序发生”，那么也就是说操作 3 在操作 4 之前发生，操作 1 在操作 2 之前发生，我是没有想得到是什么样的全局顺序能够满足这些要求，无论怎么想都有矛盾，Mara 博士也说这个例子中并没有能导致该结果的四个操作的全局一致顺序，所以如果还在这个方向思考，肯定是难以得到简单直观解释的。</p>
+<p>让我卖个关子（其实已有伏笔），欲知后事如何，且听下回分解。</p>
+]]>
+        </content>
+
+        <author>
+            <name>whx</name>
+        </author>
+    </entry>
     <entry>
         <title>AI 来了</title>
         <link rel="alternate" href="http://whx828.github.io/s3/2" type="text/html" title="AI 来了" />
@@ -25,7 +372,8 @@
 <p>需要这么几步操作：</p>
 <ol>
 <li>
-<p>首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;dn=LLaMA</p>
+<p>首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：<br />
+<code>magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;dn=LLaMA</code></p>
 </li>
 <li>
 <p>简单瞅瞅，这些模型太大，我只是想玩一下，所以选择了最小的 7B</p>
@@ -461,12 +809,8 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 数据结构：动态数组，哈希表，二叉树</li>
 <li>CSAPP, CMU: Intro to Computer Systems<br />
 数据在计算机中存储，汇编，程序优化，内存分级，控制流</li>
-<li>CMU 15-445/645 Intro to Database Systems<br />
-数据库数据存储，缓存， query 执行，事务等等</li>
 <li>MIT 6.S081 OS<br />
 系统调用，Page Table，Exception，多线程，进程等</li>
-<li>Stanford CS144 Computer Networking<br />
-从零到一实现 TCP 协议</li>
 <li>MIT 6.824 分布式系统<br />
 实现 RAFT 协议，使用 RAFT 协议搭建 KV Server，实现动态切片</li>
 </ol>
@@ -486,7 +830,7 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
     </div>
 </a>
 </h4>
-<p>走马观花地看了 1，发现没什么意思，2 的东西挺好，把边角料讲好也是本事；还有大致过了一遍 6 的视频字幕，对 OS 有了点概念，除此之外没看什么课程。</p>
+<p>走马观花地看了 1，发现没什么意思，2 的东西挺好，把边角料讲好也是本事；还有大致过了一遍 5 的视频字幕，对 OS 有了点概念，除此之外没看什么课程。</p>
 <h3 id="原则" class="flex group">
 <span>原则</span>
 <a href="#原则"
@@ -586,8 +930,6 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 <ul>
 <li><a href="https://cs61a.org">CS 61A: Structure and Interpretation of Computer Programs</a></li>
 <li><a href="https://sp18.datastructur.es/">CS 61B: Data Structures</a></li>
-<li><a href="https://web.stanford.edu/class/cs142/index.html">CS 142: Web Applications</a></li>
-<li><a href="https://cs144.github.io">CS 144: Introduction to Computer Networking</a></li>
 <li><a href="http://web.mit.edu/6.031/www/sp21/">6.031: Software Construction</a></li>
 </ul>
 <h4 id="执行情况" class="flex group">
@@ -710,13 +1052,13 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 <p>计划别搞太满，因为是没办法全部执行的。所以 2023 年我就不做什么计划了，把 2022 年没能搞定的任务接着往下完成。
 接下来就随心所欲吧，因为不知道意外什么时候到来，人生要及时行乐。2022 年我失去了很多，但并未得到什么，我发现逼自己也没什么用，再怎么调低自己的期望也无法掩盖世道越来越艰难的事实。躺平不是自嘲，而是无奈的选择。<br />
 写这篇总结之前我看了点别人的 2022 总结，怎么说呢，现在还在互联网上能表达自己生活的人，别管他们把自己的日子说得多么艰难，实际上还是对操蛋的生活有一定还手之力的家伙；而真正「弯路里没路的人」是「死得悄无声息」的，他倒下，然后死去，一点浪花都不会有，就像我的牢骚一样。<br />
-这一年，好像大家心里累得连愤怒的力气都没有了，我尤其是这样，以前我心里还有点血气，现在我很少有。「天道残缺匹夫补，只为苍生不为主。」匹夫何在？苍生何在？</p>
+这一年，好像大家心里累得连愤怒的力气都没有了，我是这样的，以前我心里还有点血气，现在我很少提得起兴致。「天道残缺匹夫补，只为苍生不为主。」匹夫何在？苍生何在？</p>
 <blockquote>
-<p>主又何在？在「幽暗的最高频道」吧。</p>
+<p>主又何在？</p>
 </blockquote>
 <p>我感到我离人很远。什么是爱具体的人？当我离开网络离人越近，当这个人越具体，我反而会越反感，越难以接受，我离「爱」这个动词越来越远，我好像并不知道「爱」是什么。<br />
-我的耐心也在减少，我懒得再去装作礼貌，我讨厌他们，同时也不放过自己。我好累。</p>
-<p>过去的一年岂是一篇小文就能总结？就这样吧。人生如果真的是缓慢受锤的过程的话，我希望 2023 锤得慢一点，我禁不起折腾了。</p>
+我的耐心也在减少，我懒得再去装作礼貌，我讨厌他们，同时也不放过自己。</p>
+<p>过去的一年岂是一篇小文就能总结？大概就这样吧。人生如果真的是缓慢受锤的过程的话，我希望 2023 锤得慢一点。</p>
 ]]>
         </content>
 
@@ -751,7 +1093,7 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 <blockquote>
 <p>……</p>
 <p>请求审核博文来改变其状态</p>
-<p>接下来需要增加请求审核博文的功能，这应当将其状态由 Draft 改为 PendingReview。示例 17-15 展示了这段代码：</p>
+<p>接下来需要增加请求审核博文的功能，这应当将其状态由 <code>Draft</code> 改为 <code>PendingReview</code>。示例 17-15 展示了这段代码：</p>
 </blockquote>
 <pre style="background-color:#fafafa;">
 <span style="color:#fa6e32;">pub struct </span><span style="color:#399ee6;">Post </span><span style="color:#61676c;">{
@@ -806,7 +1148,7 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 </span></pre>
 <blockquote>
 <p>……</p>
-<p><strong>我们需要将 state 临时设置为 None 来获取 state 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 Post 被转换为新状态后不能再使用老 state 值。</strong></p>
+<p><strong>我们需要将 <code>state</code> 临时设置为 <code>None</code> 来获取 <code>state</code> 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 <code>Post</code> 被转换为新状态后不能再使用老 <code>state</code> 值。</strong></p>
 <p>……</p>
 </blockquote>
 <p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
@@ -832,11 +1174,11 @@ Coursera Programming Languages(ML, Racket, Ruby)</li>
 如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br />
 这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br />
 但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。</p>
-<p>在 <code>std::cell</code> 模块中的 Cell 和 RefCell 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 Box 虽然一直都被拿来和前两个一起讨论，但 Box 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
-Box 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
-Cell <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
+<p>在 <code>std::cell</code> 模块中的 <code>Cell</code> 和 <code>RefCell</code> 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 <code>Box</code> 虽然一直都被拿来和前两个一起讨论，但 <code>Box</code> 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
+<code>Box</code> 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
+<code>Cell</code> <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
 <p>其次来看所有权规则。<br />
-<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 Box 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
+<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 <code>Box</code> 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
 <p>性质已经搞清，接下来我们来看具体问题。</p>
 <h2 id="为什么直接赋值不行" class="flex group">
 <span>为什么直接赋值不行</span>
@@ -886,7 +1228,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <pre style="background-color:#fafafa;">
 <span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state </span><span style="color:#ed9366;">= </span><span style="font-style:italic;color:#55b4d4;">self</span><span style="color:#ed9366;">.</span><span style="color:#61676c;">state</span><span style="color:#ed9366;">.</span><span style="color:#f07171;">request_review</span><span style="color:#61676c;">()</span><span style="color:#61676ccc;">;
 </span></pre>
-<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 Post 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
+<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 <code>Post</code> 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
 <h2 id="2023.2.16 追加" class="flex group">
 <span>2023.2.16 追加</span>
