@@ -142,7 +142,7 @@
 </span><span style="color:#61676c;">}
 </span></pre>
 <blockquote>
-<p>之所以写伪代码是因为用 Rust 写的话想写个有问题的程序着实不容易。</p>
+<p>之所以写伪代码是因为用 Rust 想写个有问题的程序着实不容易。</p>
 </blockquote>
 <p>伪代码说明（虽然我希望这是不言自明的）：</p>
 <ul>
@@ -326,7 +326,7 @@ Rust 的内存模型，主要是从 C++ 复制而来，不匹配任何现有的�
 </blockquote>
 <blockquote>
 <p>The important and counter-intuitive thing to understand is that operation 3 loading the value 20 does <em>not</em> result in a happens-before relationship with 2, even though that value is the one stored by 2. Our intuitive understanding of the concept of “before” breaks down when things don’t necessarily happen in a globally consistent order, such as when instruction reordering is involved.<br />
-需要理解的重要且违反直觉的事情是，操作 3 加载值 20 不会导致与操作 2 为 happens-before 关系，即使该值是由操作 2 存储的。当事情不一定以全局一致顺序发生时，我们对“before”概念的直觉理解就会崩溃，例如当涉及<strong>指令重排</strong>时。
+需要理解的重要且违反直觉的事情是，操作 3 加载值 20 不会导致与操作 2 为 happens-before 关系，即使该值是由操作 2 存储的。当事情不一定以全局一致顺序发生时，我们对“before”概念的直觉理解就会崩溃，例如当涉及<strong>指令重排</strong>时。<br />
 A more practical and intuitive, but less formal, understanding is that from the perspective of the thread executing <code>b</code>, operations 1 and 2 might appear to happen in the opposite order.<br />
 一种更实用、更直观但不太正式的理解是，从执行 <code>b</code> 的线程的角度来看，操作 1 和 2 的发生顺序可能相反。</p>
 </blockquote>

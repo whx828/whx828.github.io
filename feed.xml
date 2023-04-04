@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>whx's Blog</title>
     <subtitle>Welcome to my blog!</subtitle>
-    <updated>2023-04-03T21:07:11.111031+08:00</updated>
+    <updated>2023-04-04T18:33:34.386432+08:00</updated>
     <id>http://whx828.github.io</id>
     <link href="http://whx828.github.io/feed.xml" rel="self" type="application/atom+xml" />
     <link href="http://whx828.github.io" rel="alternate" type="text/html" />
@@ -37,7 +37,7 @@
 </span><span style="color:#61676c;">}
 </span></pre>
 <blockquote>
-<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.
+<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.<br />
 更有趣的是，输出也可以是 0 20，即使没有可能导致此结果的四个操作的全局一致顺序。当 3 执行时，与 2 没有 happens-before 关系，也就是说它可以加载 0 或 20。当 4 执行时，与 1 没有 happens-before 关系，这意味着它可以加载 0 或 10。鉴于此，输出 0 20 是一个有效的结果。</p>
 </blockquote>
 <p>想要彻底搞明白，还得从概念的细节下手：</p>
@@ -162,7 +162,7 @@ happened-before 关系的正式定义为──事件最不严格的偏序，使�
 </span><span style="color:#61676c;">}
 </span></pre>
 <blockquote>
-<p>之所以写伪代码是因为用 Rust 写的话想写个有问题的程序着实不容易。</p>
+<p>之所以写伪代码是因为用 Rust 想写个有问题的程序着实不容易。</p>
 </blockquote>
 <p>伪代码说明（虽然我希望这是不言自明的）：</p>
 <ul>
@@ -346,7 +346,7 @@ Rust 的内存模型，主要是从 C++ 复制而来，不匹配任何现有的�
 </blockquote>
 <blockquote>
 <p>The important and counter-intuitive thing to understand is that operation 3 loading the value 20 does <em>not</em> result in a happens-before relationship with 2, even though that value is the one stored by 2. Our intuitive understanding of the concept of “before” breaks down when things don’t necessarily happen in a globally consistent order, such as when instruction reordering is involved.<br />
-需要理解的重要且违反直觉的事情是，操作 3 加载值 20 不会导致与操作 2 为 happens-before 关系，即使该值是由操作 2 存储的。当事情不一定以全局一致顺序发生时，我们对“before”概念的直觉理解就会崩溃，例如当涉及<strong>指令重排</strong>时。
+需要理解的重要且违反直觉的事情是，操作 3 加载值 20 不会导致与操作 2 为 happens-before 关系，即使该值是由操作 2 存储的。当事情不一定以全局一致顺序发生时，我们对“before”概念的直觉理解就会崩溃，例如当涉及<strong>指令重排</strong>时。<br />
 A more practical and intuitive, but less formal, understanding is that from the perspective of the thread executing <code>b</code>, operations 1 and 2 might appear to happen in the opposite order.<br />
 一种更实用、更直观但不太正式的理解是，从执行 <code>b</code> 的线程的角度来看，操作 1 和 2 的发生顺序可能相反。</p>
 </blockquote>
@@ -1275,7 +1275,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <ul>
 <li>从借用规则角度看，可变引用是「独占引用」，也即在存在可变引用的时候是不能其他引用的，如果把值看成一种「可变引用」，那么很明显发生了冲突，之前的可变引用很可能就失效了。</li>
 <li>从所有权角度看，可以把可变引用看成持有一段时间的所有权的值的特殊状态，这段时间内原值是不拥有所有权的，所以原值也没有能力去 <code>move</code>。</li>
-<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
+<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是会原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
 </ul>
 <p>说了这么多，让我看看书里的操作是什么：</p>
 <pre style="background-color:#fafafa;">

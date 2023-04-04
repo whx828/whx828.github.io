@@ -105,7 +105,7 @@
 </span><span style="color:#61676c;">}
 </span></pre>
 <blockquote>
-<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.
+<p>More interestingly, the output can also be 0 20, even though there is no possible globally consistent order of the four operations that would result in this outcome. When 3 is executed, there is no happens-before relationship with 2, which means it could load either 0 or 20. When 4 is executed, there is no happens-before relationship with 1, which means it could load either 0 or 10. Given this, the output 0 20 is a valid outcome.<br />
 更有趣的是，输出也可以是 0 20，即使没有可能导致此结果的四个操作的全局一致顺序。当 3 执行时，与 2 没有 happens-before 关系，也就是说它可以加载 0 或 20。当 4 执行时，与 1 没有 happens-before 关系，这意味着它可以加载 0 或 10。鉴于此，输出 0 20 是一个有效的结果。</p>
 </blockquote>
 <p>想要彻底搞明白，还得从概念的细节下手：</p>

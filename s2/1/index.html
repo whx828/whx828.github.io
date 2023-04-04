@@ -289,7 +289,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <ul>
 <li>从借用规则角度看，可变引用是「独占引用」，也即在存在可变引用的时候是不能其他引用的，如果把值看成一种「可变引用」，那么很明显发生了冲突，之前的可变引用很可能就失效了。</li>
 <li>从所有权角度看，可以把可变引用看成持有一段时间的所有权的值的特殊状态，这段时间内原值是不拥有所有权的，所以原值也没有能力去 <code>move</code>。</li>
-<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
+<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是会原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
 </ul>
 <p>说了这么多，让我看看书里的操作是什么：</p>
 <pre style="background-color:#fafafa;">
