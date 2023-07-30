@@ -23,7 +23,38 @@
         font-family: 'Open Sans', sans-serif;
         font-family: 'Raleway', sans-serif;
     }
-</style><link rel="stylesheet" href="/static/zine.css">
+
+    /* #cube {
+        position: relative;
+        transform-style: preserve-3d;
+        animation: spin 20s linear infinite;
+    } */
+
+    /* #cube>div {
+        position: absolute;
+        transform-style: preserve-3d;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotateX(-0.1turn) rotateY(0turn);
+        }
+
+        to {
+            transform: rotateX(-0.1turn) rotateY(1turn);
+        }
+    } */
+</style>
+
+<!-- <div id="cube" style="width: 4em; height: 8em;">
+    <div style="transform: translate3d(0em, 0em, 2em)">w</div>
+    <div style="transform: translate3d(4em, 0em, 2em)">e</div>
+    <div style="transform: translate3d(0em, 4em, -2em)">l</div>
+    <div style="transform: translate3d(4em, 4em, -2em)">c</div>
+    <div style="transform: translate3d(4em, 4em, -2em)">o</div>
+    <div style="transform: translate3d(4em, 4em, -2em)">m</div>
+    <div style="transform: translate3d(4em, 4em, -2em)">e</div>
+</div> --><link rel="stylesheet" href="/static/zine.css">
         <link rel="alternate"
               type="application/atom+xml"
               title="whx's Blog RSS"
@@ -81,6 +112,20 @@
                         </a>
                     </div>
                 <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
+                        <a href="/s3/2">
+                            <div class="relative mx-auto ">
+                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
+                                     loading="lazy"
+                                     src="/static/2023/llama-rs.png"
+                                     alt="AI 来了"/>
+                            </div>
+                            <div class="m-3 text-xl text-black ">
+                                <div class="font-bold line-clamp-2">AI 来了</div>
+                                <div class="mt-2 text-base text-gray-500">2023-03-17</div>
+                            </div>
+                        </a>
+                    </div>
+                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
                         <a href="/s3/3">
                             <div class="relative mx-auto ">
                                 <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
@@ -105,20 +150,6 @@
                             <div class="m-3 text-xl text-black ">
                                 <div class="font-bold line-clamp-2">从 Happened-before 说起（2）</div>
                                 <div class="mt-2 text-base text-gray-500">2023-04-03</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s3/5">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2023/MIT 6.S081 操作系统.jpg"
-                                     alt="xv6 学习记录"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">xv6 学习记录</div>
-                                <div class="mt-2 text-base text-gray-500">2023-05-07</div>
                             </div>
                         </a>
                     </div>
