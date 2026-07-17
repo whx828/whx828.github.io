@@ -1,48 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://whx828.github.io/</loc>
+        <loc>https://whx828.com/</loc>
     </url>
     <url>
-        <loc>http://whx828.github.io/s1/</loc>
+        <loc>https://whx828.com/about/</loc>
     </url>
     <url>
-        <loc>http://whx828.github.io/s1/1/</loc>
+        <loc>https://whx828.com/archive/</loc>
     </url>
     <url>
-        <loc>http://whx828.github.io/s1/2/</loc>
+        <loc>https://whx828.com/posts/</loc>
     </url>
     <url>
-        <loc>http://whx828.github.io/s2/</loc>
+        <loc>https://whx828.com/posts/2022-zongjie/</loc>
+        <lastmod>2023-01-01</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s2/1/</loc>
+        <loc>https://whx828.com/posts/ai-laile/</loc>
+        <lastmod>2023-03-17</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/</loc>
+        <loc>https://whx828.com/posts/ba-ziji-zuowei-fangfa/</loc>
+        <lastmod>2021-06-05</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/1/</loc>
+        <loc>https://whx828.com/posts/hangzhou-youji/</loc>
+        <lastmod>2021-07-03</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/2/</loc>
+        <loc>https://whx828.com/posts/happened-before-1/</loc>
+        <lastmod>2023-03-22</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/3/</loc>
+        <loc>https://whx828.com/posts/happened-before-2/</loc>
+        <lastmod>2023-04-03</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/4/</loc>
+        <loc>https://whx828.com/posts/rust-tanxian/</loc>
+        <lastmod>2022-04-17</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/s3/5/</loc>
+        <loc>https://whx828.com/posts/xv6-learning/</loc>
+        <lastmod>2023-05-07</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/authors/</loc>
+        <loc>https://whx828.com/posts/zine-to-zola/</loc>
+        <lastmod>2026-07-17</lastmod>
     </url>
     <url>
-        <loc>http://whx828.github.io/@whx/</loc>
+        <loc>https://whx828.com/tags/</loc>
     </url>
     <url>
-        <loc>http://whx828.github.io/about/</loc>
+        <loc>https://whx828.com/tags/ai/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/bing-fa/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/bo-ke/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/cao-zuo-xi-tong/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/du-shu/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/fen-bu-shi/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/nian-du-zong-jie/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/rust/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/sheng-huo/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/sui-bi/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/xue-xi-bi-ji/</loc>
+    </url>
+    <url>
+        <loc>https://whx828.com/tags/you-ji/</loc>
     </url>
 </urlset>

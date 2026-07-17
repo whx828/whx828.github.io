@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
+    <title>whx&#x27;s Blog - rust</title>
+    <subtitle>记录生活</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://whx828.com/tags/rust/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://whx828.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-07-17T00:00:00+00:00</updated>
+    <id>https://whx828.com/tags/rust/atom.xml</id>
+    <entry xml:lang="zh-CN">
+        <title>博客更新：从 zine 到 Zola</title>
+        <published>2026-07-17T00:00:00+00:00</published>
+        <updated>2026-07-17T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://whx828.com/posts/zine-to-zola/"/>
+        <id>https://whx828.com/posts/zine-to-zola/</id>
+        
+        <summary type="html">&lt;p&gt;时间过得真快，转眼我已经工作近两年了（我现在做的事情离代码很远），再次打开博客一看，上一篇文章还停在 2023 年 5 月的《xv6 学习记录》。&lt;&#x2F;p&gt;
+&lt;p&gt;最近重新动了写博客的念头，索性先把房子翻新一遍：把博客从 &lt;strong&gt;zine&lt;&#x2F;strong&gt; 迁移到了 &lt;strong&gt;Zola&lt;&#x2F;strong&gt;。这篇就当作迁移记录，也算是重新开张的第一篇。&lt;&#x2F;p&gt;</summary>
+        
+    </entry>
+    <entry xml:lang="zh-CN">
+        <title>记一次 Rust 探险</title>
+        <published>2022-04-17T00:00:00+00:00</published>
+        <updated>2022-04-17T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://whx828.com/posts/rust-tanxian/"/>
+        <id>https://whx828.com/posts/rust-tanxian/</id>
+        
+        <content type="html" xml:base="https://whx828.com/posts/rust-tanxian/">&lt;h2 id=&quot;wen-ti-de-qi-shi&quot;&gt;问题的起始&lt;&#x2F;h2&gt;
+&lt;p&gt;最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;……&lt;&#x2F;p&gt;
+&lt;p&gt;请求审核博文来改变其状态&lt;&#x2F;p&gt;
+&lt;p&gt;接下来需要增加请求审核博文的功能，这应当将其状态由 &lt;code&gt;Draft&lt;&#x2F;code&gt; 改为 &lt;code&gt;PendingReview&lt;&#x2F;code&gt;。示例 17-15 展示了这段代码：&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;rust&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;pub&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; struct&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Option&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    content&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; String&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #859289;font-style: italic;&quot;&gt;   &#x2F;&#x2F; --snip--&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; new&lt;&#x2F;span&gt;&lt;span&gt;()&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;        Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;            state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Some&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;Box&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;Draft&lt;&#x2F;span&gt;&lt;span&gt; {})),&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;            content&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; String&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(),&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; add_text&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&amp;amp;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span&gt;, text&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;str&lt;&#x2F;span&gt;&lt;span&gt;) {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;        self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;content&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;push_str&lt;&#x2F;span&gt;&lt;span&gt;(text);&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; content&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt; &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;str&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        &amp;quot;&amp;quot;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&amp;amp;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span&gt;) {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;        if&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; let&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Some&lt;&#x2F;span&gt;&lt;span&gt;(s)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; =&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;take&lt;&#x2F;span&gt;&lt;span&gt;() {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;            self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state &lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Some&lt;&#x2F;span&gt;&lt;span&gt;(s&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;request_review&lt;&#x2F;span&gt;&lt;span&gt;())&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;trait&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;;&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;struct&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Draft&lt;&#x2F;span&gt;&lt;span&gt; {}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt; for&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Draft&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;        Box&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;PendingReview&lt;&#x2F;span&gt;&lt;span&gt; {})&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;struct&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; PendingReview&lt;&#x2F;span&gt;&lt;span&gt; {}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt; for&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; PendingReview&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;        self&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;……&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;我们需要将 &lt;code&gt;state&lt;&#x2F;code&gt; 临时设置为 &lt;code&gt;None&lt;&#x2F;code&gt; 来获取 &lt;code&gt;state&lt;&#x2F;code&gt; 值，即老状态的所有权，而不是使用 &lt;code&gt;self.state = self.state.request_review();&lt;&#x2F;code&gt; 这样的代码直接更新状态值。这确保了当 &lt;code&gt;Post&lt;&#x2F;code&gt; 被转换为新状态后不能再使用老 &lt;code&gt;state&lt;&#x2F;code&gt; 值。&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;……&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;box-de-xing-zhi&quot;&gt;Box 的性质&lt;&#x2F;h2&gt;
+&lt;p&gt;首先来看可变性。&lt;br &#x2F;&gt;
+在 Rust 中，一个变量是否可变，取决于是否用 &lt;code&gt;mut&lt;&#x2F;code&gt; 修饰变量绑定。&lt;&#x2F;p&gt;
+&lt;p&gt;如果我们用 &lt;code&gt;let var : T&lt;&#x2F;code&gt; 声明，那么 &lt;code&gt;var&lt;&#x2F;code&gt; 是不可变的；而且 &lt;code&gt;var&lt;&#x2F;code&gt; 内部所有的成员也都是不可变的；&lt;br &#x2F;&gt;
+如果我们用 &lt;code&gt;let mut var : T&lt;&#x2F;code&gt; 声明，那么 &lt;code&gt;var&lt;&#x2F;code&gt; 是可变的，相应的它的内部所有成员也都是可变的。&lt;br &#x2F;&gt;
+这样的话，如果有个结构体引用 &lt;code&gt;&amp;amp;SomeStruct&lt;&#x2F;code&gt;，则 &lt;code&gt;SomeStruct&lt;&#x2F;code&gt; 的所有字段都是不可变的。&lt;br &#x2F;&gt;
+但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 &lt;code&gt;std::cell&lt;&#x2F;code&gt; 模块，通过共享的可变容器允许以受控的方式进行可变性操作。&lt;&#x2F;p&gt;
+&lt;p&gt;在 &lt;code&gt;std::cell&lt;&#x2F;code&gt; 模块中的 &lt;code&gt;Cell&lt;&#x2F;code&gt; 和 &lt;code&gt;RefCell&lt;&#x2F;code&gt; 是实现内部可变性的&lt;strong&gt;容器&lt;&#x2F;strong&gt;，在保持容器不被 &lt;code&gt;drop&lt;&#x2F;code&gt; 的情况下可以修改其中的值；而 &lt;code&gt;Box&lt;&#x2F;code&gt; 虽然一直都被拿来和前两个一起讨论，但 &lt;code&gt;Box&lt;&#x2F;code&gt; 并没在 &lt;code&gt;std::cell&lt;&#x2F;code&gt; 模块中，它对可变性其实没啥限定。&lt;br &#x2F;&gt;
+&lt;code&gt;Box&lt;&#x2F;code&gt; 是一个&lt;strong&gt;指针&lt;&#x2F;strong&gt;，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它&lt;strong&gt;独占&lt;&#x2F;strong&gt;了对数据的所有权；&lt;br &#x2F;&gt;
+&lt;code&gt;Cell&lt;&#x2F;code&gt; &lt;strong&gt;不是&lt;&#x2F;strong&gt;一个指针，&lt;code&gt;Cell&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。&lt;&#x2F;p&gt;
+&lt;p&gt;其次来看所有权规则。&lt;br &#x2F;&gt;
+&lt;code&gt;Box&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; 不是 &lt;code&gt;Copy&lt;&#x2F;code&gt; 类型，因为 &lt;code&gt;Box&lt;&#x2F;code&gt; 拥有分配在堆上的缓冲区，非 &lt;code&gt;Copy&lt;&#x2F;code&gt; 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对&lt;strong&gt;被引用的原始资源&lt;&#x2F;strong&gt;负责。&lt;&#x2F;p&gt;
+&lt;p&gt;性质已经搞清，接下来我们来看具体问题。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;wei-shen-me-zhi-jie-fu-zhi-bu-xing&quot;&gt;为什么直接赋值不行&lt;&#x2F;h2&gt;
+&lt;p&gt;我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;rust&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;pub&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; struct&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    content&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; String&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;trait&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;; &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #859289;font-style: italic;&quot;&gt;    &#x2F;&#x2F; ... &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&amp;amp;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span&gt;) {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;        self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state &lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;request_review&lt;&#x2F;span&gt;&lt;span&gt;();&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #859289;font-style: italic;&quot;&gt;    &#x2F;&#x2F; ... &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;编译器报错：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;self.state = self.state.request_review();&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;             ^^^^^^ move occurs because `self.state` has type `std::boxed::Box&amp;lt;dyn State&amp;gt;`, which does not implement the `Copy` trait&amp;#39;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;原回答：&lt;br &#x2F;&gt;
+This is because calling &lt;code&gt;State::request_review&lt;&#x2F;code&gt; will move &lt;code&gt;Box&amp;lt;self&amp;gt;&lt;&#x2F;code&gt;, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement &lt;code&gt;Copy&lt;&#x2F;code&gt;, otherwise what’s left there? The book uses &lt;code&gt;Option::take()&lt;&#x2F;code&gt; to move ownership out and leave &lt;code&gt;None&lt;&#x2F;code&gt; on the place.&lt;&#x2F;p&gt;
+&lt;p&gt;翻译如下：&lt;br &#x2F;&gt;
+这是因为调用 &lt;code&gt;State::request_review&lt;&#x2F;code&gt; 将 &lt;code&gt;move&lt;&#x2F;code&gt; 分配在堆上的 &lt;code&gt;Box&amp;lt;self&amp;gt;&lt;&#x2F;code&gt;，而 Rust 不允许你将值从堆中 &lt;code&gt;move&lt;&#x2F;code&gt;，除非你实现 &lt;code&gt;Copy&lt;&#x2F;code&gt;，否则原值还剩下什么呢？The book 里面使用 &lt;code&gt;Option::take()&lt;&#x2F;code&gt; 将所有权移出，并为原值保留了 &lt;code&gt;None&lt;&#x2F;code&gt; 。&lt;&#x2F;p&gt;
+&lt;p&gt;其实已经讲得很清楚了，但我还要问一句：&lt;code&gt;move&lt;&#x2F;code&gt; 发生在哪里？&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;self.state = self.state.request_review();&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;这一句中的 &lt;code&gt;self.state.request_review();&lt;&#x2F;code&gt; 使得结构体 &lt;code&gt;Post&lt;&#x2F;code&gt; 的 &lt;code&gt;state&lt;&#x2F;code&gt; 字段被 &lt;code&gt;request_review()&lt;&#x2F;code&gt; 方法赋了新值，并取得了 &lt;code&gt;state&lt;&#x2F;code&gt; 的所有权，此时 &lt;code&gt;self.state&lt;&#x2F;code&gt; 的所有权转移进了 &lt;code&gt;request_review()&lt;&#x2F;code&gt; 方法内，&lt;code&gt;self.state&lt;&#x2F;code&gt; 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。&lt;br &#x2F;&gt;
+因此编译器报错，还指出了我们没有为 &lt;code&gt;std::boxed::Box&amp;lt;dyn State&amp;gt;&lt;&#x2F;code&gt; 实现 &lt;code&gt;Copy&lt;&#x2F;code&gt; trait，如果实现了这个 trait，&lt;code&gt;self.state&lt;&#x2F;code&gt; 在 &lt;code&gt;self.state.request_review()&lt;&#x2F;code&gt; 之后依然能保持初始化状态，也就可以完成 &lt;code&gt;self.state =&lt;&#x2F;code&gt; 这部分的赋值了。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;2023-2-16-zhui-jia&quot;&gt;2023.2.16 追加&lt;&#x2F;h2&gt;
+&lt;p&gt;再读《The Book》，想到自己还写过这么一篇文章，回来看的时候发现有个地方没说透：&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Rust 不允许你将值从堆中 &lt;code&gt;move&lt;&#x2F;code&gt;，除非你实现 &lt;code&gt;Copy&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;这句话什么意思？还是要看&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;play.rust-lang.org&#x2F;?version=stable&amp;amp;mode=debug&amp;amp;edition=2021&amp;amp;gist=dcc068cc77c38b8a929b9177a11500ec&quot;&gt;报错信息&lt;&#x2F;a&gt;：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;rust&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;   Compiling&lt;&#x2F;span&gt;&lt;span&gt; playground v0&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;playground)&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;error[&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;E0507&lt;&#x2F;span&gt;&lt;span&gt;]&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; cannot&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt; move&lt;&#x2F;span&gt;&lt;span&gt; out of `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state` which is behind a mutable reference&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;  --&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; src&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;rs&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;12&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;22&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;12&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; |&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;         self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state &lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;request_review&lt;&#x2F;span&gt;&lt;span&gt;();&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |                      ^^^^^^^^^^ ----------------&lt;&#x2F;span&gt;&lt;span&gt; `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state` moved due to this method call&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |                      |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;                      move&lt;&#x2F;span&gt;&lt;span&gt; occurs because `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state` has&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; type&lt;&#x2F;span&gt;&lt;span&gt; `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;`, which does not implement the `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;Copy&lt;&#x2F;span&gt;&lt;span&gt;` &lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;trait&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;note&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; this function takes ownership of the receiver `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;`, which moves `&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state`&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;  --&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; src&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;rs&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;7&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;23&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;7&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;  |&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;     fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;Self&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; -&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Box&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;dyn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; State&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;; &lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;   |                       ^^^^&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt;For&lt;&#x2F;span&gt;&lt;span&gt; more information about this error,&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt; try&lt;&#x2F;span&gt;&lt;span&gt; `rustc&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; --&lt;&#x2F;span&gt;&lt;span&gt;explain&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; E0507&lt;&#x2F;span&gt;&lt;span&gt;`&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;error&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt; could not compile `playground` due to previous error&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;我们的操作会 &lt;code&gt;cannot move out of *self.state* which is behind a mutable reference&lt;&#x2F;code&gt;，也就是说会在可变引用时 &lt;code&gt;move&lt;&#x2F;code&gt; 变量（转移所有权）。&lt;br &#x2F;&gt;
+看一下函数签名： &lt;code&gt;fn request_review(&amp;amp;mut self)&lt;&#x2F;code&gt;，果然使用的是 &lt;code&gt;Post&lt;&#x2F;code&gt; 的可变引用（也就是 &lt;code&gt;&amp;amp;mut self&lt;&#x2F;code&gt;），然后在 &lt;code&gt;self.state.request_review()&lt;&#x2F;code&gt; 这一步时 &lt;code&gt;move&lt;&#x2F;code&gt; 了 &lt;code&gt;self.state&lt;&#x2F;code&gt;，如果 &lt;code&gt;self.state&lt;&#x2F;code&gt; 没有实现 &lt;code&gt;Copy&lt;&#x2F;code&gt; 这个 trait，那么根据 Rust 规则，使用可变引用时是不能 &lt;code&gt;move&lt;&#x2F;code&gt; 的，一旦 &lt;code&gt;move&lt;&#x2F;code&gt; 了，对象的内存地址改变了，那引用还有效吗？&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;从借用规则角度看，可变引用是「独占引用」，也即在存在可变引用的时候是不能其他引用的，如果把值看成一种「可变引用」，那么很明显发生了冲突，之前的可变引用很可能就失效了。&lt;&#x2F;li&gt;
+&lt;li&gt;从所有权角度看，可以把可变引用看成持有一段时间的所有权的值的特殊状态，这段时间内原值是不拥有所有权的，所以原值也没有能力去 &lt;code&gt;move&lt;&#x2F;code&gt;。&lt;&#x2F;li&gt;
+&lt;li&gt;实现了 &lt;code&gt;Copy&lt;&#x2F;code&gt; trait 意味着不会真的转移所有权，而是会原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;说了这么多，让我看看书里的操作是什么：&lt;&#x2F;p&gt;
+&lt;pre class=&quot;giallo&quot; style=&quot;color: #D3C6AA; background-color: #2D353B;&quot;&gt;&lt;code data-lang=&quot;rust&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;impl&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Post&lt;&#x2F;span&gt;&lt;span&gt; {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #859289;font-style: italic;&quot;&gt;    &#x2F;&#x2F; --snip--&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;    pub fn&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt; request_review&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;&amp;amp;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span&gt;) {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #E67E80;&quot;&gt;        if&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; let&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Some&lt;&#x2F;span&gt;&lt;span&gt;(s)&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt; =&lt;&#x2F;span&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt; self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;take&lt;&#x2F;span&gt;&lt;span&gt;() {&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span style=&quot;color: #D699B6;&quot;&gt;            self&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;state &lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color: #7FBBB3;&quot;&gt; Some&lt;&#x2F;span&gt;&lt;span&gt;(s&lt;&#x2F;span&gt;&lt;span style=&quot;color: #E69875;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color: #A7C080;&quot;&gt;request_review&lt;&#x2F;span&gt;&lt;span&gt;())&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;        }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    }&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;}&lt;&#x2F;span&gt;&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;人家的 &lt;code&gt;state&lt;&#x2F;code&gt; 用 &lt;code&gt;Option&lt;&#x2F;code&gt; 给包住了，而且取值和赋值是分开写的，没有写在一行里，从 &lt;code&gt;take&lt;&#x2F;code&gt; 的签名：&lt;code&gt;pub fn take(&amp;amp;mut self) -&amp;gt; Option&amp;lt;T&amp;gt;&lt;&#x2F;code&gt; 中看出 &lt;code&gt;take&lt;&#x2F;code&gt; 用的是可变借用而不是 &lt;code&gt;self&lt;&#x2F;code&gt;，也就没有 &lt;code&gt;move&lt;&#x2F;code&gt; 了，同时生命周期推断也能发挥作用，当然就规避掉了这些问题。&lt;&#x2F;p&gt;
+&lt;p&gt;问题解决！感谢这些在网上无私分享知识的人们！&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;can-kao-yue-du&quot;&gt;参考阅读&lt;&#x2F;h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;57193489&#x2F;why-do-we-need-to-call-take-for-optiont-variable&quot;&gt;why do we need to call take() for Option&amp;lt;T&amp;gt; variable&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;rustwiki.org&#x2F;zh-CN&#x2F;rust-by-example&#x2F;scope&#x2F;move.html&quot;&gt;所有权和移动&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;rustwiki.org&#x2F;zh-CN&#x2F;rust-by-example&#x2F;variable_bindings&#x2F;declare.html&quot;&gt;变量先声明&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;www.archgrid.xyz&#x2F;2022&#x2F;03&#x2F;rust-ownership&#x2F;&quot;&gt;聊聊 Rust 中的所有权机制&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;ipotato.me&#x2F;article&#x2F;57&quot;&gt;Rust 中几个智能指针的异同与使用场景&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;rustcc.cn&#x2F;article?id=37d1cb4f-5cc9-4adc-b41a-dbe4914bf4b5&quot;&gt;【Rust 每周一知】如何理解 Rust 中的可变与不可变？&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+</content>
+        
+    </entry>
+</feed>

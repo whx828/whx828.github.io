@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
+    <title>whx&#x27;s Blog - 年度总结</title>
+    <subtitle>记录生活</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://whx828.com/tags/nian-du-zong-jie/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://whx828.com"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-01-01T00:00:00+00:00</updated>
+    <id>https://whx828.com/tags/nian-du-zong-jie/atom.xml</id>
+    <entry xml:lang="zh-CN">
+        <title>2022 总结</title>
+        <published>2023-01-01T00:00:00+00:00</published>
+        <updated>2023-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://whx828.com/posts/2022-zongjie/"/>
+        <id>https://whx828.com/posts/2022-zongjie/</id>
+        
+        <content type="html" xml:base="https://whx828.com/posts/2022-zongjie/">&lt;h1 id=&quot;2022-hui-gu-bian-shi&quot;&gt;2022 回顾 &amp;amp; 鞭尸&lt;&#x2F;h1&gt;
+&lt;h2 id=&quot;ge-ren-neng-li&quot;&gt;个人能力&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;nian-chu-ji-hua&quot;&gt;年初计划&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;深度阅读 10 本左右的各领域书籍&lt;&#x2F;li&gt;
+&lt;li&gt;争取输出自己的内容，读书笔记或者技术博客 5-6 篇&lt;&#x2F;li&gt;
+&lt;li&gt;练习英语阅读能力，之后是听和说&lt;&#x2F;li&gt;
+&lt;li&gt;锻炼身体，减肥 10 斤&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;zhi-xing-qing-kuang&quot;&gt;执行情况&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;2022%20%E9%98%85%E8%AF%BB%E4%B9%A6%E7%B1%8D.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;2022 阅读书籍&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;读了一共大概 6、7 本书吧，事实上没有太多时间读书&lt;&#x2F;li&gt;
+&lt;li&gt;写了 1 篇博客，几乎剃了光头，现在看来 2022 年唯一的正式输出也稚嫩得可笑，毫无水平，留着警醒自己吧，不要什么垃圾都往外输出&lt;&#x2F;li&gt;
+&lt;li&gt;保持阅读了英语内容，但没有学习英语，对英语失去了兴趣，我还有什么理由学习英语呢，尤其是在翻译软件异常发达的今天，明天有效果极好的同声传译软件出来我都不奇怪&lt;&#x2F;li&gt;
+&lt;li&gt;身体一年不如一年，年末受到新冠的攻击，至今仍未痊愈&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;bian-cheng-neng-li&quot;&gt;编程能力&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;ge-ren-zhan-wang&quot;&gt;个人展望&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;nian-chu-ji-hua-1&quot;&gt;年初计划&lt;&#x2F;h4&gt;
+&lt;p&gt;按照 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;zerotomastery.io&#x2F;blog&#x2F;learn-to-code-for-free&#x2F;&quot;&gt;Learn to code for free, get hired in 5 months, and have fun along the way&lt;&#x2F;a&gt; 的计划学习&lt;br &#x2F;&gt;
+追加简单的计算机科学自学计划 2022.2.15&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;成为一个具有职业水平的 Java 后端开发者（全年）&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这一项估计不行了，计划赶不上变化&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;练习一定的算法题目（全年）&lt;&#x2F;li&gt;
+&lt;li&gt;成为一个优秀的 Rust 语言爱好者（后半年）&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-1&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;第一个计划没有执行，我完全低估了前端开发的难度和逻辑，所累积的技术栈对于前端学习的帮助也非常小，学不下去也实属正常；&lt;br &#x2F;&gt;
+第二个计划执行了一些，但不多，英语课程学习起来所花费的时间巨大，而收益却未知，我不知道是好还是坏，好在内容足够有趣。&lt;&#x2F;p&gt;
+&lt;p&gt;前两项完全没做，没学 Java 也没学算法，甚至连数据结构都没学全；&lt;br &#x2F;&gt;
+最后一项估计完成了 3、4 成左右的样子吧，Rust 的难度也不小，只是我还愿意往下学而已。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;xue-xi-lu-jing&quot;&gt;学习路径&lt;&#x2F;h3&gt;
+&lt;p&gt;预计到 2023 年年初具备职业开发者的素质，争取走技术移民&#x2F;独立开发者的路子。&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-2&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;很遗憾，还未达成职业水平，而且在上班前也不会达到吧，去年的我想得太美了，完全没意识到学一年编程就达到职业水平是凡人不可能完成的任务。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;jie-duan-ji-hua&quot;&gt;阶段计划&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;yue-du-ji-hua&quot;&gt;阅读计划&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;nian-chu-ji-hua-2&quot;&gt;年初计划&lt;&#x2F;h4&gt;
+&lt;ol&gt;
+&lt;li&gt;读完《计算机系统要素》&lt;&#x2F;li&gt;
+&lt;li&gt;读完《CSAPP》&lt;&#x2F;li&gt;
+&lt;li&gt;读完《操作系统导论》&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-3&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;第一本读了一半，这本书其实也就值得读一半；&lt;br &#x2F;&gt;
+走马观花地读完了第二本，实验和课后题完全没碰；&lt;br &#x2F;&gt;
+最后一本读了三分之一。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;gong-zuo-ji-hua&quot;&gt;工作计划&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;nian-chu-ji-hua-3&quot;&gt;年初计划&lt;&#x2F;h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;del&gt;完成 WH 交代的任务&lt;&#x2F;del&gt;，顺利毕业&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;del&gt;上手区块链、JavaScript 项目&lt;&#x2F;del&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;每月输出内容取材于每周的周记，周记又源于日记&lt;&#x2F;li&gt;
+&lt;li&gt;学习英语，认真读英语文章，保证质量&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-4&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;&lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;2022%20%E5%91%A8%E6%8A%A5.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;2022 周报&lt;&#x2F;p&gt;
+&lt;p&gt;2022.4.16──2022.6.22 这段时间因学校封校，老师进不来，日子变得轻松的缘故下写了点 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;whx828.notion.site&#x2F;3e61b415aabe410d8b3f37844dfb5e68?v=f23ac96cfb3a43558649ccb8382c2279&quot;&gt;周报&lt;&#x2F;a&gt;，还有一篇 &lt;a href=&quot;&#x2F;posts&#x2F;rust-tanxian&#x2F;&quot;&gt;Rust 博客&lt;&#x2F;a&gt;；&lt;br &#x2F;&gt;
+除此之外 2022 年什么都没输出，在年末也失去了耐心，没能完成很好的内容输出。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;jian-dan-de-ji-suan-ji-ke-xue-zi-xue-ji-hua&quot;&gt;简单的计算机科学自学计划&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;nian-chu-ji-hua-4&quot;&gt;年初计划&lt;&#x2F;h4&gt;
+&lt;p&gt;5-8 重点：&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Composing programs&lt;br &#x2F;&gt;
+Coursera Programming Languages(ML, Racket, Ruby)&lt;&#x2F;li&gt;
+&lt;li&gt;The Missing Semester of Your CS Education&lt;br &#x2F;&gt;
+讲 Shell，Git，tmux 等等&lt;&#x2F;li&gt;
+&lt;li&gt;Coursera Data Structures and Algorithms Specialization(UCSD)&lt;br &#x2F;&gt;
+算法：贪心算法，分治算法，动态规划&lt;br &#x2F;&gt;
+数据结构：动态数组，哈希表，二叉树&lt;&#x2F;li&gt;
+&lt;li&gt;CSAPP, CMU: Intro to Computer Systems&lt;br &#x2F;&gt;
+数据在计算机中存储，汇编，程序优化，内存分级，控制流&lt;&#x2F;li&gt;
+&lt;li&gt;MIT 6.S081 OS&lt;br &#x2F;&gt;
+系统调用，Page Table，Exception，多线程，进程等&lt;&#x2F;li&gt;
+&lt;li&gt;MIT 6.824 分布式系统&lt;br &#x2F;&gt;
+实现 RAFT 协议，使用 RAFT 协议搭建 KV Server，实现动态切片&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-5&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;走马观花地看了 1，发现没什么意思，2 的东西挺好，把边角料讲好也是本事；还有大致过了一遍 5 的视频字幕，对 OS 有了点概念，除此之外没看什么课程。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;yuan-ze&quot;&gt;原则&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;坚持一个目标不动摇&lt;&#x2F;strong&gt;，不要换来换去，别被别人影响，锻炼自己心态，什么时候天都塌不下来&lt;br &#x2F;&gt;
+对于研究生期间遇到的项目，需要什么就学什么，不再进行项目相关扩展学习，专注于自己的学习计划&lt;br &#x2F;&gt;
+三思而行，抛弃不该有的心理包袱，扩展网络上的人际交往&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-6&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;完全没有做到，一塌糊涂，心态随着「躺平」的深渊越来越近，不想关心一切；&lt;br &#x2F;&gt;
+研究生期间的项目估计到此为止了，对我而言只剩下毕业论文；&lt;br &#x2F;&gt;
+不仅没有扩展网络人际，甚至还断掉了两个现实中的关系，不过我只后悔为什么没有早点断，那样还能体面一点，和谐一点。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;yan-jiu-sheng-gong-zuo-2022-2&quot;&gt;研究生工作 2022.2-&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;del&gt;建立一个无人工厂：&lt;&#x2F;del&gt;&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;建立 RFID、机器人、生产线组成的系统&lt;&#x2F;li&gt;
+&lt;li&gt;基于 Rethink 机器人控制，把仿真控制程序下到实体机器人上，实现机器人操作&lt;&#x2F;li&gt;
+&lt;li&gt;构建局域网，搭建 RFID 天线、其代码识别功能，机器人抓去工件（具有代码）&lt;&#x2F;li&gt;
+&lt;li&gt;远程操控，通过手机操控该系统&lt;&#x2F;li&gt;
+&lt;li&gt;建立与实体系统对应的元宇宙系统&lt;&#x2F;li&gt;
+&lt;li&gt;元宇宙系统与实体系统实现链接、互动&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-7&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;花了半年的时间才最终意识到我的研究生教育是个骗局，所有的一切除了毕业证书全都和我无关，我不应该花哪怕一秒钟在这些东西上面，因为完全都是浪费。当我知道这些的时候已经很晚了，可以说浪费了大半年的时间。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;zi-xue-ke-cheng-geng-xin-2022-3-11&quot;&gt;自学课程更新 2022.3.11-&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;cs61a.org&quot;&gt;CS 61A: Structure and Interpretation of Computer Programs&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;sp18.datastructur.es&#x2F;&quot;&gt;CS 61B: Data Structures&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;http:&#x2F;&#x2F;web.mit.edu&#x2F;6.031&#x2F;www&#x2F;sp21&#x2F;&quot;&gt;6.031: Software Construction&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h4 id=&quot;zhi-xing-qing-kuang-8&quot;&gt;执行情况&lt;&#x2F;h4&gt;
+&lt;p&gt;只看了 CS61B，还没看完。现在让我学的话我也只会学 CS61B，贪多嚼不烂。&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;zong-jie&quot;&gt;总结&lt;&#x2F;h1&gt;
+&lt;h2 id=&quot;bi-ji-qing-kuang&quot;&gt;笔记情况&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;2022%20%E6%80%BB%E7%BB%93.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;2022 总结&lt;&#x2F;p&gt;
+&lt;p&gt;看得出我还是记了不少笔记的，可惜没啥时间消化它们。2023 继续坚持。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;xiang-mu-ji-hua&quot;&gt;项目计划&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;markdown-ge-shi-hua&quot;&gt;Markdown 格式化&lt;&#x2F;h3&gt;
+&lt;p&gt;为啥想做这个东西，每次整理笔记的时候格式总是一团糟，网上找到的实现也不符合我的需求，干脆自己写一个吧。&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;crane-yu-yan&quot;&gt;Crane 语言&lt;&#x2F;h3&gt;
+&lt;p&gt;读完 《Crafting Interpreter》总有种自己也写个语言的冲动，暂定名为 Crane，希望在 2023 年完成这个项目。&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;sui-sui-nian-fa-lao-sao&quot;&gt;碎碎念 &amp;amp; 发牢骚&lt;&#x2F;h2&gt;
+&lt;p&gt;计划别搞太满，因为是没办法全部执行的。所以 2023 年我就不做什么计划了，把 2022 年没能搞定的任务接着往下完成。 接下来就随心所欲吧，因为不知道意外什么时候到来，人生要及时行乐。2022 年我失去了很多，但并未得到什么，我发现逼自己也没什么用，再怎么调低自己的期望也无法掩盖世道越来越艰难的事实。躺平不是自嘲，而是无奈的选择。&lt;br &#x2F;&gt;
+写这篇总结之前我看了点别人的 2022 总结，怎么说呢，现在还在互联网上能表达自己生活的人，别管他们把自己的日子说得多么艰难，实际上还是对操蛋的生活有一定还手之力的家伙；而真正「弯路里没路的人」是「死得悄无声息」的，他倒下，然后死去，一点浪花都不会有，就像我的牢骚一样。&lt;br &#x2F;&gt;
+这一年，好像大家心里累得连愤怒的力气都没有了，我是这样的，以前我心里还有点血气，现在我很少提得起兴致。「天道残缺匹夫补，只为苍生不为主。」匹夫何在？苍生何在？&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;主又何在？&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;我感到我离人很远。什么是爱具体的人？当我离开网络离人越近，当这个人越具体，我反而会越反感，越难以接受，我离「爱」这个动词越来越远，我好像并不知道「爱」是什么。&lt;br &#x2F;&gt;
+我的耐心也在减少，我懒得再去装作礼貌，我讨厌他们，同时也不放过自己。&lt;&#x2F;p&gt;
+&lt;p&gt;过去的一年岂是一篇小文就能总结？大概就这样吧。人生如果真的是缓慢受锤的过程的话，我希望 2023 锤得慢一点。&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

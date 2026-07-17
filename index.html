@@ -1,289 +1,330 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="theme-color" content="#55bb8a">
-        <title>whx's Blog</title>
-<meta name="description" content="Welcome to my blog!">
-<meta property="og:type" content="website">
-<meta property="og:title" content="whx's Blog">
-<meta property="og:description" content="Welcome to my blog!">
-<meta name="twitter:title" content="whx's Blog">
-<meta name="twitter:description" content="Welcome to my blog!">
-<link rel="shortcut icon" href="path/to/favicon">
-<link rel="icon" type="image/png" href="/favicon.ico">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital@1&family=Raleway&family=Roboto+Mono&display=swap"
-    rel="stylesheet">
-<style>
-    body {
-        font-family: 'Open Sans', sans-serif;
-        font-family: 'Raleway', sans-serif;
-    }
-
-    /* #cube {
-        position: relative;
-        transform-style: preserve-3d;
-        animation: spin 20s linear infinite;
-    } */
-
-    /* #cube>div {
-        position: absolute;
-        transform-style: preserve-3d;
-    }
-
-    @keyframes spin {
-        from {
-            transform: rotateX(-0.1turn) rotateY(0turn);
+<!DOCTYPE html><html lang="zh-CN" class="no-js">
+<head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><script>
+    (function () {
+      var theme = 'light'; // 默认浅色主题
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          theme = saved; // 用户手动选择过，尊重用户
+        } else if (window.matchMedia &&
+                   window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark'; // 无记录时跟随系统偏好
         }
+      } catch (e) {
+        // localStorage 不可用（隐私模式等）时静默回退到浅色
+        theme = 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script><title>whx&#x27;s Blog</title>
+  <meta name="description" content="记录生活">
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
 
-        to {
-            transform: rotateX(-0.1turn) rotateY(1turn);
-        }
-    } */
-</style>
+  
+</head>
 
-<!-- <div id="cube" style="width: 4em; height: 8em;">
-    <div style="transform: translate3d(0em, 0em, 2em)">w</div>
-    <div style="transform: translate3d(4em, 0em, 2em)">e</div>
-    <div style="transform: translate3d(0em, 4em, -2em)">l</div>
-    <div style="transform: translate3d(4em, 4em, -2em)">c</div>
-    <div style="transform: translate3d(4em, 4em, -2em)">o</div>
-    <div style="transform: translate3d(4em, 4em, -2em)">m</div>
-    <div style="transform: translate3d(4em, 4em, -2em)">e</div>
-</div> --><link rel="stylesheet" href="/static/zine.css">
-        <link rel="alternate"
-              type="application/atom+xml"
-              title="whx's Blog RSS"
-              href="/feed.xml">
-        <style>
-            :root {
-                --primary-color: #55bb8a;
-                --main-color: #111111;
-                --link-color: #e97312;
-                --secondary-color: #baccd9;
-            }
-        </style>
-    </head>
-    <body class="h-full bg-secondary">
-        <div class="bg-primary text-main font-bold text-center z-0">
-                <header class="p-8 md:p-10">
-                    <div class="text-4xl lg:text-5xl">
-                        <a href="/">whx's Blog</a>
-                    </div>
-                    <ul>
-                        <li class="inline-block mt-6 mx-5 text-base hover:underline">
-                                <a href="/about">About</a>
-                            </li>
-                        <li class="inline-block mt-6 mx-5 text-base hover:underline">
-                                <a href="/feed.xml">RSS</a>
-                            </li>
-                        <li class="inline-block mt-6 mx-5 text-base hover:underline">
-                                <a href="/static/resume.pdf">resume</a>
-                            </li>
-                        </ul>
-                </header>
-                <div class="w-full h-32 md:h-36 lg:h-44 xl:h-48 2xl:h-56"></div>
-            </div>
-            <main class="pb-10 -translate-y-32 md:-translate-y-32 lg:-translate-y-36 xl:-translate-y-44 2xl:-translate-y-56 mx-auto sm:max-w-scree-md md:max-w-screen-lg">
-                <div class="p-4 md:p-8 mx-4 my-6 bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
-            <div class="text-2xl text-center m-4">
-                <a class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-primary relative inline-block transition sm:hover:scale-110 duration-500"
-                   href="/s3">
-                    <div class="first-letter:text-4xl first-letter:font-bold relative text-main px-10">2023</div>
-                </a>
-            </div>
-            <div class="flex flex-wrap flex-col sm:flex-row sm:justify-evenly items-center">
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s3/1">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2023/2022.png"
-                                     alt="2022 总结"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">2022 总结</div>
-                                <div class="mt-2 text-base text-gray-500">2023-01-01</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s3/2">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2023/llama-rs.png"
-                                     alt="AI 来了"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">AI 来了</div>
-                                <div class="mt-2 text-base text-gray-500">2023-03-17</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s3/3">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2022/Rust.jpeg"
-                                     alt="从 Happened-before 说起（1）"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">从 Happened-before 说起（1）</div>
-                                <div class="mt-2 text-base text-gray-500">2023-03-22</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s3/4">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2022/Rust.jpeg"
-                                     alt="从 Happened-before 说起（2）"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">从 Happened-before 说起（2）</div>
-                                <div class="mt-2 text-base text-gray-500">2023-04-03</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 flex w-full mx-auto ">
-                    <a href="/s3"
-                       class="p-3 px-12 mx-auto my-8 bg-primary text-main text-sm font-bold rounded transition sm:hover:scale-110 duration-500">
-                        查看更多
-                    </a>
-                </div>
-            </div>
-        </div>
-    <div class="p-4 md:p-8 mx-4 my-6 bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
-            <div class="text-2xl text-center m-4">
-                <a class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-primary relative inline-block transition sm:hover:scale-110 duration-500"
-                   href="/s2">
-                    <div class="first-letter:text-4xl first-letter:font-bold relative text-main px-10">2022</div>
-                </a>
-            </div>
-            <div class="flex flex-wrap flex-col sm:flex-row sm:justify-evenly items-center">
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s2/1">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2022/Rust.jpeg"
-                                     alt="记一次 Rust 探险"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">记一次 Rust 探险</div>
-                                <div class="mt-2 text-base text-gray-500">2022-04-17</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 flex w-full mx-auto ">
-                    <a href="/s2"
-                       class="p-3 px-12 mx-auto my-8 bg-primary text-main text-sm font-bold rounded transition sm:hover:scale-110 duration-500">
-                        查看更多
-                    </a>
-                </div>
-            </div>
-        </div>
-    <div class="p-4 md:p-8 mx-4 my-6 bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5">
-            <div class="text-2xl text-center m-4">
-                <a class="before:block before:absolute before:-inset-1 before:-skew-y-3 before:bg-primary relative inline-block transition sm:hover:scale-110 duration-500"
-                   href="/s1">
-                    <div class="first-letter:text-4xl first-letter:font-bold relative text-main px-10">2021</div>
-                </a>
-            </div>
-            <div class="flex flex-wrap flex-col sm:flex-row sm:justify-evenly items-center">
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s1/1">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2021/把自己作为方法.jpeg"
-                                     alt="把自己作为方法"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">把自己作为方法</div>
-                                <div class="mt-2 text-base text-gray-500">2021-06-05</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 sm:max-w-md w-full transition ease-in-out sm:hover:scale-105 duration-500 hover:border border-gray-200">
-                        <a href="/s1/2">
-                            <div class="relative mx-auto ">
-                                <img class="z-0 w-full max-h-52 md:max-h-56 object-cover"
-                                     loading="lazy"
-                                     src="/static/2021/杭州游记.jpeg"
-                                     alt="杭州游记"/>
-                            </div>
-                            <div class="m-3 text-xl text-black ">
-                                <div class="font-bold line-clamp-2">杭州游记</div>
-                                <div class="mt-2 text-base text-gray-500">2021-07-03</div>
-                            </div>
-                        </a>
-                    </div>
-                <div class="mt-8 sm:mx-2 flex w-full mx-auto ">
-                    <a href="/s1"
-                       class="p-3 px-12 mx-auto my-8 bg-primary text-main text-sm font-bold rounded transition sm:hover:scale-110 duration-500">
-                        查看更多
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-            <footer class="relative">
-                <footer class="bg-black text-white text-center p-16">
-    <div>
-        <a href="https://github.com/whx828">Copyright © 2022-2023 whx</a>
+<body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
+    <div class="container header-inner"><a class="site-title" href="https://whx828.com">
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+      </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button><nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="https://whx828.com">首页</a>
+        <a href="https://whx828.com/posts">文章</a>
+        <a href="https://whx828.com/archive">归档</a>
+        <a href="https://whx828.com/tags">标签</a>
+        <a href="https://whx828.com/about">关于</a>
+      </nav><div class="search-box" role="search">
+        <input type="search" id="search-input" class="search-input"
+               placeholder="搜索文章…" aria-label="搜索文章"
+               autocomplete="off" spellcheck="false"><div class="search-results" id="search-results" hidden
+             role="listbox" aria-label="搜索结果"></div>
+      </div><button class="theme-toggle" id="theme-toggle" aria-label="切换深色/浅色主题" title="切换主题"><svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg><svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
     </div>
-</footer>
+  </header><main class="site-main" id="main-content">
+    
+<section class="hero"><div class="hero-bg" aria-hidden="true">
+    <div class="hero-grid"></div>
+    <div class="hero-shape hero-shape-1"></div>
+    <div class="hero-shape hero-shape-2"></div>
+    <div class="hero-shape hero-shape-3"></div>
+  </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
-<script>
-    document.getElementsByClassName('bg-primary')[0].setAttribute("id", "vanta");
-    document.getElementById('vanta').classList.remove('bg-primary');
-    window.addEventListener('DOMContentLoaded', () => {
-        VANTA.WAVES({
-            el: "#vanta",
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 1.00,
-            scaleMobile: 1.00,
-            shininess: 150.00,
-            waveHeight: 37.50,
-            waveSpeed: 1.50,
-            zoom: 0.97
-        })
-    });
-</script>
-<script src="https://app.embed.im/snow.js" defer></script>
-<style>
-    .vanta {
-        z-index: 0;
-        position: relative;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-    }
+  <div class="container hero-content">
+    <p class="hero-eyebrow">你好，欢迎来到</p><h1 class="hero-title">whx&#x27;s Blog</h1><p class="hero-tagline">置若惘闻</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://whx828.com/posts">开始阅读</a>
+      <a class="btn btn-ghost" href="https://whx828.com/about">关于我</a>
+    </div>
+  </div>
+</section><section class="container section-block">
+  <div class="section-head reveal">
+    <h2 class="section-title">最新文章</h2>
+    <a class="section-more" href="https://whx828.com/posts">查看全部 →</a>
+  </div>
 
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap');
-</style><a href="https://github.com/zineland"
-                   class="absolute z-20 bottom-0 w-full text-center font-bold md:text-slate-100 md:opacity-10 md:hover:opacity-50 md:bg-transparent bg-primary p-2 text-main">
-                    Proudly powered by Zine.
-                </a>
-            </div>
-        </footer>
-    </body>
-    <script src="/static/medium-zoom.min.js"></script>
-    <script src="/static/zine.js"></script>
+  <div class="post-grid">
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/zine-to-zola/">
+          <p class="post-card-meta">
+            <time datetime="2026-07-17">2026 年 07 月 17 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 4 分钟</span>
+          </p>
+          <h3 class="post-card-title">博客更新：从 zine 到 Zola</h3>
+          
+            <p class="post-card-summary">停更三年后，重启博客</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#博客</span>
+              
+                <span class="tag-chip">#随笔</span>
+              
+                <span class="tag-chip">#rust</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/xv6-learning/">
+          <p class="post-card-meta">
+            <time datetime="2023-05-07">2023 年 05 月 07 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 10 分钟</span>
+          </p>
+          <h3 class="post-card-title">xv6 学习记录</h3>
+          
+            <p class="post-card-summary">最近（就这两天）在学习 MIT 的 6.S081https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2021&#x2F;，打算补一补操作系统的课，毕竟我对</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#操作系统</span>
+              
+                <span class="tag-chip">#学习笔记</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/happened-before-2/">
+          <p class="post-card-meta">
+            <time datetime="2023-04-03">2023 年 04 月 03 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 15 分钟</span>
+          </p>
+          <h3 class="post-card-title">从 Happened-before 说起（2）</h3>
+          
+            <p class="post-card-summary">书接上文，继续讨论那个让人疑惑的问题。</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#并发</span>
+              
+                <span class="tag-chip">#分布式</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/happened-before-1/">
+          <p class="post-card-meta">
+            <time datetime="2023-03-22">2023 年 03 月 22 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 40 分钟</span>
+          </p>
+          <h3 class="post-card-title">从 Happened-before 说起（1）</h3>
+          
+            <p class="post-card-summary">本文大部分是背景介绍，本来想一气呵成，但发现要讲的东西有点多，遂分成了两篇来写。</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#并发</span>
+              
+                <span class="tag-chip">#分布式</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/ai-laile/">
+          <p class="post-card-meta">
+            <time datetime="2023-03-17">2023 年 03 月 17 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 7 分钟</span>
+          </p>
+          <h3 class="post-card-title">AI 来了</h3>
+          
+            <p class="post-card-summary">今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4&#x2F;ChatGPT&#x2F;文心一言刷屏，突然也想跟把风玩玩 AI。</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#AI</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+      <article class="post-card reveal">
+        <a class="post-card-link" href="https://whx828.com/posts/2022-zongjie/">
+          <p class="post-card-meta">
+            <time datetime="2023-01-01">2023 年 01 月 01 日</time>
+            <span class="post-card-dot" aria-hidden="true">·</span>
+            <span>约 12 分钟</span>
+          </p>
+          <h3 class="post-card-title">2022 总结</h3>
+          
+            <p class="post-card-summary">2022 回顾 &amp; 鞭尸</p>
+          
+          
+            <p class="post-card-tags">
+              
+                <span class="tag-chip">#年度总结</span>
+              
+                <span class="tag-chip">#随笔</span>
+              
+            </p>
+          
+        </a>
+      </article>
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</section>
+
+<section class="container section-block">
+  <div class="section-head reveal">
+    <h2 class="section-title">标签</h2>
+    <a class="section-more" href="https://whx828.com/tags">全部标签 →</a>
+  </div>
+  <div class="tag-cloud reveal">
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/ai/">
+        #AI <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/bing-fa/">
+        #并发 <span class="tag-count">2</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/bo-ke/">
+        #博客 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/cao-zuo-xi-tong/">
+        #操作系统 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/du-shu/">
+        #读书 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/fen-bu-shi/">
+        #分布式 <span class="tag-count">2</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/nian-du-zong-jie/">
+        #年度总结 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/rust/">
+        #rust <span class="tag-count">2</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/sheng-huo/">
+        #生活 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/sui-bi/">
+        #随笔 <span class="tag-count">3</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/xue-xi-bi-ji/">
+        #学习笔记 <span class="tag-count">1</span>
+      </a>
+    
+      <a class="tag-chip tag-chip-lg" href="https://whx828.com/tags/you-ji/">
+        #游记 <span class="tag-count">1</span>
+      </a>
+    
+  </div>
+</section>
+
+
+
+  </main><footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">
+        
+          © 2026 whx ·
+        
+        由 <a href="https://www.getzola.org" rel="noopener" target="_blank">Zola</a>（Rust 🦀）构建
+      </p>
+      <p class="footer-links">
+        <a href="https://whx828.com/atom.xml">RSS 订阅</a>
+        
+          · <a href="https://github.com/whx828" rel="noopener" target="_blank">GitHub</a>
+        
+        
+          · <a href="mailto:whx19990828@gmail.com">邮箱</a>
+        
+      </p>
+    </div>
+  </footer><button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部" hidden>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+  </button><script>
+    window.SITE_CONFIG = {
+      searchIndexUrl: "https://whx828.com/search-index.json",
+      baseUrl: "https://whx828.com"
+    };
+  </script><script src="https://whx828.com/js/main.js" defer></script>
+  <script src="https://whx828.com/js/search.js" defer></script>
+</body>
 </html>

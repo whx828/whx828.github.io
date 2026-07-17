@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-CN" class="no-js">
+<head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><script>
+    (function () {
+      var theme = 'light'; // 默认浅色主题
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          theme = saved; // 用户手动选择过，尊重用户
+        } else if (window.matchMedia &&
+                   window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark'; // 无记录时跟随系统偏好
+        }
+      } catch (e) {
+        // localStorage 不可用（隐私模式等）时静默回退到浅色
+        theme = 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script><title>记一次 Rust 探险 · whx&#x27;s Blog</title>
+  <meta name="description" content="最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：">
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+
+  
+</head>
+
+<body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
+    <div class="container header-inner"><a class="site-title" href="https://whx828.com">
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+      </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button><nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="https://whx828.com">首页</a>
+        <a href="https://whx828.com/posts">文章</a>
+        <a href="https://whx828.com/archive">归档</a>
+        <a href="https://whx828.com/tags">标签</a>
+        <a href="https://whx828.com/about">关于</a>
+      </nav><div class="search-box" role="search">
+        <input type="search" id="search-input" class="search-input"
+               placeholder="搜索文章…" aria-label="搜索文章"
+               autocomplete="off" spellcheck="false"><div class="search-results" id="search-results" hidden
+             role="listbox" aria-label="搜索结果"></div>
+      </div><button class="theme-toggle" id="theme-toggle" aria-label="切换深色/浅色主题" title="切换主题"><svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg><svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+    </div>
+  </header><main class="site-main" id="main-content">
+    
+<div class="container article-layout">
+
+  <article class="post-full"><header class="post-header">
+      <h1 class="post-title">记一次 Rust 探险</h1>
+      <p class="post-meta">
+        <time datetime="2022-04-17">📅 2022 年 04 月 17 日</time>
+        <span class="post-meta-dot" aria-hidden="true">·</span>
+        <span>⏱ 约 8 分钟读完</span>
+        
+      </p>
+      <p class="post-tags">
+        
+          <a class="tag-chip" href="https://whx828.com/tags/rust/">#rust</a>
+        
+      </p>
+      
+    </header><nav class="toc" id="toc" aria-label="文章目录" hidden>
+      <p class="toc-title">目录</p>
+      <ul class="toc-list" id="toc-list"></ul>
+    </nav><div class="post-content" id="post-content">
+      <h2 id="wen-ti-de-qi-shi">问题的起始</h2>
+<p>最近在看《The Book》，第 17 章的 17.3 节里面有这样一个细节：</p>
+<blockquote>
+<p>……</p>
+<p>请求审核博文来改变其状态</p>
+<p>接下来需要增加请求审核博文的功能，这应当将其状态由 <code>Draft</code> 改为 <code>PendingReview</code>。示例 17-15 展示了这段代码：</p>
+</blockquote>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span>    state</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Option</span><span>&lt;</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;&gt;,</span></span>
+<span class="giallo-l"><span>    content</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> String</span><span>,</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #859289;font-style: italic;">   // --snip--</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> new</span><span>()</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #7FBBB3;">        Post</span><span> {</span></span>
+<span class="giallo-l"><span>            state</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Some</span><span>(</span><span style="color: #7FBBB3;">Box</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #7FBBB3;">Draft</span><span> {})),</span></span>
+<span class="giallo-l"><span>            content</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> String</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(),</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> add_text</span><span>(</span><span style="color: #E69875;">&amp;mut</span><span style="color: #D699B6;"> self</span><span>, text</span><span style="color: #E69875;">: &amp;</span><span style="color: #7FBBB3;">str</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">        self</span><span style="color: #E69875;">.</span><span>content</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">push_str</span><span>(text);</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> content</span><span>(</span><span style="color: #E69875;">&amp;</span><span style="color: #D699B6;">self</span><span>)</span><span style="color: #E69875;"> -&gt; &amp;</span><span style="color: #7FBBB3;">str</span><span> {</span></span>
+<span class="giallo-l"><span>        &quot;&quot;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #E69875;">&amp;mut</span><span style="color: #D699B6;"> self</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">        if</span><span style="color: #E69875;"> let</span><span style="color: #7FBBB3;"> Some</span><span>(s)</span><span style="color: #E69875;"> =</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">take</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">            self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #7FBBB3;"> Some</span><span>(s</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>())</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E69875;">trait</span><span style="color: #7FBBB3;"> State</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E69875;">struct</span><span style="color: #7FBBB3;"> Draft</span><span> {}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> State</span><span style="color: #E67E80;"> for</span><span style="color: #7FBBB3;"> Draft</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #7FBBB3;">        Box</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #7FBBB3;">PendingReview</span><span> {})</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E69875;">struct</span><span style="color: #7FBBB3;"> PendingReview</span><span> {}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> State</span><span style="color: #E67E80;"> for</span><span style="color: #7FBBB3;"> PendingReview</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">        self</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<blockquote>
+<p>……</p>
+<p><strong>我们需要将 <code>state</code> 临时设置为 <code>None</code> 来获取 <code>state</code> 值，即老状态的所有权，而不是使用 <code>self.state = self.state.request_review();</code> 这样的代码直接更新状态值。这确保了当 <code>Post</code> 被转换为新状态后不能再使用老 <code>state</code> 值。</strong></p>
+<p>……</p>
+</blockquote>
+<p>这里让我非常困惑，我认为并不是这个原因，因此找了不少解释，以下是总结。</p>
+<h2 id="box-de-xing-zhi">Box 的性质</h2>
+<p>首先来看可变性。<br />
+在 Rust 中，一个变量是否可变，取决于是否用 <code>mut</code> 修饰变量绑定。</p>
+<p>如果我们用 <code>let var : T</code> 声明，那么 <code>var</code> 是不可变的；而且 <code>var</code> 内部所有的成员也都是不可变的；<br />
+如果我们用 <code>let mut var : T</code> 声明，那么 <code>var</code> 是可变的，相应的它的内部所有成员也都是可变的。<br />
+这样的话，如果有个结构体引用 <code>&amp;SomeStruct</code>，则 <code>SomeStruct</code> 的所有字段都是不可变的。<br />
+但在实际开发中，确实存在需要结构体中的某个字段可变的情况。针对这种情况，Rust 的标准库中有个 <code>std::cell</code> 模块，通过共享的可变容器允许以受控的方式进行可变性操作。</p>
+<p>在 <code>std::cell</code> 模块中的 <code>Cell</code> 和 <code>RefCell</code> 是实现内部可变性的<strong>容器</strong>，在保持容器不被 <code>drop</code> 的情况下可以修改其中的值；而 <code>Box</code> 虽然一直都被拿来和前两个一起讨论，但 <code>Box</code> 并没在 <code>std::cell</code> 模块中，它对可变性其实没啥限定。<br />
+<code>Box</code> 是一个<strong>指针</strong>，有所有权和生命周期，指向堆上的某个位置，和普通的指针不同的是，它<strong>独占</strong>了对数据的所有权；<br />
+<code>Cell</code> <strong>不是</strong>一个指针，<code>Cell&lt;T&gt;</code> 只是把数据 T 包装一下，告诉你它有“内部可变性”，数据还是那些数据。</p>
+<p>其次来看所有权规则。<br />
+<code>Box&lt;T&gt;</code> 不是 <code>Copy</code> 类型，因为 <code>Box</code> 拥有分配在堆上的缓冲区，非 <code>Copy</code> 类型如果采用逐位复制，那么会使编译器无法分辨哪个值需要对<strong>被引用的原始资源</strong>负责。</p>
+<p>性质已经搞清，接下来我们来看具体问题。</p>
+<h2 id="wei-shen-me-zhi-jie-fu-zhi-bu-xing">为什么直接赋值不行</h2>
+<p>我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：</p>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span>    state</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;,</span></span>
+<span class="giallo-l"><span>    content</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> String</span><span>,</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E69875;">trait</span><span style="color: #7FBBB3;"> State</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;; </span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #859289;font-style: italic;">    // ... </span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #E69875;">&amp;mut</span><span style="color: #D699B6;"> self</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">        self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #859289;font-style: italic;">    // ... </span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>编译器报错：</p>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>self.state = self.state.request_review();</span></span>
+<span class="giallo-l"><span>             ^^^^^^ move occurs because `self.state` has type `std::boxed::Box&lt;dyn State&gt;`, which does not implement the `Copy` trait&#39;.</span></span></code></pre>
+<p>原回答：<br />
+This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what’s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
+<p>翻译如下：<br />
+这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
+<p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>self.state = self.state.request_review();</span></span></code></pre>
+<p>这一句中的 <code>self.state.request_review();</code> 使得结构体 <code>Post</code> 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
+因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
+<h2 id="2023-2-16-zhui-jia">2023.2.16 追加</h2>
+<p>再读《The Book》，想到自己还写过这么一篇文章，回来看的时候发现有个地方没说透：</p>
+<blockquote>
+<p>Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code></p>
+</blockquote>
+<p>这句话什么意思？还是要看<a rel="noopener external" target="_blank" href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=dcc068cc77c38b8a929b9177a11500ec">报错信息</a>：</p>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #7FBBB3;">   Compiling</span><span> playground v0</span><span style="color: #E69875;">.</span><span style="color: #D699B6;">0</span><span>.</span><span style="color: #D699B6;">1</span><span> (</span><span style="color: #E69875;">/</span><span>playground)</span></span>
+<span class="giallo-l"><span>error[</span><span style="color: #7FBBB3;">E0507</span><span>]</span><span style="color: #E69875;">:</span><span> cannot</span><span style="color: #E67E80;"> move</span><span> out of `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` which is behind a mutable reference</span></span>
+<span class="giallo-l"><span style="color: #E69875;">  --&gt;</span><span> src</span><span style="color: #E69875;">/</span><span>lib</span><span style="color: #E69875;">.</span><span>rs</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">12</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">22</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">12</span><span style="color: #E69875;"> |</span><span style="color: #D699B6;">         self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |                      ^^^^^^^^^^ ----------------</span><span> `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` moved due to this method call</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |                      |</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |</span><span style="color: #E67E80;">                      move</span><span> occurs because `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` has</span><span style="color: #E69875;"> type</span><span> `</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;`, which does not implement the `</span><span style="color: #7FBBB3;">Copy</span><span>` </span><span style="color: #E69875;">trait</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
+<span class="giallo-l"><span>note</span><span style="color: #E69875;">:</span><span> this function takes ownership of the receiver `</span><span style="color: #D699B6;">self</span><span>`, which moves `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state`</span></span>
+<span class="giallo-l"><span style="color: #E69875;">  --&gt;</span><span> src</span><span style="color: #E69875;">/</span><span>lib</span><span style="color: #E69875;">.</span><span>rs</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">7</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">23</span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">7</span><span style="color: #E69875;">  |</span><span style="color: #E67E80;">     fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;; </span></span>
+<span class="giallo-l"><span style="color: #E69875;">   |                       ^^^^</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7FBBB3;">For</span><span> more information about this error,</span><span style="color: #E67E80;"> try</span><span> `rustc</span><span style="color: #E69875;"> --</span><span>explain</span><span style="color: #7FBBB3;"> E0507</span><span>`</span><span style="color: #E69875;">.</span></span>
+<span class="giallo-l"><span>error</span><span style="color: #E69875;">:</span><span> could not compile `playground` due to previous error</span></span></code></pre>
+<p>我们的操作会 <code>cannot move out of *self.state* which is behind a mutable reference</code>，也就是说会在可变引用时 <code>move</code> 变量（转移所有权）。<br />
+看一下函数签名： <code>fn request_review(&amp;mut self)</code>，果然使用的是 <code>Post</code> 的可变引用（也就是 <code>&amp;mut self</code>），然后在 <code>self.state.request_review()</code> 这一步时 <code>move</code> 了 <code>self.state</code>，如果 <code>self.state</code> 没有实现 <code>Copy</code> 这个 trait，那么根据 Rust 规则，使用可变引用时是不能 <code>move</code> 的，一旦 <code>move</code> 了，对象的内存地址改变了，那引用还有效吗？</p>
+<ul>
+<li>从借用规则角度看，可变引用是「独占引用」，也即在存在可变引用的时候是不能其他引用的，如果把值看成一种「可变引用」，那么很明显发生了冲突，之前的可变引用很可能就失效了。</li>
+<li>从所有权角度看，可以把可变引用看成持有一段时间的所有权的值的特殊状态，这段时间内原值是不拥有所有权的，所以原值也没有能力去 <code>move</code>。</li>
+<li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是会原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
+</ul>
+<p>说了这么多，让我看看书里的操作是什么：</p>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #859289;font-style: italic;">    // --snip--</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #E69875;">&amp;mut</span><span style="color: #D699B6;"> self</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #E67E80;">        if</span><span style="color: #E69875;"> let</span><span style="color: #7FBBB3;"> Some</span><span>(s)</span><span style="color: #E69875;"> =</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">take</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #D699B6;">            self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #7FBBB3;"> Some</span><span>(s</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>())</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>人家的 <code>state</code> 用 <code>Option</code> 给包住了，而且取值和赋值是分开写的，没有写在一行里，从 <code>take</code> 的签名：<code>pub fn take(&amp;mut self) -&gt; Option&lt;T&gt;</code> 中看出 <code>take</code> 用的是可变借用而不是 <code>self</code>，也就没有 <code>move</code> 了，同时生命周期推断也能发挥作用，当然就规避掉了这些问题。</p>
+<p>问题解决！感谢这些在网上无私分享知识的人们！</p>
+<h2 id="can-kao-yue-du">参考阅读</h2>
+<ol>
+<li><a rel="noopener external" target="_blank" href="https://stackoverflow.com/questions/57193489/why-do-we-need-to-call-take-for-optiont-variable">why do we need to call take() for Option&lt;T&gt; variable</a></li>
+<li><a rel="noopener external" target="_blank" href="https://rustwiki.org/zh-CN/rust-by-example/scope/move.html">所有权和移动</a></li>
+<li><a rel="noopener external" target="_blank" href="https://rustwiki.org/zh-CN/rust-by-example/variable_bindings/declare.html">变量先声明</a></li>
+<li><a rel="noopener external" target="_blank" href="https://www.archgrid.xyz/2022/03/rust-ownership/">聊聊 Rust 中的所有权机制</a></li>
+<li><a rel="noopener external" target="_blank" href="https://ipotato.me/article/57">Rust 中几个智能指针的异同与使用场景</a></li>
+<li><a rel="noopener external" target="_blank" href="https://rustcc.cn/article?id=37d1cb4f-5cc9-4adc-b41a-dbe4914bf4b5">【Rust 每周一知】如何理解 Rust 中的可变与不可变？</a></li>
+</ol>
+
+    </div><nav class="post-nav" aria-label="文章间导航">
+      
+        <a class="post-nav-item post-nav-prev" href="https://whx828.com/posts/hangzhou-youji/">
+          <span class="post-nav-label">← 上一篇（更早）</span>
+          <span class="post-nav-title">杭州游记</span>
+        </a>
+      
+      
+        <a class="post-nav-item post-nav-next" href="https://whx828.com/posts/2022-zongjie/">
+          <span class="post-nav-label">下一篇（更新）→</span>
+          <span class="post-nav-title">2022 总结</span>
+        </a>
+      
+    </nav>
+
+  </article>
+</div>
+
+  </main><footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">
+        
+          © 2026 whx ·
+        
+        由 <a href="https://www.getzola.org" rel="noopener" target="_blank">Zola</a>（Rust 🦀）构建
+      </p>
+      <p class="footer-links">
+        <a href="https://whx828.com/atom.xml">RSS 订阅</a>
+        
+          · <a href="https://github.com/whx828" rel="noopener" target="_blank">GitHub</a>
+        
+        
+          · <a href="mailto:whx19990828@gmail.com">邮箱</a>
+        
+      </p>
+    </div>
+  </footer><button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部" hidden>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+  </button><script>
+    window.SITE_CONFIG = {
+      searchIndexUrl: "https://whx828.com/search-index.json",
+      baseUrl: "https://whx828.com"
+    };
+  </script><script src="https://whx828.com/js/main.js" defer></script>
+  <script src="https://whx828.com/js/search.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="zh-CN" class="no-js">
+<head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><script>
+    (function () {
+      var theme = 'light'; // 默认浅色主题
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          theme = saved; // 用户手动选择过，尊重用户
+        } else if (window.matchMedia &&
+                   window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark'; // 无记录时跟随系统偏好
+        }
+      } catch (e) {
+        // localStorage 不可用（隐私模式等）时静默回退到浅色
+        theme = 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script><title>AI 来了 · whx&#x27;s Blog</title>
+  <meta name="description" content="今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4&#x2F;ChatGPT&#x2F;文心一言刷屏，突然也想跟把风玩玩 AI。">
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+
+  
+</head>
+
+<body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
+    <div class="container header-inner"><a class="site-title" href="https://whx828.com">
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+      </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button><nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="https://whx828.com">首页</a>
+        <a href="https://whx828.com/posts">文章</a>
+        <a href="https://whx828.com/archive">归档</a>
+        <a href="https://whx828.com/tags">标签</a>
+        <a href="https://whx828.com/about">关于</a>
+      </nav><div class="search-box" role="search">
+        <input type="search" id="search-input" class="search-input"
+               placeholder="搜索文章…" aria-label="搜索文章"
+               autocomplete="off" spellcheck="false"><div class="search-results" id="search-results" hidden
+             role="listbox" aria-label="搜索结果"></div>
+      </div><button class="theme-toggle" id="theme-toggle" aria-label="切换深色/浅色主题" title="切换主题"><svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg><svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+    </div>
+  </header><main class="site-main" id="main-content">
+    
+<div class="container article-layout">
+
+  <article class="post-full"><header class="post-header">
+      <h1 class="post-title">AI 来了</h1>
+      <p class="post-meta">
+        <time datetime="2023-03-17">📅 2023 年 03 月 17 日</time>
+        <span class="post-meta-dot" aria-hidden="true">·</span>
+        <span>⏱ 约 7 分钟读完</span>
+        
+      </p>
+      <p class="post-tags">
+        
+          <a class="tag-chip" href="https://whx828.com/tags/ai/">#AI</a>
+        
+      </p>
+      
+    </header><nav class="toc" id="toc" aria-label="文章目录" hidden>
+      <p class="toc-title">目录</p>
+      <ul class="toc-list" id="toc-list"></ul>
+    </nav><div class="post-content" id="post-content">
+      <p>今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4/ChatGPT/文心一言刷屏，突然也想跟把风玩玩 AI。</p>
+<p>上网冲浪找到了这个项目：<a rel="noopener external" target="_blank" href="https://github.com/setzer22/llama-rs">LLaMA-rs</a>，是 <a rel="noopener external" target="_blank" href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> 的 Rust 版本，正好 MacBook 也能跑，比较适合我。<br />
+我尝试着 clone 了项目，想着看看能不能跑通，权当娱乐。</p>
+<p>需要这么几步操作：</p>
+<ol>
+<li>
+<p>首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：<br />
+<code>magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;dn=LLaMA</code></p>
+</li>
+<li>
+<p>简单瞅瞅，这些模型太大，我只是想玩一下，所以选择了最小的 7B</p>
+</li>
+<li>
+<p>模型下载好之后需要按照 <a rel="noopener external" target="_blank" href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> 项目的步骤继续：</p>
+<ol>
+<li>把模型挪到 <code>./models</code> 下</li>
+<li>安装必要的依赖：<code>python3 -m pip install torch numpy sentencepiece</code></li>
+<li>将 7B 模型转换为 ggml FP16 格式：<code>python3 convert-pth-to-ggml.py models/7B/ 1</code></li>
+<li>将模型量化为 4 位：<code>./quantize.sh 7B</code></li>
+</ol>
+</li>
+<li>
+<p>通过上面一顿操作你就得到了 <code>./models/7B/ggml-model-q4_0.bin</code> 这个文件</p>
+</li>
+<li>
+<p>友情提示下载的模型就有 10 几个 G，转化好的玩意也有 4G 多，所以你最好在等下载&amp;运行转换命令的时候找点事做，不然会非常无聊（说好的娱乐向呢。。。）</p>
+</li>
+<li>
+<p>接下来 clone <a rel="noopener external" target="_blank" href="https://github.com/setzer22/llama-rs">LLaMA-rs</a> 项目，在 LLaMA-rs 项目的根目录下执行 <code>cargo build --release</code>，构建 Rust 项目（熟悉 Rust 的要注意目前 debug 模式会报错，必须是 release 模式才行）</p>
+</li>
+<li>
+<p>构建完成之后就可以用 <code>cargo run --release -- &lt;ARGS&gt;</code> 命令运行了，人家给的例子是 <code>cargo run --release -- -m /data/Llama/LLaMA/7B/ggml-model-q4_0.bin -p "Tell me how cool the Rust programming language is:</code></p>
+</li>
+<li>
+<p>一切顺利你会看到结果，大功告成！我跑出来的东西是这样的：</p>
+</li>
+</ol>
+<img src="../../images/legacy/2023/llama-rs-result.png" loading="lazy" />
+<blockquote>
+<p>Tell me how cool the Rust programming language is:</p>
+<ol>
+<li>It’s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time.</li>
+<li>It can create a complete binary application from an XML file that specifies the class hierarchy and relationships - no other code is necessary or allowed!</li>
+<li>The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I’m really loving this because I can now write C-like</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>告诉我，Rust 编程语言有多酷：<br />
+1）它是使用标准技术编译的，但是它没有运行时库（所有类都插入了可执行文件中）。因此，您通常不必担心编译时的各种事情。<br />
+2）它可以从 XML 文件中创建一个完整的二进制应用程序，该应用程序指定类层次结构和关系 - 不需要或允许其他代码！<br />
+3）编程语言看起来像 Java，但没有开销 - 它以现代硬件的正常速度（i5+MacBookPro）在内存中运行。我真的很喜欢这个，因为我现在可以写类 C 语言</p>
+</blockquote>
+<p>AI 还是有点意思的，第一条还像那么回事，Rust 官方的确没有提供运行时，但是这意味着有更多的工作要在编译时去做啊，AI 的逻辑让人哭笑不得；<br />
+第二条更加离谱，如果这里说 TOML 文件将是绝杀，可惜换不得；第三条又是说对了一部分，Rust 的确快，但和 Java 并没多少相似之处。</p>
+<hr />
+<p>再来看基于 Stanford Alpaca 的 <a rel="noopener external" target="_blank" href="https://github.com/antimatter15/alpaca.cpp">alpaca.cpp</a> 项目的神奇操作，步骤和前面的差不多，但是效果更好：</p>
+<img src="../../images/legacy/2023/alpaca-cpp.png" loading="lazy" />
+<blockquote>
+<p>Rust has been described as “the most exciting new development in software engineering since C++”. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!</p>
+</blockquote>
+<blockquote>
+<p>Rust 被描述为“自 C++ 以来软件工程领域最激动人心的新发展”。它结合了安全性和性能，并注重正确性，这使其成为编写安全代码的理想选择。Rust 还提供来自社区的强大工具支持，使您能够比以往更快地编写更好的程序！</p>
+</blockquote>
+<p>这个效果就比前者好太多了，基本没有错误！</p>
+<p>最恐怖的是，所有的这一切都是在我这台 2016 的老 MacBook 上完成的，没有什么显卡/GPU 加持，完全靠 CPU 也能做到这种程度，这样看来 ChatGPT 那种神乎其技的表现也就不足为奇了，所谓图灵测试根本是难不住它们的，依照这个速度发展下去，奇点一定会到来；<br />
+这个世界太疯狂，未来会变成什么样子，真是令人期待！</p>
+
+    </div><nav class="post-nav" aria-label="文章间导航">
+      
+        <a class="post-nav-item post-nav-prev" href="https://whx828.com/posts/2022-zongjie/">
+          <span class="post-nav-label">← 上一篇（更早）</span>
+          <span class="post-nav-title">2022 总结</span>
+        </a>
+      
+      
+        <a class="post-nav-item post-nav-next" href="https://whx828.com/posts/happened-before-1/">
+          <span class="post-nav-label">下一篇（更新）→</span>
+          <span class="post-nav-title">从 Happened-before 说起（1）</span>
+        </a>
+      
+    </nav>
+
+  </article>
+</div>
+
+  </main><footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">
+        
+          © 2026 whx ·
+        
+        由 <a href="https://www.getzola.org" rel="noopener" target="_blank">Zola</a>（Rust 🦀）构建
+      </p>
+      <p class="footer-links">
+        <a href="https://whx828.com/atom.xml">RSS 订阅</a>
+        
+          · <a href="https://github.com/whx828" rel="noopener" target="_blank">GitHub</a>
+        
+        
+          · <a href="mailto:whx19990828@gmail.com">邮箱</a>
+        
+      </p>
+    </div>
+  </footer><button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部" hidden>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+  </button><script>
+    window.SITE_CONFIG = {
+      searchIndexUrl: "https://whx828.com/search-index.json",
+      baseUrl: "https://whx828.com"
+    };
+  </script><script src="https://whx828.com/js/main.js" defer></script>
+  <script src="https://whx828.com/js/search.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="zh-CN" class="no-js">
+<head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><script>
+    (function () {
+      var theme = 'light'; // 默认浅色主题
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          theme = saved; // 用户手动选择过，尊重用户
+        } else if (window.matchMedia &&
+                   window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark'; // 无记录时跟随系统偏好
+        }
+      } catch (e) {
+        // localStorage 不可用（隐私模式等）时静默回退到浅色
+        theme = 'light';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script><title>归档 · whx&#x27;s Blog</title>
+  <meta name="description" content="记录生活">
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+
+  
+</head>
+
+<body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
+    <div class="container header-inner"><a class="site-title" href="https://whx828.com">
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+      </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button><nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a href="https://whx828.com">首页</a>
+        <a href="https://whx828.com/posts">文章</a>
+        <a href="https://whx828.com/archive">归档</a>
+        <a href="https://whx828.com/tags">标签</a>
+        <a href="https://whx828.com/about">关于</a>
+      </nav><div class="search-box" role="search">
+        <input type="search" id="search-input" class="search-input"
+               placeholder="搜索文章…" aria-label="搜索文章"
+               autocomplete="off" spellcheck="false"><div class="search-results" id="search-results" hidden
+             role="listbox" aria-label="搜索结果"></div>
+      </div><button class="theme-toggle" id="theme-toggle" aria-label="切换深色/浅色主题" title="切换主题"><svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg><svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+    </div>
+  </header><main class="site-main" id="main-content">
+    
+
+
+
+<div class="container">
+  <header class="page-head reveal">
+    <h1 class="page-title">归档</h1>
+    
+    <p class="page-desc">
+      共 9 篇文章 ·
+      最早一篇写于 2021 年 06 月
+    </p>
+  </header>
+
+  
+  
+  <div class="archive-list">
+    
+      
+        
+        
+        <h2 class="archive-year reveal">2026 年</h2>
+      
+        
+        <h3 class="archive-month reveal">07 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2026-07-17">07-17</time>
+        <a class="archive-link" href="https://whx828.com/posts/zine-to-zola/">博客更新：从 zine 到 Zola</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#博客</span><span class="tag-chip tag-chip-sm">#随笔</span><span class="tag-chip tag-chip-sm">#rust</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        
+        <h2 class="archive-year reveal">2023 年</h2>
+      
+        
+        <h3 class="archive-month reveal">05 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2023-05-07">05-07</time>
+        <a class="archive-link" href="https://whx828.com/posts/xv6-learning/">xv6 学习记录</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#操作系统</span><span class="tag-chip tag-chip-sm">#学习笔记</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        <h3 class="archive-month reveal">04 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2023-04-03">04-03</time>
+        <a class="archive-link" href="https://whx828.com/posts/happened-before-2/">从 Happened-before 说起（2）</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#并发</span><span class="tag-chip tag-chip-sm">#分布式</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        <h3 class="archive-month reveal">03 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2023-03-22">03-22</time>
+        <a class="archive-link" href="https://whx828.com/posts/happened-before-1/">从 Happened-before 说起（1）</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#并发</span><span class="tag-chip tag-chip-sm">#分布式</span>
+          </span>
+        
+      </article>
+    
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2023-03-17">03-17</time>
+        <a class="archive-link" href="https://whx828.com/posts/ai-laile/">AI 来了</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#AI</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        <h3 class="archive-month reveal">01 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2023-01-01">01-01</time>
+        <a class="archive-link" href="https://whx828.com/posts/2022-zongjie/">2022 总结</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#年度总结</span><span class="tag-chip tag-chip-sm">#随笔</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        
+        <h2 class="archive-year reveal">2022 年</h2>
+      
+        
+        <h3 class="archive-month reveal">04 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2022-04-17">04-17</time>
+        <a class="archive-link" href="https://whx828.com/posts/rust-tanxian/">记一次 Rust 探险</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#rust</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        
+        <h2 class="archive-year reveal">2021 年</h2>
+      
+        
+        <h3 class="archive-month reveal">07 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2021-07-03">07-03</time>
+        <a class="archive-link" href="https://whx828.com/posts/hangzhou-youji/">杭州游记</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#游记</span><span class="tag-chip tag-chip-sm">#生活</span>
+          </span>
+        
+      </article>
+    
+      
+        
+        <h3 class="archive-month reveal">06 月</h3>
+      
+
+      <article class="archive-item archive-item-indent reveal">
+        <time class="archive-date" datetime="2021-06-05">06-05</time>
+        <a class="archive-link" href="https://whx828.com/posts/ba-ziji-zuowei-fangfa/">把自己作为方法</a>
+        
+          <span class="archive-tags">
+            <span class="tag-chip tag-chip-sm">#读书</span><span class="tag-chip tag-chip-sm">#随笔</span>
+          </span>
+        
+      </article>
+    
+  </div>
+</div>
+
+  </main><footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">
+        
+          © 2026 whx ·
+        
+        由 <a href="https://www.getzola.org" rel="noopener" target="_blank">Zola</a>（Rust 🦀）构建
+      </p>
+      <p class="footer-links">
+        <a href="https://whx828.com/atom.xml">RSS 订阅</a>
+        
+          · <a href="https://github.com/whx828" rel="noopener" target="_blank">GitHub</a>
+        
+        
+          · <a href="mailto:whx19990828@gmail.com">邮箱</a>
+        
+      </p>
+    </div>
+  </footer><button class="back-to-top" id="back-to-top" aria-label="返回顶部" title="返回顶部" hidden>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7"></path>
+    </svg>
+  </button><script>
+    window.SITE_CONFIG = {
+      searchIndexUrl: "https://whx828.com/search-index.json",
+      baseUrl: "https://whx828.com"
+    };
+  </script><script src="https://whx828.com/js/main.js" defer></script>
+  <script src="https://whx828.com/js/search.js" defer></script>
+</body>
+</html>
