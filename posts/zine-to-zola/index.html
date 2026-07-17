@@ -18,7 +18,7 @@
       document.documentElement.setAttribute('data-theme', theme);
     })();
   </script><title>博客更新：从 zine 到 Zola · whx&#x27;s Blog</title>
-  <meta name="description" content="停更三年后，重启博客">
+  <meta name="description" content="停更三年后，重启博客。">
   <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
 
@@ -70,9 +70,7 @@
         
           <a class="tag-chip" href="https://whx828.com/tags/bo-ke/">#博客</a>
         
-          <a class="tag-chip" href="https://whx828.com/tags/sui-bi/">#随笔</a>
-        
-          <a class="tag-chip" href="https://whx828.com/tags/rust/">#rust</a>
+          <a class="tag-chip" href="https://whx828.com/tags/shi-jian/">#时间</a>
         
       </p>
       
@@ -83,7 +81,7 @@
       <p>时间过得真快，转眼我已经工作近两年了（我现在做的事情离代码很远），再次打开博客一看，上一篇文章还停在 2023 年 5 月的《xv6 学习记录》。</p>
 <p>最近重新动了写博客的念头，索性先把房子翻新一遍：把博客从 <strong>zine</strong> 迁移到了 <strong>Zola</strong>。这篇就当作迁移记录，也算是重新开张的第一篇。</p>
 <span id="continue-reading"></span><h2 id="wei-shen-me-chi-kai-zine">为什么离开 zine</h2>
-<p>先说清楚，zine 本身没什么不好。当年选它就是因为它是 <strong>Rust 写的静态站点生成器</strong>，一本“杂志”（zine）的概念也挺有意思，我把自己三年的文章按年份装进 s1、s2、s3 三季期刊里，很有仪式感。</p>
+<p>zine 本身没什么不好。当年选它就是因为它是 <strong>Rust 写的静态站点生成器</strong>，一本“杂志”（zine）的概念也挺有意思，我把自己三年的文章按年份装进 s1、s2、s3 三季期刊里，很有仪式感。</p>
 <p>但问题是：</p>
 <ul>
 <li><strong>项目停止维护了</strong>。一个静态站点生成器停止维护，意味着构建环境早晚会出问题；</li>
@@ -99,14 +97,13 @@
 <li><strong>功能刚好够用</strong>。标签（Taxonomies）、RSS、代码高亮（Syntect，构建期内联着色，不需要任何前端高亮库）全都内置；</li>
 <li><strong>部署简单</strong>。GitHub Actions 一把梭，自动构建发布。</li>
 </ol>
-<p>某种意义上这也是一种路径依赖：从 zine 到 Zola，换来换去，还是不想离开 Rust 的生态。</p>
+<p>某种意义上这也是一种路径依赖：从 zine 到 Zola，换来换去，还是不想离开 Rust 生态。</p>
 <h2 id="xin-bo-ke-you-shen-me-bu-yi-yang">新博客有什么不一样</h2>
 <ul>
 <li><strong>全文搜索</strong>：构建期生成一个 JSON 索引，前端原生 JS 做匹配，中文友好、零依赖；</li>
 <li><strong>标签 + 归档</strong>：文章按标签分类，归档页按年月分组，翻旧文方便多了；</li>
 <li><strong>昼夜双主题</strong>：默认浅色，手动切换深色，刷新不闪烁；</li>
-<li><strong>代码高亮零 JS</strong>：构建期 Syntect 直接生成带颜色的 HTML，打开就是高亮好的；</li>
-<li><strong>写文章 = 加一个 <code>.md</code> 文件</strong>，push 上去，GitHub Actions 自动构建发布。</li>
+<li><strong>代码高亮零 JS</strong>：构建期 Syntect 直接生成带颜色的 HTML，打开就是高亮好的。</li>
 </ul>
 <h2 id="jie-xia-lai">接下来</h2>
 <p>三年没写，不是没有东西可写，是懒。</p>
