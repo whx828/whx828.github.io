@@ -64,9 +64,9 @@
 &lt;blockquote&gt;
 &lt;p&gt;Tell me how cool the Rust programming language is:&lt;&#x2F;p&gt;
 &lt;ol&gt;
-&lt;li&gt;It’s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time.&lt;&#x2F;li&gt;
+&lt;li&gt;It&#x27;s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time.&lt;&#x2F;li&gt;
 &lt;li&gt;It can create a complete binary application from an XML file that specifies the class hierarchy and relationships - no other code is necessary or allowed!&lt;&#x2F;li&gt;
-&lt;li&gt;The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I’m really loving this because I can now write C-like&lt;&#x2F;li&gt;
+&lt;li&gt;The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I&#x27;m really loving this because I can now write C-like&lt;&#x2F;li&gt;
 &lt;&#x2F;ol&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
@@ -81,7 +81,7 @@
 &lt;p&gt;再来看基于 Stanford Alpaca 的 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;antimatter15&#x2F;alpaca.cpp&quot;&gt;alpaca.cpp&lt;&#x2F;a&gt; 项目的神奇操作，步骤和前面的差不多，但是效果更好：&lt;&#x2F;p&gt;
 &lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;alpaca-cpp.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Rust has been described as “the most exciting new development in software engineering since C++”. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!&lt;&#x2F;p&gt;
+&lt;p&gt;Rust has been described as &quot;the most exciting new development in software engineering since C++&quot;. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!&lt;&#x2F;p&gt;
 &lt;&#x2F;blockquote&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Rust 被描述为“自 C++ 以来软件工程领域最激动人心的新发展”。它结合了安全性和性能，并注重正确性，这使其成为编写安全代码的理想选择。Rust 还提供来自社区的强大工具支持，使您能够比以往更快地编写更好的程序！&lt;&#x2F;p&gt;

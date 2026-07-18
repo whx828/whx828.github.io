@@ -63,14 +63,17 @@
       <p class="post-meta">
         <time datetime="2026-07-17">📅 2026 年 07 月 17 日</time>
         <span class="post-meta-dot" aria-hidden="true">·</span>
-        <span>⏱ 约 4 分钟读完</span>
+        <span>⏱ 约 3 分钟读完</span>
+        
+          <span class="post-meta-dot" aria-hidden="true">·</span>
+          <span>更新于 2026-07-18</span>
         
       </p>
       <p class="post-tags">
         
           <a class="tag-chip" href="https://whx828.com/tags/bo-ke/">#博客</a>
         
-          <a class="tag-chip" href="https://whx828.com/tags/shi-jian/">#时间</a>
+          <a class="tag-chip" href="https://whx828.com/tags/sui-bi/">#随笔</a>
         
       </p>
       
@@ -78,15 +81,15 @@
       <p class="toc-title">目录</p>
       <ul class="toc-list" id="toc-list"></ul>
     </nav><div class="post-content" id="post-content">
-      <p>时间过得真快，转眼我已经工作近两年了（我现在做的事情离代码很远），再次打开博客一看，上一篇文章还停在 2023 年 5 月的《xv6 学习记录》。</p>
-<p>最近重新动了写博客的念头，索性先把房子翻新一遍：把博客从 <strong>zine</strong> 迁移到了 <strong>Zola</strong>。这篇就当作迁移记录，也算是重新开张的第一篇。</p>
+      <p>时间过得真快，转眼我已经毕业，工作近两年了（我现在做的事情离代码很远），再次打开博客一看，上一篇文章还停在 2023 年 5 月的《xv6 学习记录》。</p>
+<p>最近重新动了重启博客的念头，索性把房子翻新一遍：把博客从 <strong>zine</strong> 迁移到了 <strong>Zola</strong>。这篇就当作迁移记录，也算是重新开张的第一篇。</p>
 <span id="continue-reading"></span><h2 id="wei-shen-me-chi-kai-zine">为什么离开 zine</h2>
-<p>zine 本身没什么不好。当年选它就是因为它是 <strong>Rust 写的静态站点生成器</strong>，一本“杂志”（zine）的概念也挺有意思，我把自己三年的文章按年份装进 s1、s2、s3 三季期刊里，很有仪式感。</p>
+<p>zine 本身没什么不好。当年选它就是因为它是 <strong>Rust 写的静态站点生成器</strong>，一本“杂志”的概念也挺有意思，我把自己三年的文章装进 s1、s2、s3 三季期刊里，很有仪式感。</p>
 <p>但问题是：</p>
 <ul>
 <li><strong>项目停止维护了</strong>。一个静态站点生成器停止维护，意味着构建环境早晚会出问题；</li>
 <li>三年过去，当初的很多链接结构（<code>/s3/5/</code> 这种）已经成了历史包袱；</li>
-<li>zine 也有一些 bug，懒得修了。</li>
+<li>zine 其实也有一些 Bug，但我懒得修了。</li>
 </ul>
 <p>说白了：现在已经是 2026 年，是时候换一栋还在正常维护的房子了。</p>
 <h2 id="wei-shen-me-shi-zola">为什么是 Zola</h2>
@@ -94,8 +97,7 @@
 <ol>
 <li><strong>还是 Rust</strong>。单一个二进制文件，不用装 Node、不用管 npm 依赖地狱；</li>
 <li><strong>模板就是逻辑</strong>。Tera 模板写起来像 Django/Jinja2，站点的所有行为都能用模板说清楚，没有黑盒；</li>
-<li><strong>功能刚好够用</strong>。标签（Taxonomies）、RSS、代码高亮（Syntect，构建期内联着色，不需要任何前端高亮库）全都内置；</li>
-<li><strong>部署简单</strong>。GitHub Actions 一把梭，自动构建发布。</li>
+<li><strong>功能刚好够用</strong>。标签（Taxonomies）、RSS、代码高亮（Syntect，构建期内联着色，不需要任何前端高亮库）全都内置。</li>
 </ol>
 <p>某种意义上这也是一种路径依赖：从 zine 到 Zola，换来换去，还是不想离开 Rust 生态。</p>
 <h2 id="xin-bo-ke-you-shen-me-bu-yi-yang">新博客有什么不一样</h2>

@@ -239,8 +239,8 @@
 <p>一顿修改后编译终于不再卡住了（觉得乱没关系，看后文就好），但是我调试的时候有个奇怪的问题——用 gdb 打印的时候会报：<code>dwarf2_find_location_expression: Corrupted DWARF expression.</code> 的错。<br />
 最开始我以为这是 macOS 的问题，想换到 Ubuntu，但我的 Ubuntu 版本是 18.04，而 Xv6 在 Ubuntu 上的安装需要：<code>sudo apt-get install git build-essential gdb-multiarch qemu-system-misc gcc-riscv64-linux-gnu binutils-riscv64-linux-gnu</code>，其中 <code>qemu-system-misc</code> 需要 Ubuntu 的版本为 20 以上，所以我继续回来在 macOS 上想办法，最后在这个 <a rel="noopener external" target="_blank" href="https://github.com/mit-pdos/xv6-riscv/pull/129">PR</a> 中找到了答案：</p>
 <p>修改 makefile：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>- CFLAGS = -Wall -Werror -Wno-error=infinite-recursion -O -fno-omit-frame-pointer -ggdb</span></span>
-<span class="giallo-l"><span>+ CFLAGS = -Wall -Werror -Wno-error=infinite-recursion -O -fno-omit-frame-pointer -ggdb -gdwarf-2</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="diff"><span class="giallo-l"><span style="color: #E67E80;">- CFLAGS = -Wall -Werror -Wno-error=infinite-recursion -O -fno-omit-frame-pointer -ggdb</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">+ CFLAGS = -Wall -Werror -Wno-error=infinite-recursion -O -fno-omit-frame-pointer -ggdb -gdwarf-2</span></span></code></pre>
 <p>然后重新编译：</p>
 <p><code>make clean &amp;&amp; make CPUS=1 qemu-gdb</code></p>
 <p>问题解决！</p>
@@ -437,9 +437,9 @@
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>区别在于 <code>wait(0)</code> 的位置。我的版本，输出一般是这样的：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>3: received pong</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">3:</span><span style="color: #DBBC7F;"> received pong</span></span></code></pre>
 <p>代码会直接阻塞住，为了找出 Bug，我去掉了 <code>wait(0)</code>，输出开始有一些变化了：</p>
 <pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="c"><span class="giallo-l"><span style="color: #E67E80;">#include</span><span style="color: #DBBC7F;"> &quot;kernel/types.h&quot;</span></span>
 <span class="giallo-l"><span style="color: #E67E80;">#include</span><span style="color: #DBBC7F;"> &quot;kernel/stat.h&quot;</span></span>
@@ -486,30 +486,30 @@
 <span class="giallo-l"><span>    }</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>输出是这样的：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>3: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>5: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>7: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>9: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>11: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>13: received pong</span></span>
-<span class="giallo-l"><span>$ pingpong</span></span>
-<span class="giallo-l"><span>child receive: a</span></span>
-<span class="giallo-l"><span>16: received ping</span></span>
-<span class="giallo-l"><span>parent receive: b</span></span>
-<span class="giallo-l"><span>15: received pong</span></span>
-<span class="giallo-l"><span>$ QEMU: Terminated</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">3:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">5:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">7:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">9:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">11:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">13:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> pingpong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">child</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">16:</span><span style="color: #DBBC7F;"> received ping</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: b</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">15:</span><span style="color: #DBBC7F;"> received pong</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">$</span><span style="color: #DBBC7F;"> QEMU: Terminated</span></span></code></pre>
 <p>可以看到最后还是正常运行了一次，其余都是错误输出，为什么会这样呢？关键在 pipe 上。</p>
 <p>在 xv6 中通过系统调用 <code>pipe(int p[])</code> 可以创建一个匿名管道，然后将对应管道读端的文件描述符放入 <code>p[0]</code>，对应管道写端的文件描述符放入 <code>p[1]</code>。<code>p[0]</code> 是具有只读属性的文件描述符，<code>p[1]</code> 是具有只写属性的文件描述符。</p>
 <p>匿名管道底下对应的文件没有文件名，因此只能被有亲缘的进程打开。实际情形如下图所示</p>
@@ -517,8 +517,8 @@
 <p>为什么子进程不需要等待父进程的写入先完成？<br />
 答案是，在管道上的 <code>read</code> 是阻塞的。在没有数据可读时，在管道上的 <code>read</code> 会一直阻塞，直到要么有新的数据被写入，或者管道的所有写端都被关闭。在后者的情况下，<code>read</code> 会返回 0。也正因为这个特性，所有不需要写入数据的子进程，都应该主动关闭掉管道的写端。</p>
 <p>在我的程序中出现了这样的输出：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>parent receive: a</span></span>
-<span class="giallo-l"><span>3: received pong</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #A7C080;">parent</span><span style="color: #DBBC7F;"> receive: a</span></span>
+<span class="giallo-l"><span style="color: #A7C080;">3:</span><span style="color: #DBBC7F;"> received pong</span></span></code></pre>
 <p>一个可能是：<code>else</code> 分支也就是父进程的 <code>write</code> 被同在 <code>else</code> 分支的 <code>read</code>（也就是它自己的）消耗掉了，所以 <code>parent receive</code> 才是 <code>a</code> 而不是 <code>b</code>。<br />
 <code>write</code> 操作是在 <code>read</code> 操作之前完成的，因此在 <code>read</code> 操作之前，数据已经被写入管道中，且管道中的数据已经准备好被读取。因此，可以保证在 <code>read</code> 操作中能够读取到 <code>write</code> 操作写入的数据。<br />
 正常的程序，父进程写入管道的数据应该被子进程消耗掉才对。如果不加 <code>wait(0)</code>：</p>

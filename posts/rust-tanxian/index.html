@@ -169,14 +169,14 @@
 <span class="giallo-l"><span style="color: #859289;font-style: italic;">    // ... </span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>编译器报错：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>self.state = self.state.request_review();</span></span>
-<span class="giallo-l"><span>             ^^^^^^ move occurs because `self.state` has type `std::boxed::Box&lt;dyn State&gt;`, which does not implement the `Copy` trait&#39;.</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #E69875;">             ^^^^^^</span><span style="color: #E67E80;"> move</span><span> occurs because `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` has</span><span style="color: #E69875;"> type</span><span> `</span><span style="color: #83C092;">std</span><span style="color: #E69875;">::</span><span style="color: #83C092;">boxed</span><span style="color: #E69875;">::</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;`, which does not implement the `</span><span style="color: #7FBBB3;">Copy</span><span>` </span><span style="color: #E69875;">trait</span><span>&#39;</span><span style="color: #DBBC7F;">.</span></span></code></pre>
 <p>原回答：<br />
 This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what’s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
 <p>翻译如下：<br />
 这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
 <p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>self.state = self.state.request_review();</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span></code></pre>
 <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 <code>Post</code> 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
 <h2 id="2023-2-16-zhui-jia">2023.2.16 追加</h2>
@@ -185,23 +185,23 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <p>Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code></p>
 </blockquote>
 <p>这句话什么意思？还是要看<a rel="noopener external" target="_blank" href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=dcc068cc77c38b8a929b9177a11500ec">报错信息</a>：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #7FBBB3;">   Compiling</span><span> playground v0</span><span style="color: #E69875;">.</span><span style="color: #D699B6;">0</span><span>.</span><span style="color: #D699B6;">1</span><span> (</span><span style="color: #E69875;">/</span><span>playground)</span></span>
-<span class="giallo-l"><span>error[</span><span style="color: #7FBBB3;">E0507</span><span>]</span><span style="color: #E69875;">:</span><span> cannot</span><span style="color: #E67E80;"> move</span><span> out of `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` which is behind a mutable reference</span></span>
-<span class="giallo-l"><span style="color: #E69875;">  --&gt;</span><span> src</span><span style="color: #E69875;">/</span><span>lib</span><span style="color: #E69875;">.</span><span>rs</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">12</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">22</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
-<span class="giallo-l"><span style="color: #D699B6;">12</span><span style="color: #E69875;"> |</span><span style="color: #D699B6;">         self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |                      ^^^^^^^^^^ ----------------</span><span> `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` moved due to this method call</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |                      |</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |</span><span style="color: #E67E80;">                      move</span><span> occurs because `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` has</span><span style="color: #E69875;"> type</span><span> `</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;`, which does not implement the `</span><span style="color: #7FBBB3;">Copy</span><span>` </span><span style="color: #E69875;">trait</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
-<span class="giallo-l"><span>note</span><span style="color: #E69875;">:</span><span> this function takes ownership of the receiver `</span><span style="color: #D699B6;">self</span><span>`, which moves `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state`</span></span>
-<span class="giallo-l"><span style="color: #E69875;">  --&gt;</span><span> src</span><span style="color: #E69875;">/</span><span>lib</span><span style="color: #E69875;">.</span><span>rs</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">7</span><span style="color: #E69875;">:</span><span style="color: #D699B6;">23</span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |</span></span>
-<span class="giallo-l"><span style="color: #D699B6;">7</span><span style="color: #E69875;">  |</span><span style="color: #E67E80;">     fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #D699B6;">Self</span><span>&gt;)</span><span style="color: #E69875;"> -&gt;</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;; </span></span>
-<span class="giallo-l"><span style="color: #E69875;">   |                       ^^^^</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>   Compiling playground v0.0.1 (/playground)</span></span>
+<span class="giallo-l"><span>error[E0507]: cannot move out of `self.state` which is behind a mutable reference</span></span>
+<span class="giallo-l"><span>  --&gt; src/lib.rs:12:22</span></span>
+<span class="giallo-l"><span>   |</span></span>
+<span class="giallo-l"><span>12 |         self.state = self.state.request_review();</span></span>
+<span class="giallo-l"><span>   |                      ^^^^^^^^^^ ---------------- `self.state` moved due to this method call</span></span>
+<span class="giallo-l"><span>   |                      |</span></span>
+<span class="giallo-l"><span>   |                      move occurs because `self.state` has type `Box&lt;dyn State&gt;`, which does not implement the `Copy` trait</span></span>
+<span class="giallo-l"><span>   |</span></span>
+<span class="giallo-l"><span>note: this function takes ownership of the receiver `self`, which moves `self.state`</span></span>
+<span class="giallo-l"><span>  --&gt; src/lib.rs:7:23</span></span>
+<span class="giallo-l"><span>   |</span></span>
+<span class="giallo-l"><span>7  |     fn request_review(self: Box&lt;Self&gt;) -&gt; Box&lt;dyn State&gt;; </span></span>
+<span class="giallo-l"><span>   |                       ^^^^</span></span>
 <span class="giallo-l"></span>
-<span class="giallo-l"><span style="color: #7FBBB3;">For</span><span> more information about this error,</span><span style="color: #E67E80;"> try</span><span> `rustc</span><span style="color: #E69875;"> --</span><span>explain</span><span style="color: #7FBBB3;"> E0507</span><span>`</span><span style="color: #E69875;">.</span></span>
-<span class="giallo-l"><span>error</span><span style="color: #E69875;">:</span><span> could not compile `playground` due to previous error</span></span></code></pre>
+<span class="giallo-l"><span>For more information about this error, try `rustc --explain E0507`.</span></span>
+<span class="giallo-l"><span>error: could not compile `playground` due to previous error</span></span></code></pre>
 <p>我们的操作会 <code>cannot move out of *self.state* which is behind a mutable reference</code>，也就是说会在可变引用时 <code>move</code> 变量（转移所有权）。<br />
 看一下函数签名： <code>fn request_review(&amp;mut self)</code>，果然使用的是 <code>Post</code> 的可变引用（也就是 <code>&amp;mut self</code>），然后在 <code>self.state.request_review()</code> 这一步时 <code>move</code> 了 <code>self.state</code>，如果 <code>self.state</code> 没有实现 <code>Copy</code> 这个 trait，那么根据 Rust 规则，使用可变引用时是不能 <code>move</code> 的，一旦 <code>move</code> 了，对象的内存地址改变了，那引用还有效吗？</p>
 <ul>
