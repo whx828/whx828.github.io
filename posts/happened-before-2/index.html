@@ -17,9 +17,9 @@
       }
       document.documentElement.setAttribute('data-theme', theme);
     })();
-  </script><title>从 Happened-before 说起（2） · whx&#x27;s Blog</title>
+  </script><title>从 Happened-before 说起（2） · whx&#39;s Blog</title>
   <meta name="description" content="书接上文，继续讨论那个让人疑惑的问题。">
-  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#39;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
 
   
@@ -27,7 +27,7 @@
 
 <body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
     <div class="container header-inner"><a class="site-title" href="https://whx828.com">
-        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#39;s Blog
       </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
@@ -63,7 +63,7 @@
       <p class="post-meta">
         <time datetime="2023-04-03">📅 2023 年 04 月 03 日</time>
         <span class="post-meta-dot" aria-hidden="true">·</span>
-        <span>⏱ 约 15 分钟读完</span>
+        <span>⏱ 约 13 分钟读完</span>
         
       </p>
       <p class="post-tags">
@@ -80,7 +80,7 @@
     </nav><div class="post-content" id="post-content">
       <p>书接上文，继续讨论那个让人疑惑的问题。<br />
 为了方便讨论，我把代码挪过来：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> X</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> X</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
 <span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> Y</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
 <span class="giallo-l"></span>
 <span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> a</span><span>() {</span></span>

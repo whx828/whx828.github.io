@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="zh-CN">
-    <title>whx&#x27;s Blog - AI</title>
+    <title>whx&#39;s Blog - AI</title>
     <subtitle>记录生活</subtitle>
     <link rel="self" type="application/atom+xml" href="https://whx828.com/tags/ai/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://whx828.com"/>
@@ -13,82 +13,78 @@
         <updated>2023-03-17T00:00:00+00:00</updated>
         
         <author>
-          <name>
-            
-              Unknown
-            
-          </name>
+          <name>Unknown</name>
         </author>
         
         <link rel="alternate" type="text/html" href="https://whx828.com/posts/ai-laile/"/>
         <id>https://whx828.com/posts/ai-laile/</id>
         
-        <content type="html" xml:base="https://whx828.com/posts/ai-laile/">&lt;p&gt;今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4&#x2F;ChatGPT&#x2F;文心一言刷屏，突然也想跟把风玩玩 AI。&lt;&#x2F;p&gt;
-&lt;p&gt;上网冲浪找到了这个项目：&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;setzer22&#x2F;llama-rs&quot;&gt;LLaMA-rs&lt;&#x2F;a&gt;，是 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ggerganov&#x2F;llama.cpp&quot;&gt;llama.cpp&lt;&#x2F;a&gt; 的 Rust 版本，正好 MacBook 也能跑，比较适合我。&lt;br &#x2F;&gt;
-我尝试着 clone 了项目，想着看看能不能跑通，权当娱乐。&lt;&#x2F;p&gt;
-&lt;p&gt;需要这么几步操作：&lt;&#x2F;p&gt;
+        <content type="html" xml:base="https://whx828.com/posts/ai-laile/">&lt;p&gt;今天晚上有点累，同时闲得无聊，而且最近总被 GPT-4/ChatGPT/文心一言刷屏，突然也想跟把风玩玩 AI。&lt;/p&gt;
+&lt;p&gt;上网冲浪找到了这个项目：&lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https://github.com/setzer22/llama-rs&quot;&gt;LLaMA-rs&lt;/a&gt;，是 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https://github.com/ggerganov/llama.cpp&quot;&gt;llama.cpp&lt;/a&gt; 的 Rust 版本，正好 MacBook 也能跑，比较适合我。&lt;br /&gt;
+我尝试着 clone 了项目，想着看看能不能跑通，权当娱乐。&lt;/p&gt;
+&lt;p&gt;需要这么几步操作：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：&lt;br &#x2F;&gt;
-&lt;code&gt;magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;amp;dn=LLaMA&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;首先你需要准备 LLaMA 模型，常规操作是到 facebook 那里慢悠悠地填邮件，等人家给你发链接，不过晚吃瓜有晚吃瓜的好处，网友是万能的，现在磁力链接都有了：&lt;br /&gt;
+&lt;code&gt;magnet:?xt=urn:btih:ZXXDAUWYLRUXXBHUYEMS6Q5CE5WA3LVA&amp;amp;dn=LLaMA&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;简单瞅瞅，这些模型太大，我只是想玩一下，所以选择了最小的 7B&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;简单瞅瞅，这些模型太大，我只是想玩一下，所以选择了最小的 7B&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;模型下载好之后需要按照 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ggerganov&#x2F;llama.cpp&quot;&gt;llama.cpp&lt;&#x2F;a&gt; 项目的步骤继续：&lt;&#x2F;p&gt;
+&lt;p&gt;模型下载好之后需要按照 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https://github.com/ggerganov/llama.cpp&quot;&gt;llama.cpp&lt;/a&gt; 项目的步骤继续：&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;把模型挪到 &lt;code&gt;.&#x2F;models&lt;&#x2F;code&gt; 下&lt;&#x2F;li&gt;
-&lt;li&gt;安装必要的依赖：&lt;code&gt;python3 -m pip install torch numpy sentencepiece&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;将 7B 模型转换为 ggml FP16 格式：&lt;code&gt;python3 convert-pth-to-ggml.py models&#x2F;7B&#x2F; 1&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
-&lt;li&gt;将模型量化为 4 位：&lt;code&gt;.&#x2F;quantize.sh 7B&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
-&lt;&#x2F;ol&gt;
-&lt;&#x2F;li&gt;
+&lt;li&gt;把模型挪到 &lt;code&gt;./models&lt;/code&gt; 下&lt;/li&gt;
+&lt;li&gt;安装必要的依赖：&lt;code&gt;python3 -m pip install torch numpy sentencepiece&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;将 7B 模型转换为 ggml FP16 格式：&lt;code&gt;python3 convert-pth-to-ggml.py models/7B/ 1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;将模型量化为 4 位：&lt;code&gt;./quantize.sh 7B&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;通过上面一顿操作你就得到了 &lt;code&gt;.&#x2F;models&#x2F;7B&#x2F;ggml-model-q4_0.bin&lt;&#x2F;code&gt; 这个文件&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;通过上面一顿操作你就得到了 &lt;code&gt;./models/7B/ggml-model-q4_0.bin&lt;/code&gt; 这个文件&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;友情提示下载的模型就有 10 几个 G，转化好的玩意也有 4G 多，所以你最好在等下载&amp;amp;运行转换命令的时候找点事做，不然会非常无聊（说好的娱乐向呢。。。）&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;友情提示下载的模型就有 10 几个 G，转化好的玩意也有 4G 多，所以你最好在等下载&amp;amp;运行转换命令的时候找点事做，不然会非常无聊（说好的娱乐向呢。。。）&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;接下来 clone &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;setzer22&#x2F;llama-rs&quot;&gt;LLaMA-rs&lt;&#x2F;a&gt; 项目，在 LLaMA-rs 项目的根目录下执行 &lt;code&gt;cargo build --release&lt;&#x2F;code&gt;，构建 Rust 项目（熟悉 Rust 的要注意目前 debug 模式会报错，必须是 release 模式才行）&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;接下来 clone &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https://github.com/setzer22/llama-rs&quot;&gt;LLaMA-rs&lt;/a&gt; 项目，在 LLaMA-rs 项目的根目录下执行 &lt;code&gt;cargo build --release&lt;/code&gt;，构建 Rust 项目（熟悉 Rust 的要注意目前 debug 模式会报错，必须是 release 模式才行）&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;构建完成之后就可以用 &lt;code&gt;cargo run --release -- &amp;lt;ARGS&amp;gt;&lt;&#x2F;code&gt; 命令运行了，人家给的例子是 &lt;code&gt;cargo run --release -- -m &#x2F;data&#x2F;Llama&#x2F;LLaMA&#x2F;7B&#x2F;ggml-model-q4_0.bin -p &quot;Tell me how cool the Rust programming language is:&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
+&lt;p&gt;构建完成之后就可以用 &lt;code&gt;cargo run --release -- &amp;lt;ARGS&amp;gt;&lt;/code&gt; 命令运行了，人家给的例子是 &lt;code&gt;cargo run --release -- -m /data/Llama/LLaMA/7B/ggml-model-q4_0.bin -p &quot;Tell me how cool the Rust programming language is:&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;一切顺利你会看到结果，大功告成！我跑出来的东西是这样的：&lt;&#x2F;p&gt;
-&lt;&#x2F;li&gt;
-&lt;&#x2F;ol&gt;
-&lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;llama-rs-result.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;
+&lt;p&gt;一切顺利你会看到结果，大功告成！我跑出来的东西是这样的：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&quot;../../images/legacy/2023/llama-rs-result.png&quot; loading=&quot;lazy&quot; /&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Tell me how cool the Rust programming language is:&lt;&#x2F;p&gt;
+&lt;p&gt;Tell me how cool the Rust programming language is:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;It&#x27;s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time.&lt;&#x2F;li&gt;
-&lt;li&gt;It can create a complete binary application from an XML file that specifies the class hierarchy and relationships - no other code is necessary or allowed!&lt;&#x2F;li&gt;
-&lt;li&gt;The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I&#x27;m really loving this because I can now write C-like&lt;&#x2F;li&gt;
-&lt;&#x2F;ol&gt;
-&lt;&#x2F;blockquote&gt;
+&lt;li&gt;It&#39;s compiled using standard techniques, but it has no runtime library (all classes are inlined into executables). So all kinds of things you wouldn’t normally have to worry about compile-time.&lt;/li&gt;
+&lt;li&gt;It can create a complete binary application from an XML file that specifies the class hierarchy and relationships - no other code is necessary or allowed!&lt;/li&gt;
+&lt;li&gt;The programming language looks like Java, but it has none of the overhead – it runs in memory at normal speed on modern hardware (i5+MacBookPro here). I&#39;m really loving this because I can now write C-like&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
 &lt;blockquote&gt;
-&lt;p&gt;告诉我，Rust 编程语言有多酷：&lt;br &#x2F;&gt;
-1）它是使用标准技术编译的，但是它没有运行时库（所有类都插入了可执行文件中）。因此，您通常不必担心编译时的各种事情。&lt;br &#x2F;&gt;
-2）它可以从 XML 文件中创建一个完整的二进制应用程序，该应用程序指定类层次结构和关系 - 不需要或允许其他代码！&lt;br &#x2F;&gt;
-3）编程语言看起来像 Java，但没有开销 - 它以现代硬件的正常速度（i5+MacBookPro）在内存中运行。我真的很喜欢这个，因为我现在可以写类 C 语言&lt;&#x2F;p&gt;
-&lt;&#x2F;blockquote&gt;
-&lt;p&gt;AI 还是有点意思的，第一条还像那么回事，Rust 官方的确没有提供运行时，但是这意味着有更多的工作要在编译时去做啊，AI 的逻辑让人哭笑不得；&lt;br &#x2F;&gt;
-第二条更加离谱，如果这里说 TOML 文件将是绝杀，可惜换不得；第三条又是说对了一部分，Rust 的确快，但和 Java 并没多少相似之处。&lt;&#x2F;p&gt;
-&lt;hr &#x2F;&gt;
-&lt;p&gt;再来看基于 Stanford Alpaca 的 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;antimatter15&#x2F;alpaca.cpp&quot;&gt;alpaca.cpp&lt;&#x2F;a&gt; 项目的神奇操作，步骤和前面的差不多，但是效果更好：&lt;&#x2F;p&gt;
-&lt;img src=&quot;..&#x2F;..&#x2F;images&#x2F;legacy&#x2F;2023&#x2F;alpaca-cpp.png&quot; loading=&quot;lazy&quot; &#x2F;&gt;
+&lt;p&gt;告诉我，Rust 编程语言有多酷：&lt;br /&gt;
+1）它是使用标准技术编译的，但是它没有运行时库（所有类都插入了可执行文件中）。因此，您通常不必担心编译时的各种事情。&lt;br /&gt;
+2）它可以从 XML 文件中创建一个完整的二进制应用程序，该应用程序指定类层次结构和关系 - 不需要或允许其他代码！&lt;br /&gt;
+3）编程语言看起来像 Java，但没有开销 - 它以现代硬件的正常速度（i5+MacBookPro）在内存中运行。我真的很喜欢这个，因为我现在可以写类 C 语言&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;AI 还是有点意思的，第一条还像那么回事，Rust 官方的确没有提供运行时，但是这意味着有更多的工作要在编译时去做啊，AI 的逻辑让人哭笑不得；&lt;br /&gt;
+第二条更加离谱，如果这里说 TOML 文件将是绝杀，可惜换不得；第三条又是说对了一部分，Rust 的确快，但和 Java 并没多少相似之处。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;再来看基于 Stanford Alpaca 的 &lt;a rel=&quot;noopener external&quot; target=&quot;_blank&quot; href=&quot;https://github.com/antimatter15/alpaca.cpp&quot;&gt;alpaca.cpp&lt;/a&gt; 项目的神奇操作，步骤和前面的差不多，但是效果更好：&lt;/p&gt;
+&lt;img src=&quot;../../images/legacy/2023/alpaca-cpp.png&quot; loading=&quot;lazy&quot; /&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Rust has been described as &quot;the most exciting new development in software engineering since C++&quot;. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!&lt;&#x2F;p&gt;
-&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Rust has been described as &quot;the most exciting new development in software engineering since C++&quot;. It combines safety and performance, with a focus on correctness that makes it ideal for writing safe code. Rust also offers great tooling support from the community which allows you to write better programs faster than ever before!&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Rust 被描述为“自 C++ 以来软件工程领域最激动人心的新发展”。它结合了安全性和性能，并注重正确性，这使其成为编写安全代码的理想选择。Rust 还提供来自社区的强大工具支持，使您能够比以往更快地编写更好的程序！&lt;&#x2F;p&gt;
-&lt;&#x2F;blockquote&gt;
-&lt;p&gt;这个效果就比前者好太多了，基本没有错误！&lt;&#x2F;p&gt;
-&lt;p&gt;最恐怖的是，所有的这一切都是在我这台 2016 的老 MacBook 上完成的，没有什么显卡&#x2F;GPU 加持，完全靠 CPU 也能做到这种程度，这样看来 ChatGPT 那种神乎其技的表现也就不足为奇了，所谓图灵测试根本是难不住它们的，依照这个速度发展下去，奇点一定会到来；&lt;br &#x2F;&gt;
-这个世界太疯狂，未来会变成什么样子，真是令人期待！&lt;&#x2F;p&gt;
+&lt;p&gt;Rust 被描述为“自 C++ 以来软件工程领域最激动人心的新发展”。它结合了安全性和性能，并注重正确性，这使其成为编写安全代码的理想选择。Rust 还提供来自社区的强大工具支持，使您能够比以往更快地编写更好的程序！&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这个效果就比前者好太多了，基本没有错误！&lt;/p&gt;
+&lt;p&gt;最恐怖的是，所有的这一切都是在我这台 2016 的老 MacBook 上完成的，没有什么显卡/GPU 加持，完全靠 CPU 也能做到这种程度，这样看来 ChatGPT 那种神乎其技的表现也就不足为奇了，所谓图灵测试根本是难不住它们的，依照这个速度发展下去，奇点一定会到来；&lt;br /&gt;
+这个世界太疯狂，未来会变成什么样子，真是令人期待！&lt;/p&gt;
 </content>
         
     </entry>

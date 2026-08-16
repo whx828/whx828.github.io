@@ -17,9 +17,9 @@
       }
       document.documentElement.setAttribute('data-theme', theme);
     })();
-  </script><title>从 Happened-before 说起（1） · whx&#x27;s Blog</title>
+  </script><title>从 Happened-before 说起（1） · whx&#39;s Blog</title>
   <meta name="description" content="本文大部分是背景介绍，本来想一气呵成，但发现要讲的东西有点多，遂分成了两篇来写。">
-  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#39;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
 
   
@@ -27,7 +27,7 @@
 
 <body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
     <div class="container header-inner"><a class="site-title" href="https://whx828.com">
-        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#39;s Blog
       </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
@@ -63,7 +63,7 @@
       <p class="post-meta">
         <time datetime="2023-03-22">📅 2023 年 03 月 22 日</time>
         <span class="post-meta-dot" aria-hidden="true">·</span>
-        <span>⏱ 约 40 分钟读完</span>
+        <span>⏱ 约 34 分钟读完</span>
         
       </p>
       <p class="post-tags">
@@ -112,7 +112,7 @@
 </blockquote>
 <p>技术领域有一句名言：没有银弹。意思是不管什么问题，没有万能解决方案。多线程也不是没缺点，对程序员来说最直观的感受就是：多线程编程更难。为什么？因为在多线程编程的场景下，你会经常遇到「多个线程同时读取和修改同一个变量」的问题，而在 Rust 中，我们认为“这通常会导致未定义的行为（UB）”。</p>
 <p>为什么“多个线程同时读取和修改同一个变量”会是个问题？这不是效率更高了吗？请看下面的伪代码：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>data_race() {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="plain"><span class="giallo-l"><span>data_race() {</span></span>
 <span class="giallo-l"><span>  global x = 0</span></span>
 <span class="giallo-l"><span>  </span></span>
 <span class="giallo-l"><span>  thread1 = thread {</span></span>
@@ -197,7 +197,7 @@ What this means is that two threads might see operations on different variables 
 <p>Let’s take a look at the following function as an example:<br />
 让我们以下面的函数为例：</p>
 </blockquote>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> f</span><span>(a</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>, b</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>) {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> f</span><span>(a</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>, b</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>) {</span></span>
 <span class="giallo-l"><span style="color: #E69875;">    *</span><span>a</span><span style="color: #E69875;"> +=</span><span style="color: #D699B6;"> 1</span><span>;</span></span>
 <span class="giallo-l"><span style="color: #E69875;">    *</span><span>b</span><span style="color: #E69875;"> +=</span><span style="color: #D699B6;"> 1</span><span>;</span></span>
 <span class="giallo-l"><span style="color: #E69875;">    *</span><span>a</span><span style="color: #E69875;"> +=</span><span style="color: #D699B6;"> 1</span><span>;</span></span>
@@ -206,7 +206,7 @@ What this means is that two threads might see operations on different variables 
 <p>Here, the compiler will most certainly understand that the order of these operations does not matter, since nothing happens between these three addition operations that depends on the value of <code>*a</code> or <code>*b</code>. (Assuming overflow checking is disabled.) Because of that, it might reorder the second and third operations, and then merge the first two into a single addition:<br />
 在这里，编译器肯定会理解这些操作的顺序无关紧要，因为这三个取决于 <code>*a</code> 或 <code>*b</code> 的值的加法操作之间没有任何关联。（假设溢出检查被禁用）因此，它可能会重新排序第二个和第三个操作，然后将前两个合并为一个加法：</p>
 </blockquote>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> f</span><span>(a</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>, b</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>) {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> f</span><span>(a</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>, b</span><span style="color: #E69875;">: &amp;mut</span><span style="color: #7FBBB3;"> i32</span><span>) {</span></span>
 <span class="giallo-l"><span style="color: #E69875;">    *</span><span>a</span><span style="color: #E69875;"> +=</span><span style="color: #D699B6;"> 2</span><span>;</span></span>
 <span class="giallo-l"><span style="color: #E69875;">    *</span><span>b</span><span style="color: #E69875;"> +=</span><span style="color: #D699B6;"> 1</span><span>;</span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
@@ -220,7 +220,7 @@ Regardless of these optimizations, the result stays the same: <code>*a</code> is
 The interesting question is how we tell them. If we wanted to precisely spell out exactly what is and isn’t acceptable, concurrent programming might become exceedingly verbose and error prone, and maybe even architecture-specific:<br />
 有趣的问题是我们如何告诉他们。如果我们想准确地说明什么是可接受的，什么是不可接受的，并发编程可能会变得非常冗长和容易出错，甚至可能是特定于体系结构的：</p>
 </blockquote>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>let x = a.fetch_add(1,</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="plain"><span class="giallo-l"><span>let x = a.fetch_add(1,</span></span>
 <span class="giallo-l"><span>    Dear compiler and processor,</span></span>
 <span class="giallo-l"><span>    Feel free to reorder this with operations on b,</span></span>
 <span class="giallo-l"><span>    but if there&#39;s another thread concurrently executing f,</span></span>
@@ -282,7 +282,7 @@ Rust 的内存模型，主要是从 C++ 复制而来，不匹配任何现有的�
 <p>To explore what that means, let's take a look at the following example where we assume <code>a</code> and <code>b</code> are concurrently executed by different threads:<br />
 为了探究这意味着什么，让我们看一下下面的示例，其中我们假设 <code>a</code> 和 <code>b</code> 由不同的线程同时执行：</p>
 </blockquote>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> X</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> X</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
 <span class="giallo-l"><span style="color: #E69875;">static</span><span style="color: #7FBBB3;"> Y</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;"> =</span><span style="color: #7FBBB3;"> AtomicI32</span><span style="color: #E69875;">::</span><span style="color: #A7C080;">new</span><span>(</span><span style="color: #D699B6;">0</span><span>);</span></span>
 <span class="giallo-l"></span>
 <span class="giallo-l"><span style="color: #E67E80;">fn</span><span style="color: #A7C080;"> a</span><span>() {</span></span>

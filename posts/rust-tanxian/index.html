@@ -17,9 +17,9 @@
       }
       document.documentElement.setAttribute('data-theme', theme);
     })();
-  </script><title>记一次 Rust 探险 · whx&#x27;s Blog</title>
+  </script><title>记一次 Rust 探险 · whx&#39;s Blog</title>
   <meta name="description" content="最近在看《The Book》，第 17 章的 17.3 节里面有个细节很有意思。">
-  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#x27;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="author" content="whx"><link rel="alternate" type="application/atom+xml" title="whx&#39;s Blog - Atom" href="https://whx828.com/atom.xml"><link rel="stylesheet" href="https://whx828.com/css/main.css"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
 
   
@@ -27,7 +27,7 @@
 
 <body><div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div><header class="site-header" id="site-header">
     <div class="container header-inner"><a class="site-title" href="https://whx828.com">
-        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#x27;s Blog
+        <span class="site-title-icon" aria-hidden="true">🏮</span>whx&#39;s Blog
       </a><button class="nav-toggle" id="nav-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
@@ -63,7 +63,7 @@
       <p class="post-meta">
         <time datetime="2022-04-17">📅 2022 年 04 月 17 日</time>
         <span class="post-meta-dot" aria-hidden="true">·</span>
-        <span>⏱ 约 8 分钟读完</span>
+        <span>⏱ 约 6 分钟读完</span>
         
       </p>
       <p class="post-tags">
@@ -83,7 +83,7 @@
 <p>请求审核博文来改变其状态</p>
 <p>接下来需要增加请求审核博文的功能，这应当将其状态由 <code>Draft</code> 改为 <code>PendingReview</code>。示例 17-15 展示了这段代码：</p>
 </blockquote>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
 <span class="giallo-l"><span>    state</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Option</span><span>&lt;</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;&gt;,</span></span>
 <span class="giallo-l"><span>    content</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> String</span><span>,</span></span>
 <span class="giallo-l"><span>}</span></span>
@@ -152,7 +152,7 @@
 <p>性质已经搞清，接下来我们来看具体问题。</p>
 <h2 id="wei-shen-me-zhi-jie-fu-zhi-bu-xing">为什么直接赋值不行</h2>
 <p>我在 stackoverflow 上找到一个有关的问答，回答者把它换成了直接版本：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">pub</span><span style="color: #E69875;"> struct</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
 <span class="giallo-l"><span>    state</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;,</span></span>
 <span class="giallo-l"><span>    content</span><span style="color: #E69875;">:</span><span style="color: #7FBBB3;"> String</span><span>,</span></span>
 <span class="giallo-l"><span>}</span></span>
@@ -169,14 +169,14 @@
 <span class="giallo-l"><span style="color: #859289;font-style: italic;">    // ... </span></span>
 <span class="giallo-l"><span>}</span></span></code></pre>
 <p>编译器报错：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span>
 <span class="giallo-l"><span style="color: #E69875;">             ^^^^^^</span><span style="color: #E67E80;"> move</span><span> occurs because `</span><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state` has</span><span style="color: #E69875;"> type</span><span> `</span><span style="color: #83C092;">std</span><span style="color: #E69875;">::</span><span style="color: #83C092;">boxed</span><span style="color: #E69875;">::</span><span style="color: #7FBBB3;">Box</span><span>&lt;</span><span style="color: #E67E80;">dyn</span><span style="color: #7FBBB3;"> State</span><span>&gt;`, which does not implement the `</span><span style="color: #7FBBB3;">Copy</span><span>` </span><span style="color: #E69875;">trait</span><span>&#39;</span><span style="color: #DBBC7F;">.</span></span></code></pre>
 <p>原回答：<br />
 This is because calling <code>State::request_review</code> will move <code>Box&lt;self&gt;</code>, which is allocated on heap, and Rust doesn’t allow you to just move values away from heap unless you implement <code>Copy</code>, otherwise what’s left there? The book uses <code>Option::take()</code> to move ownership out and leave <code>None</code> on the place.</p>
 <p>翻译如下：<br />
 这是因为调用 <code>State::request_review</code> 将 <code>move</code> 分配在堆上的 <code>Box&lt;self&gt;</code>，而 Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code>，否则原值还剩下什么呢？The book 里面使用 <code>Option::take()</code> 将所有权移出，并为原值保留了 <code>None</code> 。</p>
 <p>其实已经讲得很清楚了，但我还要问一句：<code>move</code> 发生在哪里？</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span></code></pre>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #D699B6;">self</span><span style="color: #E69875;">.</span><span>state </span><span style="color: #E69875;">=</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">request_review</span><span>();</span></span></code></pre>
 <p>这一句中的 <code>self.state.request_review();</code> 使得结构体 <code>Post</code> 的 <code>state</code> 字段被 <code>request_review()</code> 方法赋了新值，并取得了 <code>state</code> 的所有权，此时 <code>self.state</code> 的所有权转移进了 <code>request_review()</code> 方法内，<code>self.state</code> 变成未初始化状态，而 Rust 编译器禁止使用未经初始化的变量，因为这会产生未定义行为。<br />
 因此编译器报错，还指出了我们没有为 <code>std::boxed::Box&lt;dyn State&gt;</code> 实现 <code>Copy</code> trait，如果实现了这个 trait，<code>self.state</code> 在 <code>self.state.request_review()</code> 之后依然能保持初始化状态，也就可以完成 <code>self.state =</code> 这部分的赋值了。</p>
 <h2 id="2023-2-16-zhui-jia">2023.2.16 追加</h2>
@@ -185,7 +185,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <p>Rust 不允许你将值从堆中 <code>move</code>，除非你实现 <code>Copy</code></p>
 </blockquote>
 <p>这句话什么意思？还是要看<a rel="noopener external" target="_blank" href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=dcc068cc77c38b8a929b9177a11500ec">报错信息</a>：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="plain"><span class="giallo-l"><span>   Compiling playground v0.0.1 (/playground)</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="plain"><span class="giallo-l"><span>   Compiling playground v0.0.1 (/playground)</span></span>
 <span class="giallo-l"><span>error[E0507]: cannot move out of `self.state` which is behind a mutable reference</span></span>
 <span class="giallo-l"><span>  --&gt; src/lib.rs:12:22</span></span>
 <span class="giallo-l"><span>   |</span></span>
@@ -210,7 +210,7 @@ This is because calling <code>State::request_review</code> will move <code>Bo
 <li>实现了 <code>Copy</code> trait 意味着不会真的转移所有权，而是会原封不动地复制一份出去，不会对原值有影响，因此引用就还会是有效状态。</li>
 </ul>
 <p>说了这么多，让我看看书里的操作是什么：</p>
-<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;"><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
+<pre class="giallo" style="color: #D3C6AA; background-color: #2D353B;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #E67E80;">impl</span><span style="color: #7FBBB3;"> Post</span><span> {</span></span>
 <span class="giallo-l"><span style="color: #859289;font-style: italic;">    // --snip--</span></span>
 <span class="giallo-l"><span style="color: #E67E80;">    pub fn</span><span style="color: #A7C080;"> request_review</span><span>(</span><span style="color: #E69875;">&amp;mut</span><span style="color: #D699B6;"> self</span><span>) {</span></span>
 <span class="giallo-l"><span style="color: #E67E80;">        if</span><span style="color: #E69875;"> let</span><span style="color: #7FBBB3;"> Some</span><span>(s)</span><span style="color: #E69875;"> =</span><span style="color: #D699B6;"> self</span><span style="color: #E69875;">.</span><span>state</span><span style="color: #E69875;">.</span><span style="color: #A7C080;">take</span><span>() {</span></span>
